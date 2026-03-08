@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   LayoutDashboard,
   Users,
@@ -15,7 +16,6 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -68,12 +68,11 @@ interface NavGroupProps {
   label: string;
   items: { title: string; url: string; icon: React.ComponentType<{ className?: string }> }[];
   collapsed: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-function NavGroup({ label, items, collapsed }: NavGroupProps) {
-  const location = useLocation();
-  const isActive = items.some((i) => location.pathname === i.url);
-
+function NavGroup({ label, items, collapsed, open, onOpenChange }: NavGroupProps) {
   if (collapsed) {
     return (
       <SidebarGroup>
@@ -100,7 +99,7 @@ function NavGroup({ label, items, collapsed }: NavGroupProps) {
   }
 
   return (
-    <Collapsible defaultOpen={isActive} className="group/collapsible">
+    <Collapsible open={open} onOpenChange={onOpenChange} className="group/collapsible">
       <SidebarGroup>
         <CollapsibleTrigger asChild>
           <SidebarGroupLabel className="cursor-pointer text-[11px] uppercase tracking-wider text-sidebar-foreground/40 hover:text-sidebar-foreground/60 flex items-center justify-between">
@@ -137,6 +136,16 @@ function NavGroup({ label, items, collapsed }: NavGroupProps) {
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    management: true,
+    academic: true,
+    dormitory: true,
+    finance: true,
+  });
+
+  const handleOpenChange = (key: string) => (open: boolean) => {
+    setOpenGroups((prev) => ({ ...prev, [key]: open }));
+  };
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
@@ -155,7 +164,6 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="px-2">
-        {/* Main */}
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -178,10 +186,10 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <NavGroup label="Manajemen / Management" items={managementItems} collapsed={collapsed} />
-        <NavGroup label="Akademik / Academic" items={academicItems} collapsed={collapsed} />
-        <NavGroup label="Asrama / Dormitory" items={dormitoryItems} collapsed={collapsed} />
-        <NavGroup label="Keuangan / Finance" items={financeItems} collapsed={collapsed} />
+        <NavGroup label="Manajemen / Management" items={managementItems} collapsed={collapsed} open={openGroups.management} onOpenChange={handleOpenChange("management")} />
+        <NavGroup label="Akademik / Academic" items={academicItems} collapsed={collapsed} open={openGroups.academic} onOpenChange={handleOpenChange("academic")} />
+        <NavGroup label="Asrama / Dormitory" items={dormitoryItems} collapsed={collapsed} open={openGroups.dormitory} onOpenChange={handleOpenChange("dormitory")} />
+        <NavGroup label="Keuangan / Finance" items={financeItems} collapsed={collapsed} open={openGroups.finance} onOpenChange={handleOpenChange("finance")} />
       </SidebarContent>
 
       <SidebarFooter className="p-3">

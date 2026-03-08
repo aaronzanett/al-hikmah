@@ -1,14 +1,9 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Bell, Search } from "lucide-react";
+import { Outlet } from "react-router-dom";
 
-interface DashboardLayoutProps {
-  children: React.ReactNode;
-  title?: string;
-  subtitle?: string;
-}
-
-export function DashboardLayout({ children, title, subtitle }: DashboardLayoutProps) {
+export function DashboardLayout() {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -17,12 +12,6 @@ export function DashboardLayout({ children, title, subtitle }: DashboardLayoutPr
           <header className="h-14 flex items-center justify-between border-b bg-card px-4 shrink-0">
             <div className="flex items-center gap-3">
               <SidebarTrigger />
-              {title && (
-                <div>
-                  <h2 className="text-sm font-semibold leading-tight">{title}</h2>
-                  {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
-                </div>
-              )}
             </div>
             <div className="flex items-center gap-2">
               <button className="p-2 rounded-md hover:bg-muted transition-colors">
@@ -40,7 +29,7 @@ export function DashboardLayout({ children, title, subtitle }: DashboardLayoutPr
             </div>
           </header>
           <main className="flex-1 overflow-auto p-4 md:p-6">
-            {children}
+            <Outlet />
           </main>
         </div>
       </div>
