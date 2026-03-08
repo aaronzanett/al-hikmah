@@ -1,16 +1,42 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck, Users, GraduationCap, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
+
+const roleConfig: Record<string, { title: string; subtitle: string; icon: React.ElementType; gradient: string }> = {
+  admin: {
+    title: "Administrator",
+    subtitle: "Masuk sebagai pengelola pesantren",
+    icon: ShieldCheck,
+    gradient: "from-primary to-primary/80",
+  },
+  guardian: {
+    title: "Wali Santri",
+    subtitle: "Masuk sebagai orang tua / wali santri",
+    icon: Users,
+    gradient: "from-accent to-amber-600",
+  },
+  student: {
+    title: "Santri",
+    subtitle: "Masuk sebagai santri",
+    icon: GraduationCap,
+    gradient: "from-[hsl(var(--info))] to-blue-600",
+  },
+};
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { role = "admin" } = useParams<{ role: string }>();
+
+  const config = roleConfig[role] || roleConfig.admin;
+  const Icon = config.icon;
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/");
+    if (role === "admin") navigate("/");
+    else navigate("/");
   };
 
   return (
@@ -18,29 +44,37 @@ const Login = () => {
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 gradient-primary flex-col justify-between p-10">
         <div>
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg gradient-gold">
               <span className="text-sm font-bold text-accent-foreground">B</span>
             </div>
             <h1 className="text-xl font-bold text-primary-foreground">BoardingCore</h1>
-          </div>
+          </Link>
         </div>
         <div>
-          <motion.h2
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
+            className={`mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${config.gradient}`}
+          >
+            <Icon className="h-8 w-8 text-primary-foreground" />
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
             className="text-3xl font-bold text-primary-foreground leading-tight mb-4 font-display"
           >
-            Sistem Manajemen<br />Pesantren Terpadu
+            Portal {config.title}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
+            transition={{ delay: 0.4 }}
             className="text-primary-foreground/70 text-sm max-w-md"
           >
-            Kelola santri, akademik, asrama, dan keuangan pesantren Anda dalam satu platform terintegrasi.
+            {config.subtitle}. Sistem Manajemen Pesantren Terpadu BoardingCore.
           </motion.p>
         </div>
         <p className="text-primary-foreground/40 text-xs">© 2026 BoardingCore. All rights reserved.</p>
@@ -49,34 +83,50 @@ const Login = () => {
       {/* Right panel */}
       <div className="flex-1 flex items-center justify-center p-6 bg-background">
         <motion.div
+          key={role}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-sm"
         >
-          <div className="lg:hidden flex items-center gap-3 mb-8">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Kembali ke Beranda
+          </Link>
+
+          <div className="lg:hidden flex items-center gap-3 mb-6">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-gold">
               <span className="text-sm font-bold text-accent-foreground">B</span>
             </div>
-            <h1 className="text-lg font-bold">BoardingCore</h1>
+            <h1 className="text-lg font-bold text-foreground">BoardingCore</h1>
           </div>
 
-          <h2 className="text-xl font-bold mb-1">Masuk / Login</h2>
-          <p className="text-sm text-muted-foreground mb-6">Masukkan kredensial untuk mengakses dashboard.</p>
+          <div className="flex items-center gap-3 mb-6">
+            <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${config.gradient}`}>
+              <Icon className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-foreground">Masuk — {config.title}</h2>
+              <p className="text-xs text-muted-foreground">{config.subtitle}</p>
+            </div>
+          </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-                Email
+                {role === "student" ? "NIS / Username" : "Email"}
               </label>
               <input
-                type="email"
-                placeholder="admin@pesantren.id"
+                type={role === "student" ? "text" : "email"}
+                placeholder={role === "student" ? "Masukkan NIS atau username" : "email@pesantren.id"}
                 className="w-full rounded-lg border bg-card px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-                Kata Sandi / Password
+                Kata Sandi
               </label>
               <div className="relative">
                 <input
@@ -97,15 +147,32 @@ const Login = () => {
             <div className="flex items-center justify-between text-xs">
               <label className="flex items-center gap-2 text-muted-foreground cursor-pointer">
                 <input type="checkbox" className="rounded border" />
-                Ingat saya / Remember me
+                Ingat saya
               </label>
               <a href="#" className="text-primary font-medium hover:underline">Lupa sandi?</a>
             </div>
 
             <Button type="submit" className="w-full">
-              Masuk / Sign In
+              Masuk
             </Button>
           </form>
+
+          {/* Role switcher */}
+          <div className="mt-8 pt-6 border-t">
+            <p className="text-xs text-muted-foreground mb-3 text-center">Masuk sebagai peran lain:</p>
+            <div className="flex gap-2 justify-center">
+              {Object.entries(roleConfig)
+                .filter(([key]) => key !== role)
+                .map(([key, cfg]) => (
+                  <Link key={key} to={`/login/${key}`}>
+                    <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+                      <cfg.icon className="h-3.5 w-3.5" />
+                      {cfg.title}
+                    </Button>
+                  </Link>
+                ))}
+            </div>
+          </div>
 
           <p className="text-xs text-center text-muted-foreground mt-6">
             Hubungi administrator jika Anda belum memiliki akun.
