@@ -1,80 +1,68 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Eye, EyeOff, ShieldCheck, Users, GraduationCap, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, Users, GraduationCap, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
-const roleConfig: Record<string, { title: string; subtitle: string; icon: React.ElementType; gradient: string }> = {
-  admin: {
-    title: "Administrator",
-    subtitle: "Masuk sebagai pengelola pesantren",
-    icon: ShieldCheck,
-    gradient: "from-primary to-primary/80",
-  },
+type Role = "guardian" | "student";
+
+const roleConfig: Record<Role, { title: string; subtitle: string; icon: React.ElementType; placeholder: string; inputType: string; inputLabel: string }> = {
   guardian: {
     title: "Wali Santri",
-    subtitle: "Masuk sebagai orang tua / wali santri",
+    subtitle: "Pantau perkembangan dan tagihan anak Anda",
     icon: Users,
-    gradient: "from-accent to-amber-600",
+    placeholder: "email@example.com",
+    inputType: "email",
+    inputLabel: "Email",
   },
   student: {
     title: "Santri",
-    subtitle: "Masuk sebagai santri",
+    subtitle: "Lihat jadwal, nilai, dan informasi akademik",
     icon: GraduationCap,
-    gradient: "from-[hsl(var(--info))] to-blue-600",
+    placeholder: "Masukkan NIS atau username",
+    inputType: "text",
+    inputLabel: "NIS / Username",
   },
 };
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [activeRole, setActiveRole] = useState<Role>("guardian");
   const navigate = useNavigate();
-  const { role = "admin" } = useParams<{ role: string }>();
 
-  const config = roleConfig[role] || roleConfig.admin;
-  const Icon = config.icon;
+  const config = roleConfig[activeRole];
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (role === "admin") navigate("/");
-    else navigate("/");
+    navigate("/dashboard");
   };
 
   return (
     <div className="min-h-screen flex">
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 gradient-primary flex-col justify-between p-10">
+        <Link to="/" className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg gradient-gold">
+            <span className="text-sm font-bold text-accent-foreground">B</span>
+          </div>
+          <h1 className="text-xl font-bold text-primary-foreground">BoardingCore</h1>
+        </Link>
         <div>
-          <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg gradient-gold">
-              <span className="text-sm font-bold text-accent-foreground">B</span>
-            </div>
-            <h1 className="text-xl font-bold text-primary-foreground">BoardingCore</h1>
-          </Link>
-        </div>
-        <div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className={`mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${config.gradient}`}
-          >
-            <Icon className="h-8 w-8 text-primary-foreground" />
-          </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.2 }}
             className="text-3xl font-bold text-primary-foreground leading-tight mb-4 font-display"
           >
-            Portal {config.title}
+            Portal Santri &<br />Wali Santri
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.35 }}
             className="text-primary-foreground/70 text-sm max-w-md"
           >
-            {config.subtitle}. Sistem Manajemen Pesantren Terpadu BoardingCore.
+            Akses informasi akademik, keuangan, dan perkembangan santri dalam satu platform terintegrasi.
           </motion.p>
         </div>
         <p className="text-primary-foreground/40 text-xs">© 2026 BoardingCore. All rights reserved.</p>
@@ -83,7 +71,6 @@ const Login = () => {
       {/* Right panel */}
       <div className="flex-1 flex items-center justify-center p-6 bg-background">
         <motion.div
-          key={role}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-sm"
@@ -103,76 +90,75 @@ const Login = () => {
             <h1 className="text-lg font-bold text-foreground">BoardingCore</h1>
           </div>
 
-          <div className="flex items-center gap-3 mb-6">
-            <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${config.gradient}`}>
-              <Icon className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-foreground">Masuk — {config.title}</h2>
-              <p className="text-xs text-muted-foreground">{config.subtitle}</p>
-            </div>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-                {role === "student" ? "NIS / Username" : "Email"}
-              </label>
-              <input
-                type={role === "student" ? "text" : "email"}
-                placeholder={role === "student" ? "Masukkan NIS atau username" : "email@pesantren.id"}
-                className="w-full rounded-lg border bg-card px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-                Kata Sandi
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  className="w-full rounded-lg border bg-card px-4 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-ring"
-                />
+          {/* Role Switcher */}
+          <div className="flex rounded-lg border bg-muted p-1 mb-6">
+            {(["guardian", "student"] as Role[]).map((role) => {
+              const Icon = roleConfig[role].icon;
+              return (
                 <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  key={role}
+                  onClick={() => setActiveRole(role)}
+                  className={`flex-1 flex items-center justify-center gap-2 rounded-md py-2.5 text-sm font-medium transition-all ${
+                    activeRole === role
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  <Icon className="h-4 w-4" />
+                  {roleConfig[role].title}
                 </button>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs">
-              <label className="flex items-center gap-2 text-muted-foreground cursor-pointer">
-                <input type="checkbox" className="rounded border" />
-                Ingat saya
-              </label>
-              <a href="#" className="text-primary font-medium hover:underline">Lupa sandi?</a>
-            </div>
-
-            <Button type="submit" className="w-full">
-              Masuk
-            </Button>
-          </form>
-
-          {/* Role switcher */}
-          <div className="mt-8 pt-6 border-t">
-            <p className="text-xs text-muted-foreground mb-3 text-center">Masuk sebagai peran lain:</p>
-            <div className="flex gap-2 justify-center">
-              {Object.entries(roleConfig)
-                .filter(([key]) => key !== role)
-                .map(([key, cfg]) => (
-                  <Link key={key} to={`/login/${key}`}>
-                    <Button variant="outline" size="sm" className="gap-1.5 text-xs">
-                      <cfg.icon className="h-3.5 w-3.5" />
-                      {cfg.title}
-                    </Button>
-                  </Link>
-                ))}
-            </div>
+              );
+            })}
           </div>
+
+          <motion.div key={activeRole} initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}>
+            <h2 className="text-lg font-bold text-foreground mb-1">Masuk — {config.title}</h2>
+            <p className="text-xs text-muted-foreground mb-5">{config.subtitle}</p>
+
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                  {config.inputLabel}
+                </label>
+                <input
+                  type={config.inputType}
+                  placeholder={config.placeholder}
+                  className="w-full rounded-lg border bg-card px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                  Kata Sandi
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    className="w-full rounded-lg border bg-card px-4 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-ring"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-xs">
+                <label className="flex items-center gap-2 text-muted-foreground cursor-pointer">
+                  <input type="checkbox" className="rounded border" />
+                  Ingat saya
+                </label>
+                <a href="#" className="text-primary font-medium hover:underline">Lupa sandi?</a>
+              </div>
+
+              <Button type="submit" className="w-full">
+                Masuk sebagai {config.title}
+              </Button>
+            </form>
+          </motion.div>
 
           <p className="text-xs text-center text-muted-foreground mt-6">
             Hubungi administrator jika Anda belum memiliki akun.
