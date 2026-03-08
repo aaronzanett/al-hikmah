@@ -25,25 +25,18 @@ const features = [
 
 const roles = [
   {
-    icon: ShieldCheck,
-    title: "Administrator",
-    desc: "Akses penuh untuk mengelola seluruh sistem pesantren.",
-    href: "/login/admin",
-    color: "from-primary to-primary/80",
-  },
-  {
     icon: Users,
     title: "Wali Santri",
     desc: "Pantau perkembangan, tagihan, dan informasi anak Anda.",
-    href: "/login/guardian",
+    href: "/login",
     color: "from-accent to-amber-600",
   },
   {
     icon: GraduationCap,
     title: "Santri",
     desc: "Lihat jadwal, nilai, dan informasi akademik Anda.",
-    href: "/login/student",
-    color: "from-info to-blue-600",
+    href: "/login",
+    color: "from-[hsl(var(--info))] to-blue-600",
   },
 ];
 
@@ -58,7 +51,7 @@ const fadeUp = {
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
@@ -72,8 +65,8 @@ const Index = () => {
             <a href="#features" className="hover:text-foreground transition-colors">Fitur</a>
             <a href="#login" className="hover:text-foreground transition-colors">Masuk</a>
           </div>
-          <Link to="/login/admin">
-            <Button size="sm">Masuk Dashboard</Button>
+          <Link to="/login">
+            <Button size="sm">Masuk</Button>
           </Link>
         </div>
       </nav>
@@ -109,9 +102,9 @@ const Index = () => {
               transition={{ delay: 0.3, duration: 0.5 }}
               className="flex flex-col sm:flex-row gap-3 justify-center"
             >
-              <Link to="/login/admin">
+              <Link to="/login">
                 <Button size="lg" className="w-full sm:w-auto gap-2">
-                  Mulai Sekarang <ChevronRight className="h-4 w-4" />
+                  Masuk Sekarang <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>
               <a href="#features">
@@ -164,7 +157,7 @@ const Index = () => {
               Pilih portal sesuai peran Anda untuk mengakses sistem.
             </p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-3 max-w-4xl mx-auto">
+          <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto">
             {roles.map((r, i) => (
               <motion.div
                 key={r.title}
@@ -193,16 +186,24 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t bg-card py-8">
-        <div className="mx-auto max-w-6xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md gradient-gold">
-              <span className="text-[10px] font-bold text-accent-foreground">B</span>
+      {/* Footer with Admin Login */}
+      <footer className="border-t bg-card py-8 mt-auto">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-md gradient-gold">
+                <span className="text-[10px] font-bold text-accent-foreground">B</span>
+              </div>
+              <span className="text-sm font-semibold text-foreground">BoardingCore</span>
             </div>
-            <span className="text-sm font-semibold text-foreground">BoardingCore</span>
+            <p className="text-xs text-muted-foreground">© 2026 BoardingCore. All rights reserved.</p>
+            <Link to="/login/admin">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Login Administrator
+              </Button>
+            </Link>
           </div>
-          <p className="text-xs text-muted-foreground">© 2026 BoardingCore. All rights reserved.</p>
         </div>
       </footer>
     </div>
