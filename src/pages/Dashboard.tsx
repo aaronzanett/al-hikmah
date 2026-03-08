@@ -1,4 +1,3 @@
-import { DashboardLayout } from "@/components/DashboardLayout";
 import { StatCard } from "@/components/StatCard";
 import { motion } from "framer-motion";
 import {
@@ -47,96 +46,44 @@ const recentActivities = [
 
 const Dashboard = () => {
   return (
-    <DashboardLayout title="Dashboard" subtitle="Ringkasan data pesantren / Overview">
-      {/* Stats */}
+    <>
+      <div className="mb-6">
+        <h1 className="text-lg font-bold">Dashboard</h1>
+        <p className="text-sm text-muted-foreground">Ringkasan data pesantren / Overview</p>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard
-          title="Total Santri / Students"
-          value={380}
-          subtitle="Aktif di semua cabang"
-          icon={Users}
-          trend={{ value: 5.2, label: "vs bulan lalu" }}
-          variant="primary"
-        />
-        <StatCard
-          title="Cabang / Branches"
-          value={3}
-          subtitle="Pusat, Cabang 1, Cabang 2"
-          icon={Building2}
-        />
-        <StatCard
-          title="Tagihan Bulan Ini / Monthly Bills"
-          value="Rp 228M"
-          subtitle="380 tagihan aktif"
-          icon={Receipt}
-          variant="accent"
-        />
-        <StatCard
-          title="Pembayaran Masuk / Income"
-          value="Rp 192M"
-          subtitle="84% terkumpul"
-          icon={Wallet}
-          trend={{ value: 12, label: "vs bulan lalu" }}
-        />
+        <StatCard title="Total Santri / Students" value={380} subtitle="Aktif di semua cabang" icon={Users} trend={{ value: 5.2, label: "vs bulan lalu" }} variant="primary" />
+        <StatCard title="Cabang / Branches" value={3} subtitle="Pusat, Cabang 1, Cabang 2" icon={Building2} />
+        <StatCard title="Tagihan Bulan Ini / Monthly Bills" value="Rp 228M" subtitle="380 tagihan aktif" icon={Receipt} variant="accent" />
+        <StatCard title="Pembayaran Masuk / Income" value="Rp 192M" subtitle="84% terkumpul" icon={Wallet} trend={{ value: 12, label: "vs bulan lalu" }} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        {/* Payment Chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="lg:col-span-2 bg-card border rounded-xl p-5 shadow-card"
-        >
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="lg:col-span-2 bg-card border rounded-xl p-5 shadow-card">
           <h3 className="text-sm font-semibold mb-4">Pembayaran Bulanan / Monthly Payments</h3>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={monthlyPayments}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(40, 20%, 90%)" />
               <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="hsl(150, 10%, 45%)" />
               <YAxis tick={{ fontSize: 12 }} stroke="hsl(150, 10%, 45%)" />
-              <Tooltip
-                contentStyle={{
-                  borderRadius: "8px",
-                  border: "1px solid hsl(40, 20%, 90%)",
-                  fontSize: "12px",
-                }}
-              />
+              <Tooltip contentStyle={{ borderRadius: "8px", border: "1px solid hsl(40, 20%, 90%)", fontSize: "12px" }} />
               <Bar dataKey="paid" fill="hsl(152, 45%, 28%)" radius={[4, 4, 0, 0]} name="Lunas" />
               <Bar dataKey="unpaid" fill="hsl(42, 75%, 55%)" radius={[4, 4, 0, 0]} name="Belum Bayar" />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
 
-        {/* Pie Chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-          className="bg-card border rounded-xl p-5 shadow-card"
-        >
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="bg-card border rounded-xl p-5 shadow-card">
           <h3 className="text-sm font-semibold mb-4">Status Pembayaran / Payment Status</h3>
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
-              <Pie
-                data={paymentStatus}
-                cx="50%"
-                cy="50%"
-                innerRadius={50}
-                outerRadius={80}
-                paddingAngle={3}
-                dataKey="value"
-              >
+              <Pie data={paymentStatus} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="value">
                 {paymentStatus.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip
-                contentStyle={{
-                  borderRadius: "8px",
-                  border: "1px solid hsl(40, 20%, 90%)",
-                  fontSize: "12px",
-                }}
-              />
+              <Tooltip contentStyle={{ borderRadius: "8px", border: "1px solid hsl(40, 20%, 90%)", fontSize: "12px" }} />
             </PieChart>
           </ResponsiveContainer>
           <div className="space-y-2 mt-2">
@@ -153,31 +100,12 @@ const Dashboard = () => {
         </motion.div>
       </div>
 
-      {/* Quick Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <StatCard
-          title="Tunggakan / Overdue"
-          value={15}
-          subtitle="Perlu tindak lanjut segera"
-          icon={AlertCircle}
-          variant="info"
-        />
-        <StatCard
-          title="Pendapatan Platform / Platform Revenue"
-          value="Rp 1.52M"
-          subtitle="Dari micro-fee transaksi"
-          icon={TrendingUp}
-          trend={{ value: 8.3, label: "bulan ini" }}
-        />
+        <StatCard title="Tunggakan / Overdue" value={15} subtitle="Perlu tindak lanjut segera" icon={AlertCircle} variant="info" />
+        <StatCard title="Pendapatan Platform / Platform Revenue" value="Rp 1.52M" subtitle="Dari micro-fee transaksi" icon={TrendingUp} trend={{ value: 8.3, label: "bulan ini" }} />
       </div>
 
-      {/* Recent Activity */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="bg-card border rounded-xl p-5 shadow-card"
-      >
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-card border rounded-xl p-5 shadow-card">
         <h3 className="text-sm font-semibold mb-4">Aktivitas Terkini / Recent Activity</h3>
         <div className="space-y-3">
           {recentActivities.map((activity) => (
@@ -191,7 +119,7 @@ const Dashboard = () => {
           ))}
         </div>
       </motion.div>
-    </DashboardLayout>
+    </>
   );
 };
 
