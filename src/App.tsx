@@ -192,6 +192,38 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/content/gallery"
+              element={
+                <ProtectedRoute requiredPermissions={["content_gallery.view"]}>
+                  <ManageGallery />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/content/news"
+              element={
+                <ProtectedRoute requiredPermissions={["content_news.view"]}>
+                  <ManageNews />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/content/contact"
+              element={
+                <ProtectedRoute requiredPermissions={["content_contact.view"]}>
+                  <ManageContact />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/content/messages"
+              element={
+                <ProtectedRoute requiredPermissions={["content_messages.view"]}>
+                  <ContactMessages />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           {/* Guardian portal routes */}
