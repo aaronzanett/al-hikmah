@@ -52,6 +52,9 @@ const App = () => (
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<Index />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/login/admin" element={<AdminLogin />} />
 
