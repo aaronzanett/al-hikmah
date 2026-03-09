@@ -49,6 +49,15 @@ export type Permission =
   | 'settings.manage'
   | 'users.view'
   | 'users.manage'
+  // Content management permissions (super admin)
+  | 'content_gallery.view'
+  | 'content_gallery.manage'
+  | 'content_news.view'
+  | 'content_news.manage'
+  | 'content_contact.view'
+  | 'content_contact.manage'
+  | 'content_messages.view'
+  | 'content_messages.manage'
   // Guardian-specific permissions
   | 'guardian_portal.view'
   | 'child_profile.view'
