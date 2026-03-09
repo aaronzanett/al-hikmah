@@ -49,6 +49,15 @@ export type Permission =
   | 'settings.manage'
   | 'users.view'
   | 'users.manage'
+  // Content management permissions (super admin)
+  | 'content_gallery.view'
+  | 'content_gallery.manage'
+  | 'content_news.view'
+  | 'content_news.manage'
+  | 'content_contact.view'
+  | 'content_contact.manage'
+  | 'content_messages.view'
+  | 'content_messages.manage'
   // Guardian-specific permissions
   | 'guardian_portal.view'
   | 'child_profile.view'
@@ -76,6 +85,10 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     'savings.view', 'savings.manage',
     'settings.view', 'settings.manage',
     'users.view', 'users.manage',
+    'content_gallery.view', 'content_gallery.manage',
+    'content_news.view', 'content_news.manage',
+    'content_contact.view', 'content_contact.manage',
+    'content_messages.view', 'content_messages.manage',
   ],
   
   branch_admin: [
@@ -154,6 +167,10 @@ export const routePermissions: Record<string, Permission[]> = {
   '/expenses': ['expenses.view'],
   '/savings': ['savings.view'],
   '/settings': ['settings.view'],
+  '/content/gallery': ['content_gallery.view'],
+  '/content/news': ['content_news.view'],
+  '/content/contact': ['content_contact.view'],
+  '/content/messages': ['content_messages.view'],
   // Guardian portal routes
   '/portal': ['guardian_portal.view'],
   '/portal/child': ['child_profile.view'],

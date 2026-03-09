@@ -33,6 +33,10 @@ import Payments from "./pages/Payments";
 import Expenses from "./pages/Expenses";
 import Savings from "./pages/Savings";
 import Settings from "./pages/Settings";
+import ManageGallery from "./pages/ManageGallery";
+import ManageNews from "./pages/ManageNews";
+import ManageContact from "./pages/ManageContact";
+import ContactMessages from "./pages/ContactMessages";
 
 // Guardian portal pages
 import GuardianPortal from "./pages/portal/GuardianPortal";
@@ -185,6 +189,38 @@ const App = () => (
               element={
                 <ProtectedRoute requiredPermissions={["settings.view"]}>
                   <Settings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/content/gallery"
+              element={
+                <ProtectedRoute requiredPermissions={["content_gallery.view"]}>
+                  <ManageGallery />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/content/news"
+              element={
+                <ProtectedRoute requiredPermissions={["content_news.view"]}>
+                  <ManageNews />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/content/contact"
+              element={
+                <ProtectedRoute requiredPermissions={["content_contact.view"]}>
+                  <ManageContact />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/content/messages"
+              element={
+                <ProtectedRoute requiredPermissions={["content_messages.view"]}>
+                  <ContactMessages />
                 </ProtectedRoute>
               }
             />

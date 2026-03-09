@@ -15,6 +15,10 @@ import {
   LogOut,
   ChevronDown,
   UserCog,
+  Image,
+  Newspaper,
+  Phone,
+  MessageSquare,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -73,6 +77,13 @@ const financeItems: MenuItem[] = [
   { title: "Pembayaran / Payments", url: "/payments", icon: Wallet, permission: "payments.view" },
   { title: "Pengeluaran / Expenses", url: "/expenses", icon: Receipt, permission: "expenses.view" },
   { title: "Tabungan / Savings", url: "/savings", icon: PiggyBank, permission: "savings.view" },
+];
+
+const contentItems: MenuItem[] = [
+  { title: "Galeri / Gallery", url: "/content/gallery", icon: Image, permission: "content_gallery.view" },
+  { title: "Berita / News", url: "/content/news", icon: Newspaper, permission: "content_news.view" },
+  { title: "Kontak / Contact", url: "/content/contact", icon: Phone, permission: "content_contact.view" },
+  { title: "Pesan Masuk / Messages", url: "/content/messages", icon: MessageSquare, permission: "content_messages.view" },
 ];
 
 interface NavGroupProps {
@@ -164,6 +175,7 @@ export function AppSidebar() {
     academic: true,
     dormitory: true,
     finance: true,
+    content: true,
   });
 
   const handleOpenChange = (key: string) => (open: boolean) => {
@@ -183,6 +195,7 @@ export function AppSidebar() {
   const showAcademic = academicItems.some(item => can(item.permission));
   const showDormitory = dormitoryItems.some(item => can(item.permission));
   const showFinance = financeItems.some(item => can(item.permission));
+  const showContent = contentItems.some(item => can(item.permission));
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
@@ -265,6 +278,16 @@ export function AppSidebar() {
             collapsed={collapsed} 
             open={openGroups.finance} 
             onOpenChange={handleOpenChange("finance")} 
+          />
+        )}
+
+        {showContent && (
+          <NavGroup 
+            label="Konten Website / Content" 
+            items={contentItems} 
+            collapsed={collapsed} 
+            open={openGroups.content} 
+            onOpenChange={handleOpenChange("content")} 
           />
         )}
       </SidebarContent>
