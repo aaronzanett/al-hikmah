@@ -280,6 +280,16 @@ export function AppSidebar() {
             onOpenChange={handleOpenChange("finance")} 
           />
         )}
+
+        {showContent && (
+          <NavGroup 
+            label="Konten Website / Content" 
+            items={contentItems} 
+            collapsed={collapsed} 
+            open={openGroups.content} 
+            onOpenChange={handleOpenChange("content")} 
+          />
+        )}
       </SidebarContent>
 
       <SidebarFooter className="p-3">
