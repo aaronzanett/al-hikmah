@@ -14,6 +14,7 @@ import {
   Settings,
   LogOut,
   ChevronDown,
+  UserCog,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -34,51 +35,69 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { useAuth, usePermissions } from "@/contexts/AuthContext";
+import { Permission, roleDisplayNames } from "@/types/auth";
+import { useNavigate } from "react-router-dom";
 
-const mainItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+interface MenuItem {
+  title: string;
+  url: string;
+  icon: React.ComponentType<{ className?: string }>;
+  permission: Permission;
+}
+
+const mainItems: MenuItem[] = [
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, permission: "dashboard.view" },
 ];
 
-const managementItems = [
-  { title: "Cabang / Branches", url: "/branches", icon: Building2 },
-  { title: "Santri / Students", url: "/students", icon: Users },
-  { title: "Wali / Guardians", url: "/guardians", icon: Users },
+const managementItems: MenuItem[] = [
+  { title: "Cabang / Branches", url: "/branches", icon: Building2, permission: "branches.view" },
+  { title: "Santri / Students", url: "/students", icon: Users, permission: "students.view" },
+  { title: "Wali / Guardians", url: "/guardians", icon: Users, permission: "guardians.view" },
 ];
 
-const academicItems = [
-  { title: "Kelas / Classes", url: "/classes", icon: GraduationCap },
-  { title: "Mata Pelajaran / Subjects", url: "/subjects", icon: BookOpen },
-  { title: "Nilai / Grades", url: "/grades", icon: ClipboardList },
-  { title: "Absensi / Attendance", url: "/attendance", icon: ClipboardList },
+const academicItems: MenuItem[] = [
+  { title: "Kelas / Classes", url: "/classes", icon: GraduationCap, permission: "classes.view" },
+  { title: "Mata Pelajaran / Subjects", url: "/subjects", icon: BookOpen, permission: "subjects.view" },
+  { title: "Nilai / Grades", url: "/grades", icon: ClipboardList, permission: "grades.view" },
+  { title: "Absensi / Attendance", url: "/attendance", icon: ClipboardList, permission: "attendance.view" },
 ];
 
-const dormitoryItems = [
-  { title: "Kamar / Rooms", url: "/rooms", icon: BedDouble },
-  { title: "Inventaris / Inventory", url: "/inventory", icon: Package },
+const dormitoryItems: MenuItem[] = [
+  { title: "Kamar / Rooms", url: "/rooms", icon: BedDouble, permission: "rooms.view" },
+  { title: "Inventaris / Inventory", url: "/inventory", icon: Package, permission: "inventory.view" },
 ];
 
-const financeItems = [
-  { title: "Tagihan / Bills", url: "/bills", icon: Receipt },
-  { title: "Pembayaran / Payments", url: "/payments", icon: Wallet },
-  { title: "Pengeluaran / Expenses", url: "/expenses", icon: Receipt },
-  { title: "Tabungan / Savings", url: "/savings", icon: PiggyBank },
+const financeItems: MenuItem[] = [
+  { title: "Tagihan / Bills", url: "/bills", icon: Receipt, permission: "bills.view" },
+  { title: "Pembayaran / Payments", url: "/payments", icon: Wallet, permission: "payments.view" },
+  { title: "Pengeluaran / Expenses", url: "/expenses", icon: Receipt, permission: "expenses.view" },
+  { title: "Tabungan / Savings", url: "/savings", icon: PiggyBank, permission: "savings.view" },
 ];
 
 interface NavGroupProps {
   label: string;
-  items: { title: string; url: string; icon: React.ComponentType<{ className?: string }> }[];
+  items: MenuItem[];
   collapsed: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 function NavGroup({ label, items, collapsed, open, onOpenChange }: NavGroupProps) {
+  const { can } = usePermissions();
+  
+  // Filter items based on permissions
+  const visibleItems = items.filter(item => can(item.permission));
+  
+  // Don't render group if no items are visible
+  if (visibleItems.length === 0) return null;
+
   if (collapsed) {
     return (
       <SidebarGroup>
         <SidebarGroupContent>
           <SidebarMenu>
-            {items.map((item) => (
+            {visibleItems.map((item) => (
               <SidebarMenuItem key={item.url}>
                 <SidebarMenuButton asChild tooltip={item.title}>
                   <NavLink
@@ -110,7 +129,7 @@ function NavGroup({ label, items, collapsed, open, onOpenChange }: NavGroupProps
         <CollapsibleContent>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {visibleItems.map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton asChild>
                     <NavLink
@@ -136,6 +155,10 @@ function NavGroup({ label, items, collapsed, open, onOpenChange }: NavGroupProps
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
+  const { user, logout } = useAuth();
+  const { can } = usePermissions();
+  const navigate = useNavigate();
+  
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     management: true,
     academic: true,
@@ -147,6 +170,20 @@ export function AppSidebar() {
     setOpenGroups((prev) => ({ ...prev, [key]: open }));
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  // Filter main items based on permissions
+  const visibleMainItems = mainItems.filter(item => can(item.permission));
+
+  // Check if management group should be visible
+  const showManagement = managementItems.some(item => can(item.permission));
+  const showAcademic = academicItems.some(item => can(item.permission));
+  const showDormitory = dormitoryItems.some(item => can(item.permission));
+  const showFinance = financeItems.some(item => can(item.permission));
+
   return (
     <Sidebar collapsible="icon" className="border-r-0">
       <SidebarHeader className="p-4">
@@ -157,65 +194,124 @@ export function AppSidebar() {
           {!collapsed && (
             <div className="animate-slide-in">
               <h1 className="text-base font-bold text-sidebar-foreground">BoardingCore</h1>
-              <p className="text-[11px] text-sidebar-foreground/50">Pesantren Management</p>
+              <p className="text-[11px] text-sidebar-foreground/50">
+                {user ? roleDisplayNames[user.role].id : 'Pesantren Management'}
+              </p>
             </div>
           )}
         </div>
       </SidebarHeader>
 
       <SidebarContent className="px-2">
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {mainItems.map((item) => (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild tooltip={item.title}>
-                    <NavLink
-                      to={item.url}
-                      end
-                      className="flex items-center gap-3 rounded-md px-3 py-2 text-sidebar-foreground/70 text-sm transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                      activeClassName="bg-sidebar-accent text-sidebar-primary font-semibold"
-                    >
-                      <item.icon className="h-4 w-4 shrink-0" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {/* Main Dashboard Item */}
+        {visibleMainItems.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {visibleMainItems.map((item) => (
+                  <SidebarMenuItem key={item.url}>
+                    <SidebarMenuButton asChild tooltip={item.title}>
+                      <NavLink
+                        to={item.url}
+                        end
+                        className="flex items-center gap-3 rounded-md px-3 py-2 text-sidebar-foreground/70 text-sm transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                        activeClassName="bg-sidebar-accent text-sidebar-primary font-semibold"
+                      >
+                        <item.icon className="h-4 w-4 shrink-0" />
+                        {!collapsed && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
-        <NavGroup label="Manajemen / Management" items={managementItems} collapsed={collapsed} open={openGroups.management} onOpenChange={handleOpenChange("management")} />
-        <NavGroup label="Akademik / Academic" items={academicItems} collapsed={collapsed} open={openGroups.academic} onOpenChange={handleOpenChange("academic")} />
-        <NavGroup label="Asrama / Dormitory" items={dormitoryItems} collapsed={collapsed} open={openGroups.dormitory} onOpenChange={handleOpenChange("dormitory")} />
-        <NavGroup label="Keuangan / Finance" items={financeItems} collapsed={collapsed} open={openGroups.finance} onOpenChange={handleOpenChange("finance")} />
+        {showManagement && (
+          <NavGroup 
+            label="Manajemen / Management" 
+            items={managementItems} 
+            collapsed={collapsed} 
+            open={openGroups.management} 
+            onOpenChange={handleOpenChange("management")} 
+          />
+        )}
+        
+        {showAcademic && (
+          <NavGroup 
+            label="Akademik / Academic" 
+            items={academicItems} 
+            collapsed={collapsed} 
+            open={openGroups.academic} 
+            onOpenChange={handleOpenChange("academic")} 
+          />
+        )}
+        
+        {showDormitory && (
+          <NavGroup 
+            label="Asrama / Dormitory" 
+            items={dormitoryItems} 
+            collapsed={collapsed} 
+            open={openGroups.dormitory} 
+            onOpenChange={handleOpenChange("dormitory")} 
+          />
+        )}
+        
+        {showFinance && (
+          <NavGroup 
+            label="Keuangan / Finance" 
+            items={financeItems} 
+            collapsed={collapsed} 
+            open={openGroups.finance} 
+            onOpenChange={handleOpenChange("finance")} 
+          />
+        )}
       </SidebarContent>
 
       <SidebarFooter className="p-3">
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip="Pengaturan">
-              <NavLink
-                to="/settings"
-                className="flex items-center gap-3 rounded-md px-3 py-2 text-sidebar-foreground/50 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                activeClassName="bg-sidebar-accent text-sidebar-primary"
-              >
-                <Settings className="h-4 w-4 shrink-0" />
-                {!collapsed && <span>Pengaturan / Settings</span>}
-              </NavLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {can('settings.view') && (
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Pengaturan">
+                <NavLink
+                  to="/settings"
+                  className="flex items-center gap-3 rounded-md px-3 py-2 text-sidebar-foreground/50 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  activeClassName="bg-sidebar-accent text-sidebar-primary"
+                >
+                  <Settings className="h-4 w-4 shrink-0" />
+                  {!collapsed && <span>Pengaturan / Settings</span>}
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
+          
+          {/* User info when expanded */}
+          {!collapsed && user && (
+            <div className="px-3 py-2 mb-2 border-t border-sidebar-border mt-2 pt-3">
+              <div className="flex items-center gap-2">
+                <div className="h-7 w-7 rounded-full gradient-primary flex items-center justify-center">
+                  <span className="text-[10px] font-semibold text-primary-foreground">
+                    {user.avatar || user.name.slice(0, 2).toUpperCase()}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-sidebar-foreground truncate">{user.name}</p>
+                  <p className="text-[10px] text-sidebar-foreground/50 truncate">{user.email}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Logout">
-              <NavLink
-                to="/login"
-                className="flex items-center gap-3 rounded-md px-3 py-2 text-sidebar-foreground/50 text-sm hover:bg-sidebar-accent hover:text-destructive"
-                activeClassName=""
+              <button
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sidebar-foreground/50 text-sm hover:bg-sidebar-accent hover:text-destructive"
               >
                 <LogOut className="h-4 w-4 shrink-0" />
                 {!collapsed && <span>Keluar / Logout</span>}
-              </NavLink>
+              </button>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

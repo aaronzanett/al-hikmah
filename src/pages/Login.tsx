@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Eye, EyeOff, Users, GraduationCap, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth, mockUsers } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 type Role = "guardian" | "student";
 
@@ -28,13 +30,34 @@ const roleConfig: Record<Role, { title: string; subtitle: string; icon: React.El
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [activeRole, setActiveRole] = useState<Role>("guardian");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const { toast } = useToast();
 
   const config = roleConfig[activeRole];
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/dashboard");
+    
+    // For demo: login as guardian
+    if (activeRole === "guardian") {
+      const guardianUser = mockUsers.guardian;
+      login(guardianUser);
+      toast({
+        title: "Berhasil masuk / Login successful",
+        description: `Selamat datang, ${guardianUser.name}`,
+      });
+      navigate("/portal");
+    } else {
+      // Student login - for now just show message
+      toast({
+        title: "Portal Santri",
+        description: "Fitur portal santri sedang dalam pengembangan",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -123,6 +146,8 @@ const Login = () => {
                 <input
                   type={config.inputType}
                   placeholder={config.placeholder}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full rounded-lg border bg-card px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
@@ -134,6 +159,8 @@ const Login = () => {
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full rounded-lg border bg-card px-4 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-ring"
                   />
                   <button
