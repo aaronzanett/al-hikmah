@@ -276,9 +276,14 @@ const Index = () => {
             animate={{ opacity: 1, height: "auto" }}
             className="lg:hidden border-t bg-background px-4 py-4 space-y-3"
           >
-            {["Tentang|#about","Program|#programs","Galeri|#gallery","Berita|#news","Kontak|#contact"].map(item => {
+            {["Tentang|#about","Program|#programs","Galeri|/gallery","Berita|/news","Kontak|#contact"].map(item => {
               const [label, href] = item.split("|");
-              return <a key={href} href={href} onClick={() => setMobileNav(false)} className="block text-sm font-medium text-muted-foreground hover:text-foreground">{label}</a>;
+              const isRoute = href.startsWith("/");
+              return isRoute ? (
+                <Link key={href} to={href} onClick={() => setMobileNav(false)} className="block text-sm font-medium text-muted-foreground hover:text-foreground">{label}</Link>
+              ) : (
+                <a key={href} href={href} onClick={() => setMobileNav(false)} className="block text-sm font-medium text-muted-foreground hover:text-foreground">{label}</a>
+              );
             })}
             <Link to="/login" onClick={() => setMobileNav(false)}>
               <Button size="sm" className="w-full mt-2">Portal Masuk</Button>
