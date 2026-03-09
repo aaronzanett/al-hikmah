@@ -1,16 +1,50 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Eye, EyeOff, ShieldCheck, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck, ArrowLeft, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth, mockUsers } from "@/contexts/AuthContext";
+import { UserRole, roleDisplayNames } from "@/types/auth";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+// Admin roles that can login through this page
+const adminRoles: UserRole[] = [
+  'super_admin',
+  'branch_admin',
+  'treasurer',
+  'academic_staff',
+  'dormitory_supervisor',
+];
 
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<UserRole>('super_admin');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const { toast } = useToast();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/dashboard");
+    
+    // For demo: login with selected role
+    const user = mockUsers[selectedRole];
+    if (user) {
+      login(user);
+      toast({
+        title: "Berhasil masuk / Login successful",
+        description: `Selamat datang, ${user.name} (${roleDisplayNames[user.role].id})`,
+      });
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -48,6 +82,20 @@ const AdminLogin = () => {
           >
             Akses penuh untuk mengelola seluruh sistem pesantren. Hanya untuk administrator resmi.
           </motion.p>
+          
+          {/* Role descriptions */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="mt-8 space-y-2 text-xs text-primary-foreground/60"
+          >
+            <p><span className="text-primary-foreground/80 font-medium">Super Admin:</span> Akses penuh ke seluruh sistem</p>
+            <p><span className="text-primary-foreground/80 font-medium">Admin Cabang:</span> Kelola data santri & operasional cabang</p>
+            <p><span className="text-primary-foreground/80 font-medium">Bendahara:</span> Kelola tagihan, pembayaran & keuangan</p>
+            <p><span className="text-primary-foreground/80 font-medium">Staff Akademik:</span> Kelola nilai, absensi & jadwal</p>
+            <p><span className="text-primary-foreground/80 font-medium">Musyrif:</span> Kelola kamar & kegiatan asrama</p>
+          </motion.div>
         </div>
         <p className="text-primary-foreground/40 text-xs">© 2026 BoardingCore. All rights reserved.</p>
       </div>
@@ -80,16 +128,37 @@ const AdminLogin = () => {
             </div>
             <div>
               <h2 className="text-lg font-bold text-foreground">Masuk — Administrator</h2>
-              <p className="text-xs text-muted-foreground">Akses penuh ke dashboard pesantren</p>
+              <p className="text-xs text-muted-foreground">Akses dashboard pesantren</p>
             </div>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
+            {/* Role Selector */}
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                Peran / Role
+              </label>
+              <Select value={selectedRole} onValueChange={(v) => setSelectedRole(v as UserRole)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih peran" />
+                </SelectTrigger>
+                <SelectContent>
+                  {adminRoles.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {roleDisplayNames[role].id} / {roleDisplayNames[role].en}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Email</label>
               <input
                 type="email"
                 placeholder="admin@pesantren.id"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full rounded-lg border bg-card px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
@@ -99,6 +168,8 @@ const AdminLogin = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full rounded-lg border bg-card px-4 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-ring"
                 />
                 <button
@@ -119,10 +190,18 @@ const AdminLogin = () => {
               <a href="#" className="text-primary font-medium hover:underline">Lupa sandi?</a>
             </div>
 
-            <Button type="submit" className="w-full">Masuk</Button>
+            <Button type="submit" className="w-full">
+              Masuk sebagai {roleDisplayNames[selectedRole].id}
+            </Button>
           </form>
 
-          <p className="text-xs text-center text-muted-foreground mt-6">
+          <div className="mt-6 p-3 rounded-lg bg-muted/50 border">
+            <p className="text-xs text-muted-foreground text-center">
+              <span className="font-medium text-foreground">Demo Mode:</span> Pilih role dan klik masuk untuk mencoba akses berdasarkan peran.
+            </p>
+          </div>
+
+          <p className="text-xs text-center text-muted-foreground mt-4">
             Hubungi super admin jika Anda belum memiliki akun administrator.
           </p>
         </motion.div>
