@@ -2,8 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { GuardianLayout } from "@/components/GuardianLayout";
 import { ProtectedRoute, AdminRoute, GuardianRoute } from "@/components/ProtectedRoute";
@@ -43,123 +42,166 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/login/admin" element={<AdminLogin />} />
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/login/admin" element={<AdminLogin />} />
 
-            {/* Admin dashboard routes (requires admin-level role) */}
+          {/* Admin dashboard routes (requires admin-level role) */}
+          <Route
+            element={
+              <AdminRoute>
+                <DashboardLayout />
+              </AdminRoute>
+            }
+          >
             <Route
+              path="/dashboard"
               element={
-                <AdminRoute>
-                  <DashboardLayout />
-                </AdminRoute>
-              }
-            >
-              <Route path="/dashboard" element={
                 <ProtectedRoute requiredPermissions={["dashboard.view"]}>
                   <Dashboard />
                 </ProtectedRoute>
-              } />
-              <Route path="/branches" element={
+              }
+            />
+            <Route
+              path="/branches"
+              element={
                 <ProtectedRoute requiredPermissions={["branches.view"]}>
                   <Branches />
                 </ProtectedRoute>
-              } />
-              <Route path="/students" element={
+              }
+            />
+            <Route
+              path="/students"
+              element={
                 <ProtectedRoute requiredPermissions={["students.view"]}>
                   <Students />
                 </ProtectedRoute>
-              } />
-              <Route path="/guardians" element={
+              }
+            />
+            <Route
+              path="/guardians"
+              element={
                 <ProtectedRoute requiredPermissions={["guardians.view"]}>
                   <Guardians />
                 </ProtectedRoute>
-              } />
-              <Route path="/classes" element={
+              }
+            />
+            <Route
+              path="/classes"
+              element={
                 <ProtectedRoute requiredPermissions={["classes.view"]}>
                   <Classes />
                 </ProtectedRoute>
-              } />
-              <Route path="/subjects" element={
+              }
+            />
+            <Route
+              path="/subjects"
+              element={
                 <ProtectedRoute requiredPermissions={["subjects.view"]}>
                   <Subjects />
                 </ProtectedRoute>
-              } />
-              <Route path="/grades" element={
+              }
+            />
+            <Route
+              path="/grades"
+              element={
                 <ProtectedRoute requiredPermissions={["grades.view"]}>
                   <Grades />
                 </ProtectedRoute>
-              } />
-              <Route path="/attendance" element={
+              }
+            />
+            <Route
+              path="/attendance"
+              element={
                 <ProtectedRoute requiredPermissions={["attendance.view"]}>
                   <Attendance />
                 </ProtectedRoute>
-              } />
-              <Route path="/rooms" element={
+              }
+            />
+            <Route
+              path="/rooms"
+              element={
                 <ProtectedRoute requiredPermissions={["rooms.view"]}>
                   <Rooms />
                 </ProtectedRoute>
-              } />
-              <Route path="/inventory" element={
+              }
+            />
+            <Route
+              path="/inventory"
+              element={
                 <ProtectedRoute requiredPermissions={["inventory.view"]}>
                   <Inventory />
                 </ProtectedRoute>
-              } />
-              <Route path="/bills" element={
+              }
+            />
+            <Route
+              path="/bills"
+              element={
                 <ProtectedRoute requiredPermissions={["bills.view"]}>
                   <Bills />
                 </ProtectedRoute>
-              } />
-              <Route path="/payments" element={
+              }
+            />
+            <Route
+              path="/payments"
+              element={
                 <ProtectedRoute requiredPermissions={["payments.view"]}>
                   <Payments />
                 </ProtectedRoute>
-              } />
-              <Route path="/expenses" element={
+              }
+            />
+            <Route
+              path="/expenses"
+              element={
                 <ProtectedRoute requiredPermissions={["expenses.view"]}>
                   <Expenses />
                 </ProtectedRoute>
-              } />
-              <Route path="/savings" element={
+              }
+            />
+            <Route
+              path="/savings"
+              element={
                 <ProtectedRoute requiredPermissions={["savings.view"]}>
                   <Savings />
                 </ProtectedRoute>
-              } />
-              <Route path="/settings" element={
+              }
+            />
+            <Route
+              path="/settings"
+              element={
                 <ProtectedRoute requiredPermissions={["settings.view"]}>
                   <Settings />
                 </ProtectedRoute>
-              } />
-            </Route>
-
-            {/* Guardian portal routes */}
-            <Route
-              element={
-                <GuardianRoute>
-                  <GuardianLayout />
-                </GuardianRoute>
               }
-            >
-              <Route path="/portal" element={<GuardianPortal />} />
-              <Route path="/portal/child" element={<ChildProfile />} />
-              <Route path="/portal/grades" element={<PortalGrades />} />
-              <Route path="/portal/attendance" element={<PortalAttendance />} />
-              <Route path="/portal/bills" element={<PortalBills />} />
-              <Route path="/portal/savings" element={<PortalSavings />} />
-            </Route>
+            />
+          </Route>
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+          {/* Guardian portal routes */}
+          <Route
+            element={
+              <GuardianRoute>
+                <GuardianLayout />
+              </GuardianRoute>
+            }
+          >
+            <Route path="/portal" element={<GuardianPortal />} />
+            <Route path="/portal/child" element={<ChildProfile />} />
+            <Route path="/portal/grades" element={<PortalGrades />} />
+            <Route path="/portal/attendance" element={<PortalAttendance />} />
+            <Route path="/portal/bills" element={<PortalBills />} />
+            <Route path="/portal/savings" element={<PortalSavings />} />
+          </Route>
+
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 
