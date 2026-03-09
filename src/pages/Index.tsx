@@ -610,7 +610,6 @@ const Index = () => {
               Lihat Semua Berita <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          </div>
         </div>
       </section>
 
