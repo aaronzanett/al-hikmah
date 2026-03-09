@@ -565,9 +565,9 @@ const Index = () => {
                 Kabar Terbaru
               </h2>
             </div>
-            <a href="#" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+            <Link to="/news" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
               Lihat Semua <ArrowRight className="h-4 w-4" />
-            </a>
+            </Link>
           </div>
           <div className="grid gap-8 md:grid-cols-3">
             {newsItems.map((news, i) => (
