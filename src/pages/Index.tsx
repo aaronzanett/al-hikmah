@@ -351,7 +351,7 @@ const Index = () => {
       </section>
 
       {/* ─── About / Visi Misi ─── */}
-      <section id="about" className="py-20 lg:py-28">
+      <section id="about" className="py-20 lg:py-28 islamic-pattern-star">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <motion.div
