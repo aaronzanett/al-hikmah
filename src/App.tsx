@@ -33,6 +33,10 @@ import Payments from "./pages/Payments";
 import Expenses from "./pages/Expenses";
 import Savings from "./pages/Savings";
 import Settings from "./pages/Settings";
+import ManageGallery from "./pages/ManageGallery";
+import ManageNews from "./pages/ManageNews";
+import ManageContact from "./pages/ManageContact";
+import ContactMessages from "./pages/ContactMessages";
 
 // Guardian portal pages
 import GuardianPortal from "./pages/portal/GuardianPortal";
