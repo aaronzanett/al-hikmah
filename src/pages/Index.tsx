@@ -40,6 +40,112 @@ import galleryDormitory from "@/assets/gallery-dormitory.jpg";
 import gallerySports from "@/assets/gallery-sports.jpg";
 import galleryQuran from "@/assets/gallery-quran.jpg";
 
+const heroSlides = [
+  {
+    image: heroPesantren,
+    badge: "Pendaftaran Santri Baru 2026/2027 Dibuka",
+    title: <>Mencetak Generasi <span className="text-accent">Qur'ani</span>, Berilmu &amp; Berkarakter</>,
+    desc: "Pesantren Al-Hikmah memadukan pendidikan agama Islam dan ilmu pengetahuan modern dalam lingkungan asrama yang kondusif sejak 1985.",
+  },
+  {
+    image: galleryMosque,
+    badge: "Program Unggulan Tahfidz Al-Qur'an",
+    title: <>Hafal Al-Qur'an <span className="text-accent">30 Juz</span> dengan Metode Mutqin</>,
+    desc: "Program tahfidz intensif dengan bimbingan ustadz berpengalaman, menghasilkan ratusan hafidz dan hafidzah setiap tahunnya.",
+  },
+  {
+    image: galleryClassroom,
+    badge: "Kurikulum Modern & Diniyah",
+    title: <>Pendidikan <span className="text-accent">Berkualitas</span> untuk Masa Depan</>,
+    desc: "Kurikulum terintegrasi yang memadukan pendidikan nasional dengan pendidikan pesantren untuk menghasilkan lulusan kompetitif.",
+  },
+  {
+    image: gallerySports,
+    badge: "Fasilitas Lengkap & Modern",
+    title: <>Lingkungan <span className="text-accent">Terbaik</span> untuk Tumbuh Kembang Santri</>,
+    desc: "Asrama modern, lapangan olahraga, laboratorium, dan perpustakaan digital mendukung kehidupan santri yang seimbang.",
+  },
+];
+
+function HeroCarousel() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
+    Autoplay({ delay: 5000, stopOnInteraction: false }),
+  ]);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setActiveIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on("select", onSelect);
+    return () => { emblaApi.off("select", onSelect); };
+  }, [emblaApi, onSelect]);
+
+  return (
+    <section className="relative overflow-hidden">
+      <div ref={emblaRef} className="overflow-hidden">
+        <div className="flex">
+          {heroSlides.map((slide, i) => (
+            <div key={i} className="min-w-0 shrink-0 grow-0 basis-full relative">
+              <div className="absolute inset-0">
+                <img src={slide.image} alt="" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-black/30" />
+              </div>
+              <div className="relative mx-auto max-w-7xl px-4 lg:px-8 py-24 md:py-36 lg:py-44">
+                <div className="max-w-2xl">
+                  <motion.div
+                    key={`hero-${i}-${activeIndex}`}
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: activeIndex === i ? 1 : 0, y: activeIndex === i ? 0 : 24 }}
+                    transition={{ duration: 0.7 }}
+                  >
+                    <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-1.5 text-xs font-medium text-white/90">
+                      <Star className="h-3.5 w-3.5 text-accent" />
+                      {slide.badge}
+                    </div>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-5 font-display">
+                      {slide.title}
+                    </h1>
+                    <p className="text-base md:text-lg text-white/75 max-w-xl mb-8 leading-relaxed">
+                      {slide.desc}
+                    </p>
+                  </motion.div>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Link to="/login">
+                      <Button size="lg" className="w-full sm:w-auto gap-2 shadow-lg">
+                        Daftar Sekarang <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                    <a href="#about">
+                      <Button variant="outline" size="lg" className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10 hover:text-white bg-white/5">
+                        Kenali Kami
+                      </Button>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Dots indicator */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        {heroSlides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => emblaApi?.scrollTo(i)}
+            className={`h-2 rounded-full transition-all duration-300 ${activeIndex === i ? "w-8 bg-accent" : "w-2 bg-white/40 hover:bg-white/60"}`}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 // ─── Data ────────────────────────────────────────────
 const stats = [
   { value: "1,250+", label: "Santri Aktif", icon: GraduationCap },
