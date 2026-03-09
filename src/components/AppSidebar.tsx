@@ -195,6 +195,7 @@ export function AppSidebar() {
   const showAcademic = academicItems.some(item => can(item.permission));
   const showDormitory = dormitoryItems.some(item => can(item.permission));
   const showFinance = financeItems.some(item => can(item.permission));
+  const showContent = contentItems.some(item => can(item.permission));
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
