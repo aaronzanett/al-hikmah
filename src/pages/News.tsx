@@ -2,7 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, ArrowRight, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, ArrowRight, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import PublicNavbar from "@/components/PublicNavbar";
 
 import galleryQuran from "@/assets/gallery-quran.jpg";
 import heroPesantren from "@/assets/hero-pesantren.jpg";

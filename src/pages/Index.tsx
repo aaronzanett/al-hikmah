@@ -1,7 +1,9 @@
 import { motion, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 import {
   GraduationCap,
   Users,
@@ -28,9 +30,8 @@ import {
   Calendar,
   ArrowRight,
   Quote,
-  Menu,
-  XIcon,
 } from "lucide-react";
+import PublicNavbar from "@/components/PublicNavbar";
 
 import heroPesantren from "@/assets/hero-pesantren.jpg";
 import galleryClassroom from "@/assets/gallery-classroom.jpg";
