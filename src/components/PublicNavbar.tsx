@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Menu, XIcon } from "lucide-react";
@@ -15,7 +15,18 @@ const navLinks = [
 export default function PublicNavbar() {
   const [mobileNav, setMobileNav] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const isHome = location.pathname === "/";
+
+  const handleAnchorClick = (hash: string) => {
+    setMobileNav(false);
+    if (isHome) {
+      const el = document.querySelector(hash);
+      el?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate("/" + hash);
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur-xl">
@@ -40,13 +51,13 @@ export default function PublicNavbar() {
                 {link.label}
               </Link>
             ) : (
-              <a
+              <button
                 key={link.href}
-                href={isHome ? link.href : `/${link.href}`}
+                onClick={() => handleAnchorClick(link.href)}
                 className="hover:text-foreground transition-colors"
               >
                 {link.label}
-              </a>
+              </button>
             )
           )}
         </div>
@@ -73,9 +84,9 @@ export default function PublicNavbar() {
                 {link.label}
               </Link>
             ) : (
-              <a key={link.href} href={isHome ? link.href : `/${link.href}`} onClick={() => setMobileNav(false)} className="block text-sm font-medium text-muted-foreground hover:text-foreground">
+              <button key={link.href} onClick={() => handleAnchorClick(link.href)} className="block text-sm font-medium text-muted-foreground hover:text-foreground text-left w-full">
                 {link.label}
-              </a>
+              </button>
             )
           )}
           <Link to="/login" onClick={() => setMobileNav(false)}>
