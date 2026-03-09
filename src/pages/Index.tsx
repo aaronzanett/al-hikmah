@@ -688,7 +688,7 @@ const Index = () => {
       </section>
 
       {/* ─── Contact ─── */}
-      <section id="contact" className="py-20 lg:py-28 bg-muted/30">
+      <section id="contact" className="py-20 lg:py-28 bg-muted/30 islamic-pattern">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12">
             <div>
