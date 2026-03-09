@@ -172,7 +172,7 @@ export function AppSidebar() {
 
   const handleLogout = () => {
     logout();
-    navigate("/admin-login");
+    navigate("/login/admin");
   };
 
   // Filter main items based on permissions
