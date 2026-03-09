@@ -254,8 +254,8 @@ const Index = () => {
           <div className="hidden lg:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#about" className="hover:text-foreground transition-colors">Tentang</a>
             <a href="#programs" className="hover:text-foreground transition-colors">Program</a>
-            <a href="#gallery" className="hover:text-foreground transition-colors">Galeri</a>
-            <a href="#news" className="hover:text-foreground transition-colors">Berita</a>
+            <Link to="/gallery" className="hover:text-foreground transition-colors">Galeri</Link>
+            <Link to="/news" className="hover:text-foreground transition-colors">Berita</Link>
             <a href="#contact" className="hover:text-foreground transition-colors">Kontak</a>
           </div>
           <div className="flex items-center gap-3">
@@ -276,9 +276,14 @@ const Index = () => {
             animate={{ opacity: 1, height: "auto" }}
             className="lg:hidden border-t bg-background px-4 py-4 space-y-3"
           >
-            {["Tentang|#about","Program|#programs","Galeri|#gallery","Berita|#news","Kontak|#contact"].map(item => {
+            {["Tentang|#about","Program|#programs","Galeri|/gallery","Berita|/news","Kontak|#contact"].map(item => {
               const [label, href] = item.split("|");
-              return <a key={href} href={href} onClick={() => setMobileNav(false)} className="block text-sm font-medium text-muted-foreground hover:text-foreground">{label}</a>;
+              const isRoute = href.startsWith("/");
+              return isRoute ? (
+                <Link key={href} to={href} onClick={() => setMobileNav(false)} className="block text-sm font-medium text-muted-foreground hover:text-foreground">{label}</Link>
+              ) : (
+                <a key={href} href={href} onClick={() => setMobileNav(false)} className="block text-sm font-medium text-muted-foreground hover:text-foreground">{label}</a>
+              );
             })}
             <Link to="/login" onClick={() => setMobileNav(false)}>
               <Button size="sm" className="w-full mt-2">Portal Masuk</Button>
@@ -560,9 +565,9 @@ const Index = () => {
                 Kabar Terbaru
               </h2>
             </div>
-            <a href="#" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+            <Link to="/news" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
               Lihat Semua <ArrowRight className="h-4 w-4" />
-            </a>
+            </Link>
           </div>
           <div className="grid gap-8 md:grid-cols-3">
             {newsItems.map((news, i) => (
@@ -601,9 +606,9 @@ const Index = () => {
             ))}
           </div>
           <div className="text-center mt-8 sm:hidden">
-            <a href="#" className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+            <Link to="/news" className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
               Lihat Semua Berita <ArrowRight className="h-4 w-4" />
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -779,8 +784,8 @@ const Index = () => {
               <ul className="space-y-2.5 text-sm text-muted-foreground">
                 <li><a href="#about" className="hover:text-foreground transition-colors">Tentang</a></li>
                 <li><a href="#programs" className="hover:text-foreground transition-colors">Program</a></li>
-                <li><a href="#gallery" className="hover:text-foreground transition-colors">Galeri</a></li>
-                <li><a href="#news" className="hover:text-foreground transition-colors">Berita</a></li>
+                <li><Link to="/gallery" className="hover:text-foreground transition-colors">Galeri</Link></li>
+                <li><Link to="/news" className="hover:text-foreground transition-colors">Berita</Link></li>
               </ul>
             </div>
             <div>
