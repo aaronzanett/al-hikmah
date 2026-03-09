@@ -563,7 +563,7 @@ const Index = () => {
       )}
 
       {/* ─── News ─── */}
-      <section id="news" className="py-20 lg:py-28">
+      <section id="news" className="py-20 lg:py-28 islamic-pattern">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="flex items-end justify-between mb-14">
             <div>
