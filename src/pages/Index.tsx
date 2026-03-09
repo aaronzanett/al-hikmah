@@ -541,6 +541,13 @@ const Index = () => {
               </motion.div>
             ))}
           </motion.div>
+          <div className="text-center mt-10">
+            <Link to="/gallery">
+              <Button variant="outline" className="gap-2">
+                Lihat Semua Galeri <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
