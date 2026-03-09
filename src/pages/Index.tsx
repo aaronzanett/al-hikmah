@@ -351,7 +351,7 @@ const Index = () => {
       </section>
 
       {/* ─── About / Visi Misi ─── */}
-      <section id="about" className="py-20 lg:py-28">
+      <section id="about" className="py-20 lg:py-28 islamic-pattern-star">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <motion.div
@@ -417,7 +417,7 @@ const Index = () => {
       </section>
 
       {/* ─── Programs ─── */}
-      <section id="programs" className="py-20 lg:py-28 bg-muted/30">
+      <section id="programs" className="py-20 lg:py-28 bg-muted/30 islamic-pattern">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="text-center mb-14">
             <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">Program Unggulan</span>
@@ -460,7 +460,7 @@ const Index = () => {
       </section>
 
       {/* ─── Facilities ─── */}
-      <section className="py-20 lg:py-28">
+      <section className="py-20 lg:py-28 islamic-pattern-arabesque">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -501,7 +501,7 @@ const Index = () => {
       </section>
 
       {/* ─── Gallery ─── */}
-      <section id="gallery" className="py-20 lg:py-28 bg-muted/30">
+      <section id="gallery" className="py-20 lg:py-28 bg-muted/30 islamic-pattern-star">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="text-center mb-14">
             <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">Galeri</span>
@@ -563,7 +563,7 @@ const Index = () => {
       )}
 
       {/* ─── News ─── */}
-      <section id="news" className="py-20 lg:py-28">
+      <section id="news" className="py-20 lg:py-28 islamic-pattern">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="flex items-end justify-between mb-14">
             <div>
@@ -621,7 +621,7 @@ const Index = () => {
       </section>
 
       {/* ─── Testimonials ─── */}
-      <section className="py-20 lg:py-28 bg-muted/30">
+      <section className="py-20 lg:py-28 bg-muted/30 islamic-pattern-arabesque">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="text-center mb-14">
             <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">Testimoni</span>
@@ -688,7 +688,7 @@ const Index = () => {
       </section>
 
       {/* ─── Contact ─── */}
-      <section id="contact" className="py-20 lg:py-28 bg-muted/30">
+      <section id="contact" className="py-20 lg:py-28 bg-muted/30 islamic-pattern">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12">
             <div>
