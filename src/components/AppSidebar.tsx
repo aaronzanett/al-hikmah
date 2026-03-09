@@ -15,6 +15,10 @@ import {
   LogOut,
   ChevronDown,
   UserCog,
+  Image,
+  Newspaper,
+  Phone,
+  MessageSquare,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
