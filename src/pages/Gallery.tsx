@@ -23,7 +23,12 @@ const galleryItems = [
   { src: galleryClassroom, title: "Laboratorium Komputer", category: "Fasilitas", description: "Lab komputer modern untuk mendukung program keterampilan digital santri. Dilengkapi dengan 40 unit komputer terbaru dan koneksi internet berkecepatan tinggi." },
   { src: galleryQuran, title: "Wisuda Tahfidz", category: "Kegiatan", description: "Acara wisuda tahfidz tahunan sebagai bentuk apresiasi terhadap santri yang telah berhasil menyelesaikan hafalan Al-Qur'an 30 juz." },
   { src: gallerySports, title: "Perlombaan Antar-Asrama", category: "Kegiatan", description: "Kompetisi olahraga dan seni antar-asrama yang diadakan setiap semester untuk mempererat ukhuwah dan sportivitas santri." },
+  { src: galleryMosque, title: "Shalat Berjamaah", category: "Kegiatan", description: "Kegiatan shalat berjamaah lima waktu yang wajib diikuti seluruh santri sebagai bagian dari pembentukan karakter Islami." },
+  { src: galleryDormitory, title: "Ruang Belajar Asrama", category: "Fasilitas", description: "Area belajar bersama di setiap lantai asrama yang nyaman untuk aktivitas belajar mandiri dan kelompok." },
+  { src: heroPesantren, title: "Taman Pesantren", category: "Fasilitas", description: "Area taman hijau yang asri untuk santri beristirahat dan berdiskusi di waktu luang." },
 ];
+
+const ITEMS_PER_PAGE = 6;
 
 const staggerContainer = {
   hidden: {},
@@ -38,10 +43,27 @@ const staggerItem = {
 export default function Gallery() {
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filtered = activeCategory === "Semua"
     ? galleryItems
     : galleryItems.filter(item => item.category === activeCategory);
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedItems = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handleCategoryChange = (cat: string) => {
+    setActiveCategory(cat);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 300, behavior: "smooth" });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -56,8 +78,8 @@ export default function Gallery() {
         </div>
       </div>
 
-      {/* Hero with curved pattern */}
-      <section className="relative overflow-hidden py-16 lg:py-24 bg-muted/20 islamic-pattern-door">
+      {/* Hero with mosque door pattern */}
+      <section className="relative overflow-hidden py-16 lg:py-24 bg-muted/30 islamic-pattern-door">
         <div className="mx-auto max-w-7xl px-4 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">Galeri Foto</span>
@@ -72,14 +94,14 @@ export default function Gallery() {
       </section>
 
       {/* Filter */}
-      <div className="mx-auto max-w-7xl px-4 lg:px-8 mb-10">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8 my-10">
         <div className="flex flex-wrap gap-2 justify-center">
           {categories.map(cat => (
             <Button
               key={cat}
               variant={activeCategory === cat ? "default" : "outline"}
               size="sm"
-              onClick={() => setActiveCategory(cat)}
+              onClick={() => handleCategoryChange(cat)}
               className="rounded-full"
             >
               {cat}
@@ -88,21 +110,21 @@ export default function Gallery() {
         </div>
       </div>
 
-      {/* Grid with bottom curve */}
-      <div className="mx-auto max-w-7xl px-4 lg:px-8 pb-20 islamic-curve-bottom">
+      {/* Grid */}
+      <div className="mx-auto max-w-7xl px-4 lg:px-8 pb-10">
         <motion.div
-          key={activeCategory}
+          key={`${activeCategory}-${currentPage}`}
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
           className="grid grid-cols-2 md:grid-cols-3 gap-4 lg:gap-6"
         >
-          {filtered.map((item, i) => (
+          {paginatedItems.map((item, i) => (
             <motion.div
               key={`${item.title}-${i}`}
               variants={staggerItem}
               className="group relative rounded-2xl overflow-hidden cursor-pointer aspect-[4/3] border shadow-card"
-              onClick={() => setLightboxIndex(i)}
+              onClick={() => setLightboxIndex((currentPage - 1) * ITEMS_PER_PAGE + i)}
             >
               <img
                 src={item.src}
@@ -121,6 +143,52 @@ export default function Gallery() {
           ))}
         </motion.div>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mx-auto max-w-7xl px-4 lg:px-8 pb-20">
+          <div className="flex items-center justify-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="gap-1"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Sebelumnya</span>
+            </Button>
+            
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handlePageChange(page)}
+                  className="w-9 h-9 p-0"
+                >
+                  {page}
+                </Button>
+              ))}
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="gap-1"
+            >
+              <span className="hidden sm:inline">Selanjutnya</span>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+          <p className="text-center text-xs text-muted-foreground mt-3">
+            Menampilkan {(currentPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} dari {filtered.length} foto
+          </p>
+        </div>
+      )}
 
       {/* Lightbox with detail */}
       {lightboxIndex !== null && (
