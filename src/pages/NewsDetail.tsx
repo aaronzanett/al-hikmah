@@ -80,7 +80,7 @@ export default function NewsDetail() {
       </article>
 
       {/* Related */}
-      <section className="bg-muted/30 py-16">
+      <section className="bg-muted/30 py-16 islamic-pattern-arabesque">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <h2 className="text-xl font-bold text-foreground mb-8">Berita Lainnya</h2>
           <div className="grid gap-6 md:grid-cols-3">
