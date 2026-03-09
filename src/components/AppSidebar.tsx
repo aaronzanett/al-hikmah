@@ -175,6 +175,7 @@ export function AppSidebar() {
     academic: true,
     dormitory: true,
     finance: true,
+    content: true,
   });
 
   const handleOpenChange = (key: string) => (open: boolean) => {
