@@ -2,7 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, ArrowRight, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, ArrowRight, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import PublicNavbar from "@/components/PublicNavbar";
 
 import galleryQuran from "@/assets/gallery-quran.jpg";
 import heroPesantren from "@/assets/hero-pesantren.jpg";
@@ -188,16 +189,8 @@ export default function News() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
-          <Link to="/" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="h-4 w-4" /> Kembali
-          </Link>
-          <h1 className="text-base font-bold text-foreground">Berita & Pengumuman</h1>
-          <div className="w-20" />
-        </div>
-      </div>
+      {/* Navbar */}
+      <PublicNavbar />
 
       {/* Hero */}
       <section className="py-16 lg:py-24 islamic-pattern-door bg-muted/30">
@@ -215,7 +208,7 @@ export default function News() {
       </section>
 
       {/* Featured article */}
-      <div className="mx-auto max-w-7xl px-4 lg:px-8 mb-12 -mt-8">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8 mb-12 -mt-8 relative z-10">
         <Link to={`/news/${allNewsItems[0].id}`}>
           <motion.article
             initial={{ opacity: 0, y: 20 }}

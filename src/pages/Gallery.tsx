@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import PublicNavbar from "@/components/PublicNavbar";
 
 import galleryClassroom from "@/assets/gallery-classroom.jpg";
 import galleryMosque from "@/assets/gallery-mosque.jpg";
@@ -67,16 +67,8 @@ export default function Gallery() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
-          <Link to="/" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="h-4 w-4" /> Kembali
-          </Link>
-          <h1 className="text-base font-bold text-foreground">Galeri Pesantren</h1>
-          <div className="w-20" />
-        </div>
-      </div>
+      {/* Navbar */}
+      <PublicNavbar />
 
       {/* Hero with mosque door pattern */}
       <section className="relative overflow-hidden py-16 lg:py-24 bg-muted/30 islamic-pattern-door">
