@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, ArrowRight, Clock } from "lucide-react";
+import { ArrowLeft, Calendar, ArrowRight, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 
 import galleryQuran from "@/assets/gallery-quran.jpg";
 import heroPesantren from "@/assets/hero-pesantren.jpg";
@@ -60,76 +61,104 @@ Pendaftaran dapat dilakukan secara online melalui portal resmi pesantren atau se
 "Kami mengajak para orang tua untuk segera mendaftarkan putra-putrinya karena kuota sangat terbatas," ungkap panitia pendaftaran.`,
   },
   {
-    id: "workshop-digital",
+    id: "workshop-digital-2026",
     title: "Workshop Keterampilan Digital untuk Santri",
     excerpt: "Pesantren menggelar workshop coding dan desain grafis bekerja sama dengan komunitas teknologi lokal.",
     date: "25 Feb 2026",
     category: "Kegiatan",
     image: galleryClassroom,
     readTime: "3 menit",
-    content: `Dalam rangka membekali santri dengan keterampilan yang relevan di era digital, Pesantren Al-Hikmah menggelar workshop keterampilan digital selama 3 hari pada tanggal 23-25 Februari 2026.
+    content: `Dalam upaya membekali santri dengan keterampilan yang relevan di era digital, Pesantren Al-Hikmah menggelar workshop keterampilan digital yang berlangsung selama tiga hari.
 
-Workshop ini menggandeng komunitas teknologi lokal dan beberapa profesional dari industri IT untuk memberikan pelatihan langsung kepada para santri.
+Workshop ini diikuti oleh 120 santri kelas 10 dan 11 yang dibagi menjadi dua jalur: coding dasar dan desain grafis. Acara ini bekerja sama dengan komunitas teknologi lokal dan praktisi industri.
 
-**Materi yang diajarkan meliputi:**
-- Dasar-dasar pemrograman web (HTML, CSS, JavaScript)
-- Desain grafis menggunakan Canva dan Figma
-- Digital marketing dan media sosial
-- Pengenalan artificial intelligence
+Materi yang diajarkan meliputi dasar-dasar pemrograman web menggunakan HTML, CSS, dan JavaScript untuk jalur coding, serta penggunaan Canva dan Adobe Illustrator untuk jalur desain grafis.
 
-Sebanyak 120 santri dari kelas 10 dan 11 mengikuti workshop ini dengan antusias tinggi. Banyak dari mereka yang berhasil membuat website sederhana dan desain poster di akhir workshop.
-
-"Santri zaman sekarang harus melek teknologi. Ini bukan bertentangan dengan nilai pesantren, justru melengkapi," ujar Ustadz Hadi, koordinator program keterampilan digital.`,
+"Santri zaman sekarang harus melek teknologi. Dengan keterampilan ini, mereka bisa berdakwah dengan cara yang lebih modern dan menjangkau lebih banyak orang," kata Ustadz Ridwan, koordinator kegiatan.`,
   },
   {
-    id: "kunjungan-kemenag",
-    title: "Kemenag RI Kunjungi Pesantren Al-Hikmah",
-    excerpt: "Delegasi Kementerian Agama melakukan kunjungan kerja untuk meninjau program pendidikan integratif pesantren.",
+    id: "kunjungan-menteri-2026",
+    title: "Menteri Agama Kunjungi Pesantren Al-Hikmah",
+    excerpt: "Kunjungan kerja Menteri Agama RI dalam rangka meninjau program pendidikan pesantren modern.",
     date: "20 Feb 2026",
     category: "Berita",
     image: galleryMosque,
-    readTime: "3 menit",
-    content: `Delegasi dari Kementerian Agama Republik Indonesia melakukan kunjungan kerja ke Pesantren Al-Hikmah pada Rabu, 20 Februari 2026. Kunjungan ini dipimpin langsung oleh Direktur Pendidikan Diniyah dan Pondok Pesantren.
+    readTime: "4 menit",
+    content: `Pesantren Al-Hikmah kedatangan tamu istimewa, Menteri Agama Republik Indonesia, dalam kunjungan kerja untuk meninjau program pendidikan pesantren modern.
 
-Dalam kunjungannya, delegasi meninjau berbagai fasilitas pendidikan dan asrama, serta berdiskusi dengan pimpinan pesantren tentang model kurikulum integratif yang diterapkan.
+Dalam kunjungannya, Menteri Agama menyempatkan diri untuk berkeliling melihat fasilitas pesantren, termasuk asrama, ruang kelas, laboratorium komputer, dan masjid.
 
-"Pesantren Al-Hikmah bisa menjadi role model bagi pesantren lain dalam mengintegrasikan kurikulum nasional dengan kurikulum keagamaan," ungkap Direktur Pendidikan Diniyah.
+"Pesantren Al-Hikmah adalah contoh yang baik bagaimana pesantren bisa memadukan pendidikan agama dengan pendidikan umum secara seimbang. Ini adalah model yang patut ditiru oleh pesantren lain," puji Menteri Agama.
 
-Pihak pesantren menyambut baik kunjungan ini dan berharap dapat terjalin kerja sama yang lebih erat dengan Kemenag dalam pengembangan pendidikan pesantren di Indonesia.`,
+Kunjungan ini juga menjadi momentum untuk membahas rencana kerja sama antara Kementerian Agama dengan pesantren dalam pengembangan kurikulum pendidikan pesantren yang lebih komprehensif.`,
   },
   {
-    id: "turnamen-olahraga",
-    title: "Turnamen Olahraga Antar-Pesantren se-Jabodetabek",
-    excerpt: "Pesantren Al-Hikmah menjadi tuan rumah turnamen olahraga yang diikuti 24 pesantren dari wilayah Jabodetabek.",
+    id: "olimpiade-sains-2026",
+    title: "Santri Raih Medali Olimpiade Sains Nasional",
+    excerpt: "Dua santri berhasil meraih medali perunggu di Olimpiade Sains Nasional bidang Fisika dan Biologi.",
     date: "15 Feb 2026",
-    category: "Kegiatan",
+    category: "Prestasi",
     image: gallerySports,
     readTime: "3 menit",
-    content: `Pesantren Al-Hikmah sukses menjadi tuan rumah Turnamen Olahraga Antar-Pesantren se-Jabodetabek 2026. Turnamen yang berlangsung selama 4 hari ini diikuti oleh 24 pesantren dari wilayah Jakarta, Bogor, Depok, Tangerang, dan Bekasi.
+    content: `Pesantren Al-Hikmah kembali menorehkan prestasi di bidang akademik setelah dua santrinya berhasil meraih medali perunggu di Olimpiade Sains Nasional (OSN) 2026.
 
-Cabang olahraga yang dipertandingkan meliputi futsal, bola voli, badminton, dan tenis meja. Total peserta yang berpartisipasi mencapai lebih dari 500 santri.
+Ahmad Zaki, santri kelas 11, berhasil meraih medali perunggu di bidang Fisika, sementara Fatimah Azzahra, santri kelas 12, meraih medali perunggu di bidang Biologi.
 
-Tim tuan rumah berhasil meraih prestasi membanggakan dengan meraih juara 1 di cabang futsal dan juara 2 di cabang badminton.
+"Ini membuktikan bahwa santri pesantren juga mampu bersaing di tingkat nasional dalam bidang sains," ujar Kepala Bidang Akademik pesantren.
 
-"Turnamen ini bukan hanya soal kompetisi, tapi juga sarana silaturahim dan ukhuwah antar santri dari berbagai pesantren," ujar ketua panitia.`,
+Kedua santri ini sebelumnya telah melalui seleksi ketat di tingkat kabupaten dan provinsi sebelum akhirnya mewakili provinsi di tingkat nasional.`,
   },
   {
-    id: "renovasi-asrama",
-    title: "Renovasi Asrama Putri Tahap 2 Selesai",
-    excerpt: "Asrama putri baru dengan kapasitas 200 santri resmi digunakan setelah proses renovasi selama 6 bulan.",
+    id: "renovasi-asrama-2026",
+    title: "Peresmian Gedung Asrama Baru Putri",
+    excerpt: "Pesantren meresmikan gedung asrama baru putri dengan kapasitas 200 santri dan fasilitas modern.",
     date: "10 Feb 2026",
     category: "Pengumuman",
     image: galleryDormitory,
-    readTime: "2 menit",
-    content: `Proyek renovasi asrama putri tahap 2 di Pesantren Al-Hikmah telah resmi selesai dan mulai digunakan oleh para santri. Renovasi yang memakan waktu 6 bulan ini menghadirkan asrama modern dengan berbagai fasilitas terbaru.
+    readTime: "3 menit",
+    content: `Pesantren Al-Hikmah meresmikan gedung asrama baru putri yang dibangun dengan investasi sebesar Rp 8 miliar. Gedung empat lantai ini mampu menampung hingga 200 santri putri.
 
-Asrama baru ini memiliki kapasitas 200 santri dengan fasilitas yang meliputi kamar ber-AC, kamar mandi dalam, ruang belajar bersama, mushola, dan area laundry.
+Fasilitas yang tersedia meliputi kamar tidur ber-AC dengan kapasitas 4 orang per kamar, kamar mandi dalam, ruang belajar bersama, kantin, dan area olahraga indoor.
 
-"Kami ingin santri merasa nyaman seperti di rumah sendiri sehingga mereka bisa fokus belajar dan beribadah," ujar pimpinan pesantren saat peresmian.
+"Dengan gedung asrama baru ini, kami berharap dapat menerima lebih banyak santri putri dan memberikan kenyamanan yang lebih baik," kata Pengasuh Pesantren.
 
-Total investasi untuk renovasi ini mencapai Rp 3,5 miliar yang bersumber dari donasi alumni, orang tua santri, dan dana pesantren.`,
+Pembangunan gedung ini merupakan bagian dari masterplan pengembangan pesantren dalam lima tahun ke depan.`,
+  },
+  {
+    id: "bakti-sosial-2026",
+    title: "Santri Gelar Bakti Sosial di Desa Tertinggal",
+    excerpt: "Ratusan santri mengikuti program bakti sosial dan mengajar di desa-desa tertinggal sekitar pesantren.",
+    date: "5 Feb 2026",
+    category: "Kegiatan",
+    image: heroPesantren,
+    readTime: "3 menit",
+    content: `Sebagai bentuk kepedulian sosial, Pesantren Al-Hikmah menggelar program bakti sosial yang diikuti oleh 150 santri kelas 11 dan 12.
+
+Kegiatan yang berlangsung selama satu minggu ini meliputi mengajar di sekolah dasar, memberikan les gratis untuk anak-anak, membersihkan lingkungan, dan membagikan sembako kepada warga kurang mampu.
+
+"Program ini bertujuan untuk melatih santri agar memiliki kepekaan sosial dan rasa tanggung jawab terhadap masyarakat sekitar," jelas koordinator kegiatan.
+
+Selain bakti sosial, santri juga mengadakan pengajian akbar yang dihadiri oleh warga dari tiga desa di sekitar lokasi kegiatan.`,
+  },
+  {
+    id: "wisuda-tahfidz-2026",
+    title: "Wisuda 50 Hafidz dan Hafidzah Baru",
+    excerpt: "Pesantren menggelar wisuda tahfidz untuk 50 santri yang berhasil menyelesaikan hafalan 30 juz Al-Qur'an.",
+    date: "1 Feb 2026",
+    category: "Prestasi",
+    image: galleryQuran,
+    readTime: "3 menit",
+    content: `Pesantren Al-Hikmah menggelar acara wisuda tahfidz untuk 50 santri yang berhasil menyelesaikan hafalan Al-Qur'an 30 juz dengan predikat mumtaz.
+
+Acara yang dihadiri oleh para wali santri dan tokoh masyarakat ini menjadi momen yang sangat emosional bagi para hafidz dan hafidzah beserta keluarganya.
+
+"Menghafal Al-Qur'an 30 juz bukanlah pencapaian yang mudah. Para santri ini telah menunjukkan kesungguhan dan istiqomah yang luar biasa," ujar Pengasuh Pesantren dalam sambutannya.
+
+Para wisudawan juga mendapatkan beasiswa penuh untuk melanjutkan pendidikan di perguruan tinggi Islam terkemuka.`,
   },
 ];
+
+const ITEMS_PER_PAGE = 6;
 
 const staggerContainer = {
   hidden: {},
@@ -142,6 +171,21 @@ const staggerItem = {
 };
 
 export default function News() {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Exclude featured article (first one) from pagination
+  const remainingNews = allNewsItems.slice(1);
+  const totalPages = Math.ceil(remainingNews.length / ITEMS_PER_PAGE);
+  const paginatedNews = remainingNews.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 500, behavior: "smooth" });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -156,7 +200,7 @@ export default function News() {
       </div>
 
       {/* Hero */}
-      <section className="py-16 lg:py-24 islamic-pattern">
+      <section className="py-16 lg:py-24 islamic-pattern-door bg-muted/30">
         <div className="mx-auto max-w-7xl px-4 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">Berita Terbaru</span>
@@ -171,7 +215,7 @@ export default function News() {
       </section>
 
       {/* Featured article */}
-      <div className="mx-auto max-w-7xl px-4 lg:px-8 mb-12">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8 mb-12 -mt-8">
         <Link to={`/news/${allNewsItems[0].id}`}>
           <motion.article
             initial={{ opacity: 0, y: 20 }}
@@ -199,14 +243,15 @@ export default function News() {
       </div>
 
       {/* All articles */}
-      <div className="mx-auto max-w-7xl px-4 lg:px-8 pb-20">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8 pb-10">
         <motion.div
+          key={currentPage}
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
           className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
         >
-          {allNewsItems.slice(1).map((news) => (
+          {paginatedNews.map((news) => (
             <motion.div key={news.id} variants={staggerItem}>
               <Link to={`/news/${news.id}`}>
                 <article className="group rounded-2xl border bg-card overflow-hidden shadow-card hover:shadow-card-hover transition-all h-full">
@@ -230,6 +275,52 @@ export default function News() {
           ))}
         </motion.div>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mx-auto max-w-7xl px-4 lg:px-8 pb-20">
+          <div className="flex items-center justify-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="gap-1"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Sebelumnya</span>
+            </Button>
+            
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handlePageChange(page)}
+                  className="w-9 h-9 p-0"
+                >
+                  {page}
+                </Button>
+              ))}
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="gap-1"
+            >
+              <span className="hidden sm:inline">Selanjutnya</span>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+          <p className="text-center text-xs text-muted-foreground mt-3">
+            Menampilkan {(currentPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, remainingNews.length)} dari {remainingNews.length} berita
+          </p>
+        </div>
+      )}
     </div>
   );
 }
