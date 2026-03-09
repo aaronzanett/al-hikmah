@@ -2,8 +2,12 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Bell, Search } from "lucide-react";
 import { Outlet } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { roleDisplayNames } from "@/types/auth";
 
 export function DashboardLayout() {
+  const { user } = useAuth();
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -21,10 +25,20 @@ export function DashboardLayout() {
                 <Bell className="h-4 w-4 text-muted-foreground" />
                 <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive" />
               </button>
-              <div className="ml-2 flex items-center gap-2">
+              <div className="ml-2 flex items-center gap-2.5 pl-2 border-l">
                 <div className="h-8 w-8 rounded-full gradient-primary flex items-center justify-center">
-                  <span className="text-xs font-semibold text-primary-foreground">SA</span>
+                  <span className="text-xs font-semibold text-primary-foreground">
+                    {user?.avatar || user?.name?.slice(0, 2).toUpperCase() || "??"}
+                  </span>
                 </div>
+                {user && (
+                  <div className="hidden sm:block">
+                    <p className="text-xs font-semibold text-foreground leading-none">{user.name}</p>
+                    <p className="text-[10px] text-muted-foreground leading-tight">
+                      {roleDisplayNames[user.role].id}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </header>
