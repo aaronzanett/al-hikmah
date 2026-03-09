@@ -606,9 +606,10 @@ const Index = () => {
             ))}
           </div>
           <div className="text-center mt-8 sm:hidden">
-            <a href="#" className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+            <Link to="/news" className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
               Lihat Semua Berita <ArrowRight className="h-4 w-4" />
-            </a>
+            </Link>
+          </div>
           </div>
         </div>
       </section>
