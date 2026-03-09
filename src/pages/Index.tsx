@@ -621,7 +621,7 @@ const Index = () => {
       </section>
 
       {/* ─── Testimonials ─── */}
-      <section className="py-20 lg:py-28 bg-muted/30">
+      <section className="py-20 lg:py-28 bg-muted/30 islamic-pattern-arabesque">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="text-center mb-14">
             <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">Testimoni</span>
