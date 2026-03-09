@@ -236,7 +236,6 @@ function GalleryLightbox({
 // ─── Main Page ─────────────────────────────────────────
 const Index = () => {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [mobileNav, setMobileNav] = useState(false);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
