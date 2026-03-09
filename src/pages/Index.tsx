@@ -240,104 +240,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* ─── Navbar ─── */}
-      <nav className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-gold shadow-md">
-              <span className="text-sm font-bold text-accent-foreground">B</span>
-            </div>
-            <div className="hidden sm:block">
-              <span className="text-base font-bold text-foreground leading-none">Pesantren Al-Hikmah</span>
-              <span className="block text-[10px] text-muted-foreground leading-tight">Modern Islamic Boarding School</span>
-            </div>
-          </Link>
-          <div className="hidden lg:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-            <a href="#about" className="hover:text-foreground transition-colors">Tentang</a>
-            <a href="#programs" className="hover:text-foreground transition-colors">Program</a>
-            <Link to="/gallery" className="hover:text-foreground transition-colors">Galeri</Link>
-            <Link to="/news" className="hover:text-foreground transition-colors">Berita</Link>
-            <a href="#contact" className="hover:text-foreground transition-colors">Kontak</a>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link to="/login" className="hidden sm:inline-flex">
-              <Button size="sm" className="gap-1.5">
-                Portal Masuk <ChevronRight className="h-3.5 w-3.5" />
-              </Button>
-            </Link>
-            <button onClick={() => setMobileNav(!mobileNav)} className="lg:hidden p-2 rounded-md hover:bg-muted">
-              {mobileNav ? <XIcon className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
-          </div>
-        </div>
-        {/* Mobile nav */}
-        {mobileNav && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            className="lg:hidden border-t bg-background px-4 py-4 space-y-3"
-          >
-            {["Tentang|#about","Program|#programs","Galeri|/gallery","Berita|/news","Kontak|#contact"].map(item => {
-              const [label, href] = item.split("|");
-              const isRoute = href.startsWith("/");
-              return isRoute ? (
-                <Link key={href} to={href} onClick={() => setMobileNav(false)} className="block text-sm font-medium text-muted-foreground hover:text-foreground">{label}</Link>
-              ) : (
-                <a key={href} href={href} onClick={() => setMobileNav(false)} className="block text-sm font-medium text-muted-foreground hover:text-foreground">{label}</a>
-              );
-            })}
-            <Link to="/login" onClick={() => setMobileNav(false)}>
-              <Button size="sm" className="w-full mt-2">Portal Masuk</Button>
-            </Link>
-          </motion.div>
-        )}
-      </nav>
+      <PublicNavbar />
 
-      {/* ─── Hero ─── */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <img src={heroPesantren} alt="Kampus Pesantren Al-Hikmah" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-black/30" />
-        </div>
-        <div className="relative mx-auto max-w-7xl px-4 lg:px-8 py-24 md:py-36 lg:py-44">
-          <div className="max-w-2xl">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-            >
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-1.5 text-xs font-medium text-white/90">
-                <Star className="h-3.5 w-3.5 text-accent" />
-                Pendaftaran Santri Baru 2026/2027 Dibuka
-              </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-5 font-display">
-                Mencetak Generasi{" "}
-                <span className="text-accent">Qur'ani</span>,{" "}
-                Berilmu &amp; Berkarakter
-              </h1>
-              <p className="text-base md:text-lg text-white/75 max-w-xl mb-8 leading-relaxed">
-                Pesantren Al-Hikmah memadukan pendidikan agama Islam dan ilmu pengetahuan modern dalam lingkungan asrama yang kondusif sejak 1985.
-              </p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              className="flex flex-col sm:flex-row gap-3"
-            >
-              <Link to="/login">
-                <Button size="lg" className="w-full sm:w-auto gap-2 shadow-lg">
-                  Daftar Sekarang <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <a href="#about">
-                <Button variant="outline" size="lg" className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10 hover:text-white bg-white/5">
-                  Kenali Kami
-                </Button>
-              </a>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      {/* ─── Hero Carousel ─── */}
+      <HeroCarousel />
 
       {/* ─── Stats Bar ─── */}
       <section className="relative -mt-12 z-10">

@@ -208,7 +208,7 @@ export default function News() {
       </section>
 
       {/* Featured article */}
-      <div className="mx-auto max-w-7xl px-4 lg:px-8 mb-12 -mt-8">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8 mb-12 -mt-8 relative z-10">
         <Link to={`/news/${allNewsItems[0].id}`}>
           <motion.article
             initial={{ opacity: 0, y: 20 }}
