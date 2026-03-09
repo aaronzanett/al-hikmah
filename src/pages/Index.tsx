@@ -254,8 +254,8 @@ const Index = () => {
           <div className="hidden lg:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#about" className="hover:text-foreground transition-colors">Tentang</a>
             <a href="#programs" className="hover:text-foreground transition-colors">Program</a>
-            <a href="#gallery" className="hover:text-foreground transition-colors">Galeri</a>
-            <a href="#news" className="hover:text-foreground transition-colors">Berita</a>
+            <Link to="/gallery" className="hover:text-foreground transition-colors">Galeri</Link>
+            <Link to="/news" className="hover:text-foreground transition-colors">Berita</Link>
             <a href="#contact" className="hover:text-foreground transition-colors">Kontak</a>
           </div>
           <div className="flex items-center gap-3">
