@@ -57,7 +57,7 @@ export default function Gallery() {
       </div>
 
       {/* Hero */}
-      <section className="relative overflow-hidden py-16 lg:py-24">
+      <section className="relative overflow-hidden py-16 lg:py-24 islamic-pattern-star">
         <div className="mx-auto max-w-7xl px-4 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">Galeri Foto</span>
