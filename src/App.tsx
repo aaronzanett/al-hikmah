@@ -47,6 +47,15 @@ import PortalAttendance from "./pages/portal/PortalAttendance";
 import PortalBills from "./pages/portal/PortalBills";
 import PortalSavings from "./pages/portal/PortalSavings";
 
+// Student portal pages
+import StudentPortal from "./pages/student/StudentPortal";
+import StudentProfile from "./pages/student/StudentProfile";
+import StudentSchedule from "./pages/student/StudentSchedule";
+import StudentGrades from "./pages/student/StudentGrades";
+import StudentAttendance from "./pages/student/StudentAttendance";
+import StudentBills from "./pages/student/StudentBills";
+import StudentSavings from "./pages/student/StudentSavings";
+
 const queryClient = new QueryClient();
 
 const App = () => (
