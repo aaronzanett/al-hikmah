@@ -198,6 +198,14 @@ export const routePermissions: Record<string, Permission[]> = {
   '/portal/attendance': ['child_attendance.view'],
   '/portal/bills': ['child_bills.view'],
   '/portal/savings': ['child_savings.view'],
+  // Student portal routes
+  '/student': ['student_portal.view'],
+  '/student/profile': ['student_profile.view'],
+  '/student/grades': ['student_grades.view'],
+  '/student/attendance': ['student_attendance.view'],
+  '/student/bills': ['student_bills.view'],
+  '/student/savings': ['student_savings.view'],
+  '/student/schedule': ['student_schedule.view'],
 };
 
 // Helper function to check if a role has a permission
