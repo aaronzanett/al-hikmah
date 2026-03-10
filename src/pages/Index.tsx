@@ -569,38 +569,39 @@ const Index = () => {
           </div>
           <div className="grid gap-8 md:grid-cols-3">
             {newsItems.map((news, i) => (
-              <motion.article
-                key={i}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                className="group rounded-2xl border bg-card overflow-hidden shadow-card hover:shadow-card-hover transition-all"
-              >
-                <div className="aspect-[16/9] overflow-hidden">
-                  <img
-                    src={news.image}
-                    alt={news.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="p-5">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                      {news.category}
-                    </span>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Calendar className="h-3 w-3" /> {news.date}
-                    </span>
+              <Link key={news.id} to={`/news/${news.id}`}>
+                <motion.article
+                  custom={i}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={fadeUp}
+                  className="group rounded-2xl border bg-card overflow-hidden shadow-card hover:shadow-card-hover transition-all h-full"
+                >
+                  <div className="aspect-[16/9] overflow-hidden">
+                    <img
+                      src={news.image}
+                      alt={news.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
                   </div>
-                  <h3 className="font-bold text-foreground mb-2 leading-snug group-hover:text-primary transition-colors">
-                    {news.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{news.excerpt}</p>
-                </div>
-              </motion.article>
+                  <div className="p-5">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                        {news.category}
+                      </span>
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Calendar className="h-3 w-3" /> {news.date}
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-foreground mb-2 leading-snug group-hover:text-primary transition-colors">
+                      {news.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{news.excerpt}</p>
+                  </div>
+                </motion.article>
+              </Link>
             ))}
           </div>
           <div className="text-center mt-8 sm:hidden">
