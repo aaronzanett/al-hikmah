@@ -147,6 +147,16 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     'child_bills.view',
     'child_savings.view',
   ],
+  
+  student: [
+    'student_portal.view',
+    'student_profile.view',
+    'student_grades.view',
+    'student_attendance.view',
+    'student_bills.view',
+    'student_savings.view',
+    'student_schedule.view',
+  ],
 };
 
 // Role display names
