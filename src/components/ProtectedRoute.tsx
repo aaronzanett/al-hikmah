@@ -26,14 +26,14 @@ export function ProtectedRoute({
   // Check role-based access
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     // Redirect to appropriate dashboard based on role
-    const defaultRoute = user.role === 'guardian' ? '/portal' : '/dashboard';
+    const defaultRoute = user.role === 'guardian' ? '/portal' : user.role === 'student' ? '/student' : '/dashboard';
     return <Navigate to={defaultRoute} replace />;
   }
 
   // Check permission-based access
   if (requiredPermissions.length > 0 && !hasAnyPermission(requiredPermissions)) {
     // Redirect to appropriate dashboard based on role
-    const defaultRoute = user.role === 'guardian' ? '/portal' : '/dashboard';
+    const defaultRoute = user.role === 'guardian' ? '/portal' : user.role === 'student' ? '/student' : '/dashboard';
     return <Navigate to={defaultRoute} replace />;
   }
 

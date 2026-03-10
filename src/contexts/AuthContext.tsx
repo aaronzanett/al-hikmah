@@ -58,6 +58,13 @@ export const mockUsers: Record<string, User> = {
     role: 'guardian',
     avatar: 'MR',
   },
+  'student': {
+    id: '7',
+    name: 'Muhammad Azzam Ridwan',
+    email: 'azzam@pesantren.id',
+    role: 'student',
+    avatar: 'MA',
+  },
 };
 
 interface AuthProviderProps {

@@ -7,6 +7,7 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { GuardianLayout } from "@/components/GuardianLayout";
 import { ProtectedRoute, AdminRoute, GuardianRoute } from "@/components/ProtectedRoute";
+import { StudentLayout } from "@/components/StudentLayout";
 
 // Public pages
 import Index from "./pages/Index";
@@ -45,6 +46,15 @@ import PortalGrades from "./pages/portal/PortalGrades";
 import PortalAttendance from "./pages/portal/PortalAttendance";
 import PortalBills from "./pages/portal/PortalBills";
 import PortalSavings from "./pages/portal/PortalSavings";
+
+// Student portal pages
+import StudentPortal from "./pages/student/StudentPortal";
+import StudentProfile from "./pages/student/StudentProfile";
+import StudentSchedule from "./pages/student/StudentSchedule";
+import StudentGrades from "./pages/student/StudentGrades";
+import StudentAttendance from "./pages/student/StudentAttendance";
+import StudentBills from "./pages/student/StudentBills";
+import StudentSavings from "./pages/student/StudentSavings";
 
 const queryClient = new QueryClient();
 
@@ -240,6 +250,23 @@ const App = () => (
             <Route path="/portal/attendance" element={<PortalAttendance />} />
             <Route path="/portal/bills" element={<PortalBills />} />
             <Route path="/portal/savings" element={<PortalSavings />} />
+          </Route>
+
+          {/* Student portal routes */}
+          <Route
+            element={
+              <ProtectedRoute allowedRoles={['student']}>
+                <StudentLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/student" element={<StudentPortal />} />
+            <Route path="/student/profile" element={<StudentProfile />} />
+            <Route path="/student/schedule" element={<StudentSchedule />} />
+            <Route path="/student/grades" element={<StudentGrades />} />
+            <Route path="/student/attendance" element={<StudentAttendance />} />
+            <Route path="/student/bills" element={<StudentBills />} />
+            <Route path="/student/savings" element={<StudentSavings />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

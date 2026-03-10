@@ -5,7 +5,8 @@ export type UserRole =
   | 'treasurer'
   | 'academic_staff'
   | 'dormitory_supervisor'
-  | 'guardian';
+  | 'guardian'
+  | 'student';
 
 export interface User {
   id: string;
@@ -64,7 +65,15 @@ export type Permission =
   | 'child_grades.view'
   | 'child_attendance.view'
   | 'child_bills.view'
-  | 'child_savings.view';
+  | 'child_savings.view'
+  // Student-specific permissions
+  | 'student_portal.view'
+  | 'student_profile.view'
+  | 'student_grades.view'
+  | 'student_attendance.view'
+  | 'student_bills.view'
+  | 'student_savings.view'
+  | 'student_schedule.view';
 
 // Role-Permission mapping
 export const rolePermissions: Record<UserRole, Permission[]> = {
@@ -138,6 +147,16 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     'child_bills.view',
     'child_savings.view',
   ],
+  
+  student: [
+    'student_portal.view',
+    'student_profile.view',
+    'student_grades.view',
+    'student_attendance.view',
+    'student_bills.view',
+    'student_savings.view',
+    'student_schedule.view',
+  ],
 };
 
 // Role display names
@@ -148,6 +167,7 @@ export const roleDisplayNames: Record<UserRole, { id: string; en: string }> = {
   academic_staff: { id: 'Staff Akademik', en: 'Academic Staff' },
   dormitory_supervisor: { id: 'Musyrif Asrama', en: 'Dormitory Supervisor' },
   guardian: { id: 'Wali Santri', en: 'Guardian' },
+  student: { id: 'Santri', en: 'Student' },
 };
 
 // Route-Permission mapping for protected routes
@@ -178,6 +198,14 @@ export const routePermissions: Record<string, Permission[]> = {
   '/portal/attendance': ['child_attendance.view'],
   '/portal/bills': ['child_bills.view'],
   '/portal/savings': ['child_savings.view'],
+  // Student portal routes
+  '/student': ['student_portal.view'],
+  '/student/profile': ['student_profile.view'],
+  '/student/grades': ['student_grades.view'],
+  '/student/attendance': ['student_attendance.view'],
+  '/student/bills': ['student_bills.view'],
+  '/student/savings': ['student_savings.view'],
+  '/student/schedule': ['student_schedule.view'],
 };
 
 // Helper function to check if a role has a permission
@@ -202,8 +230,7 @@ export function getAccessibleRoutes(role: UserRole): string[] {
 
 // Get the default route for each role after login
 export function getDefaultRoute(role: UserRole): string {
-  if (role === 'guardian') {
-    return '/portal';
-  }
+  if (role === 'guardian') return '/portal';
+  if (role === 'student') return '/student';
   return '/dashboard';
 }
