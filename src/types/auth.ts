@@ -167,6 +167,7 @@ export const roleDisplayNames: Record<UserRole, { id: string; en: string }> = {
   academic_staff: { id: 'Staff Akademik', en: 'Academic Staff' },
   dormitory_supervisor: { id: 'Musyrif Asrama', en: 'Dormitory Supervisor' },
   guardian: { id: 'Wali Santri', en: 'Guardian' },
+  student: { id: 'Santri', en: 'Student' },
 };
 
 // Route-Permission mapping for protected routes
