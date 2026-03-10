@@ -51,12 +51,13 @@ const Login = () => {
       });
       navigate("/portal");
     } else {
-      // Student login - for now just show message
+      const studentUser = mockUsers.student;
+      login(studentUser);
       toast({
-        title: "Portal Santri",
-        description: "Fitur portal santri sedang dalam pengembangan",
-        variant: "destructive",
+        title: "Berhasil masuk / Login successful",
+        description: `Selamat datang, ${studentUser.name}`,
       });
+      navigate("/student");
     }
   };
 

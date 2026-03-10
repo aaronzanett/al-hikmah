@@ -252,6 +252,23 @@ const App = () => (
             <Route path="/portal/savings" element={<PortalSavings />} />
           </Route>
 
+          {/* Student portal routes */}
+          <Route
+            element={
+              <ProtectedRoute allowedRoles={['student']}>
+                <StudentLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/student" element={<StudentPortal />} />
+            <Route path="/student/profile" element={<StudentProfile />} />
+            <Route path="/student/schedule" element={<StudentSchedule />} />
+            <Route path="/student/grades" element={<StudentGrades />} />
+            <Route path="/student/attendance" element={<StudentAttendance />} />
+            <Route path="/student/bills" element={<StudentBills />} />
+            <Route path="/student/savings" element={<StudentSavings />} />
+          </Route>
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
