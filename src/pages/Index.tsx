@@ -1,4 +1,5 @@
 import { motion, useInView } from "framer-motion";
+import { allNewsItems } from "./News";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useRef, useState, useEffect, useCallback } from "react";
