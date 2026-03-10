@@ -204,29 +204,7 @@ const galleryItems = [
   { src: heroPesantren, title: "Kampus Pesantren", category: "Fasilitas" },
 ];
 
-const newsItems = [
-  {
-    title: "Pesantren Raih Juara Umum MTQ Nasional 2026",
-    excerpt: "Delegasi santri berhasil meraih 5 medali emas dan 3 perak pada ajang Musabaqah Tilawatil Qur'an tingkat nasional di Makassar.",
-    date: "5 Mar 2026",
-    category: "Prestasi",
-    image: galleryQuran,
-  },
-  {
-    title: "Pendaftaran Santri Baru Tahun Ajaran 2026/2027 Dibuka",
-    excerpt: "Gelombang pertama pendaftaran santri baru resmi dibuka mulai 10 Maret hingga 30 April 2026 dengan kuota terbatas.",
-    date: "1 Mar 2026",
-    category: "Pengumuman",
-    image: heroPesantren,
-  },
-  {
-    title: "Workshop Keterampilan Digital untuk Santri",
-    excerpt: "Pesantren menggelar workshop coding dan desain grafis bekerja sama dengan komunitas teknologi lokal.",
-    date: "25 Feb 2026",
-    category: "Kegiatan",
-    image: galleryClassroom,
-  },
-];
+const newsItems = allNewsItems.slice(0, 3);
 
 const testimonials = [
   {
