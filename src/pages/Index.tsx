@@ -1,4 +1,5 @@
 import { motion, useInView } from "framer-motion";
+import { allNewsItems } from "./News";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useRef, useState, useEffect, useCallback } from "react";
@@ -204,29 +205,7 @@ const galleryItems = [
   { src: heroPesantren, title: "Kampus Pesantren", category: "Fasilitas" },
 ];
 
-const newsItems = [
-  {
-    title: "Pesantren Raih Juara Umum MTQ Nasional 2026",
-    excerpt: "Delegasi santri berhasil meraih 5 medali emas dan 3 perak pada ajang Musabaqah Tilawatil Qur'an tingkat nasional di Makassar.",
-    date: "5 Mar 2026",
-    category: "Prestasi",
-    image: galleryQuran,
-  },
-  {
-    title: "Pendaftaran Santri Baru Tahun Ajaran 2026/2027 Dibuka",
-    excerpt: "Gelombang pertama pendaftaran santri baru resmi dibuka mulai 10 Maret hingga 30 April 2026 dengan kuota terbatas.",
-    date: "1 Mar 2026",
-    category: "Pengumuman",
-    image: heroPesantren,
-  },
-  {
-    title: "Workshop Keterampilan Digital untuk Santri",
-    excerpt: "Pesantren menggelar workshop coding dan desain grafis bekerja sama dengan komunitas teknologi lokal.",
-    date: "25 Feb 2026",
-    category: "Kegiatan",
-    image: galleryClassroom,
-  },
-];
+const newsItems = allNewsItems.slice(0, 3);
 
 const testimonials = [
   {
@@ -590,38 +569,39 @@ const Index = () => {
           </div>
           <div className="grid gap-8 md:grid-cols-3">
             {newsItems.map((news, i) => (
-              <motion.article
-                key={i}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                className="group rounded-2xl border bg-card overflow-hidden shadow-card hover:shadow-card-hover transition-all"
-              >
-                <div className="aspect-[16/9] overflow-hidden">
-                  <img
-                    src={news.image}
-                    alt={news.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="p-5">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                      {news.category}
-                    </span>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Calendar className="h-3 w-3" /> {news.date}
-                    </span>
+              <Link key={news.id} to={`/news/${news.id}`}>
+                <motion.article
+                  custom={i}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={fadeUp}
+                  className="group rounded-2xl border bg-card overflow-hidden shadow-card hover:shadow-card-hover transition-all h-full"
+                >
+                  <div className="aspect-[16/9] overflow-hidden">
+                    <img
+                      src={news.image}
+                      alt={news.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
                   </div>
-                  <h3 className="font-bold text-foreground mb-2 leading-snug group-hover:text-primary transition-colors">
-                    {news.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{news.excerpt}</p>
-                </div>
-              </motion.article>
+                  <div className="p-5">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                        {news.category}
+                      </span>
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Calendar className="h-3 w-3" /> {news.date}
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-foreground mb-2 leading-snug group-hover:text-primary transition-colors">
+                      {news.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{news.excerpt}</p>
+                  </div>
+                </motion.article>
+              </Link>
             ))}
           </div>
           <div className="text-center mt-8 sm:hidden">
