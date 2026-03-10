@@ -230,8 +230,7 @@ export function getAccessibleRoutes(role: UserRole): string[] {
 
 // Get the default route for each role after login
 export function getDefaultRoute(role: UserRole): string {
-  if (role === 'guardian') {
-    return '/portal';
-  }
+  if (role === 'guardian') return '/portal';
+  if (role === 'student') return '/student';
   return '/dashboard';
 }
