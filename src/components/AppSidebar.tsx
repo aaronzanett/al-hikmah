@@ -200,7 +200,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
-      <SidebarHeader className={collapsed ? "p-2 flex items-center justify-center" : "p-4"}>
+      <SidebarHeader className={collapsed ? "p-0 flex items-center justify-center" : "p-4"}>
         <div className={cn("flex items-center overflow-hidden", collapsed ? "justify-center" : "gap-3")}>
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg gradient-gold">
             <span className="text-sm font-bold text-sidebar-primary-foreground">B</span>
@@ -216,7 +216,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2">
+      <SidebarContent className={collapsed ? "px-0" : "px-2"}>
         {/* Main Dashboard Item */}
         {visibleMainItems.length > 0 && (
           <SidebarGroup>
@@ -293,7 +293,7 @@ export function AppSidebar() {
         )}
       </SidebarContent>
 
-      <SidebarFooter className="p-3">
+      <SidebarFooter className={collapsed ? "p-0" : "p-3"}>
         <SidebarMenu>
           {can('settings.view') && (
             <SidebarMenuItem>
