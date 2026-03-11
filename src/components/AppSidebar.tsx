@@ -293,7 +293,7 @@ export function AppSidebar() {
         )}
       </SidebarContent>
 
-      <SidebarFooter className="p-3">
+      <SidebarFooter className={collapsed ? "p-0" : "p-3"}>
         <SidebarMenu>
           {can('settings.view') && (
             <SidebarMenuItem>
