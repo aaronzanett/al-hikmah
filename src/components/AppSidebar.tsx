@@ -293,14 +293,17 @@ export function AppSidebar() {
         )}
       </SidebarContent>
 
-      <SidebarFooter className={collapsed ? "p-0" : "p-3"}>
+      <SidebarFooter className={collapsed ? "p-2" : "p-3"}>
         <SidebarMenu>
           {can('settings.view') && (
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Pengaturan">
                 <NavLink
                   to="/settings"
-                  className="flex items-center gap-3 rounded-md px-3 py-2 text-sidebar-foreground/50 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  className={cn(
+                    "flex items-center rounded-md text-sidebar-foreground/50 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                    collapsed ? "justify-center p-2" : "gap-3 px-3 py-2"
+                  )}
                   activeClassName="bg-sidebar-accent text-sidebar-primary"
                 >
                   <Settings className="h-4 w-4 shrink-0" />
