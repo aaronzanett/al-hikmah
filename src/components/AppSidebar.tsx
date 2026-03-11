@@ -216,7 +216,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2">
+      <SidebarContent className={collapsed ? "px-0" : "px-2"}>
         {/* Main Dashboard Item */}
         {visibleMainItems.length > 0 && (
           <SidebarGroup>
