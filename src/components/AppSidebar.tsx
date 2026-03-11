@@ -334,7 +334,10 @@ export function AppSidebar() {
             <SidebarMenuButton asChild tooltip="Logout">
               <button
                 onClick={handleLogout}
-                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sidebar-foreground/50 text-sm hover:bg-sidebar-accent hover:text-destructive"
+                className={cn(
+                  "flex w-full items-center rounded-md text-sidebar-foreground/50 text-sm hover:bg-sidebar-accent hover:text-destructive",
+                  collapsed ? "justify-center p-2" : "gap-3 px-3 py-2"
+                )}
               >
                 <LogOut className="h-4 w-4 shrink-0" />
                 {!collapsed && <span>Keluar / Logout</span>}
