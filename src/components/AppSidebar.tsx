@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Users,
@@ -199,15 +200,15 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
+      <SidebarHeader className={collapsed ? "p-2 flex items-center justify-center" : "p-4"}>
+        <div className={cn("flex items-center overflow-hidden", collapsed ? "justify-center" : "gap-3")}>
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg gradient-gold">
             <span className="text-sm font-bold text-sidebar-primary-foreground">B</span>
           </div>
           {!collapsed && (
-            <div className="animate-slide-in">
-              <h1 className="text-base font-bold text-sidebar-foreground">BoardingCore</h1>
-              <p className="text-[11px] text-sidebar-foreground/50">
+            <div className="animate-slide-in min-w-0">
+              <h1 className="text-base font-bold text-sidebar-foreground truncate">BoardingCore</h1>
+              <p className="text-[11px] text-sidebar-foreground/50 truncate">
                 {user ? roleDisplayNames[user.role].id : 'Pesantren Management'}
               </p>
             </div>
