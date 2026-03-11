@@ -200,10 +200,10 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
-      <SidebarHeader className={collapsed ? "p-0 flex items-center justify-center" : "p-4"}>
+      <SidebarHeader className={collapsed ? "p-2 flex items-center justify-center" : "p-4"}>
         <div className={cn("flex items-center overflow-hidden", collapsed ? "justify-center" : "gap-3")}>
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg gradient-gold">
-            <span className="text-sm font-bold text-sidebar-primary-foreground">B</span>
+          <div className={cn("flex shrink-0 items-center justify-center rounded-lg gradient-gold", collapsed ? "h-7 w-7" : "h-9 w-9")}>
+            <span className={cn("font-bold text-sidebar-primary-foreground", collapsed ? "text-xs" : "text-sm")}>B</span>
           </div>
           {!collapsed && (
             <div className="animate-slide-in min-w-0">
@@ -293,14 +293,17 @@ export function AppSidebar() {
         )}
       </SidebarContent>
 
-      <SidebarFooter className={collapsed ? "p-0" : "p-3"}>
+      <SidebarFooter className={collapsed ? "p-2" : "p-3"}>
         <SidebarMenu>
           {can('settings.view') && (
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Pengaturan">
                 <NavLink
                   to="/settings"
-                  className="flex items-center gap-3 rounded-md px-3 py-2 text-sidebar-foreground/50 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  className={cn(
+                    "flex items-center rounded-md text-sidebar-foreground/50 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                    collapsed ? "justify-center p-2" : "gap-3 px-3 py-2"
+                  )}
                   activeClassName="bg-sidebar-accent text-sidebar-primary"
                 >
                   <Settings className="h-4 w-4 shrink-0" />
@@ -331,7 +334,10 @@ export function AppSidebar() {
             <SidebarMenuButton asChild tooltip="Logout">
               <button
                 onClick={handleLogout}
-                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sidebar-foreground/50 text-sm hover:bg-sidebar-accent hover:text-destructive"
+                className={cn(
+                  "flex w-full items-center rounded-md text-sidebar-foreground/50 text-sm hover:bg-sidebar-accent hover:text-destructive",
+                  collapsed ? "justify-center p-2" : "gap-3 px-3 py-2"
+                )}
               >
                 <LogOut className="h-4 w-4 shrink-0" />
                 {!collapsed && <span>Keluar / Logout</span>}
