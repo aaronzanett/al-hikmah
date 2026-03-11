@@ -200,7 +200,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
-      <SidebarHeader className={collapsed ? "p-2 flex items-center justify-center" : "p-4"}>
+      <SidebarHeader className={collapsed ? "p-0 flex items-center justify-center" : "p-4"}>
         <div className={cn("flex items-center overflow-hidden", collapsed ? "justify-center" : "gap-3")}>
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg gradient-gold">
             <span className="text-sm font-bold text-sidebar-primary-foreground">B</span>
