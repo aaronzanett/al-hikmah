@@ -200,10 +200,10 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
-      <SidebarHeader className={collapsed ? "p-0 flex items-center justify-center" : "p-4"}>
+      <SidebarHeader className={collapsed ? "p-2 flex items-center justify-center" : "p-4"}>
         <div className={cn("flex items-center overflow-hidden", collapsed ? "justify-center" : "gap-3")}>
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg gradient-gold">
-            <span className="text-sm font-bold text-sidebar-primary-foreground">B</span>
+          <div className={cn("flex shrink-0 items-center justify-center rounded-lg gradient-gold", collapsed ? "h-7 w-7" : "h-9 w-9")}>
+            <span className={cn("font-bold text-sidebar-primary-foreground", collapsed ? "text-xs" : "text-sm")}>B</span>
           </div>
           {!collapsed && (
             <div className="animate-slide-in min-w-0">
