@@ -34,9 +34,9 @@ import Payments from "./pages/Payments";
 import Expenses from "./pages/Expenses";
 import Savings from "./pages/Savings";
 import Settings from "./pages/Settings";
+import Users from "./pages/Users";
 import ManageGallery from "./pages/ManageGallery";
 import ManageNews from "./pages/ManageNews";
-import ManageContact from "./pages/ManageContact";
 import ContactMessages from "./pages/ContactMessages";
 
 // Guardian portal pages
@@ -203,6 +203,14 @@ const App = () => (
               }
             />
             <Route
+              path="/users"
+              element={
+                <ProtectedRoute requiredPermissions={["users.view"]}>
+                  <Users />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/content/gallery"
               element={
                 <ProtectedRoute requiredPermissions={["content_gallery.view"]}>
@@ -215,14 +223,6 @@ const App = () => (
               element={
                 <ProtectedRoute requiredPermissions={["content_news.view"]}>
                   <ManageNews />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/content/contact"
-              element={
-                <ProtectedRoute requiredPermissions={["content_contact.view"]}>
-                  <ManageContact />
                 </ProtectedRoute>
               }
             />
