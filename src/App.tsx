@@ -34,9 +34,9 @@ import Payments from "./pages/Payments";
 import Expenses from "./pages/Expenses";
 import Savings from "./pages/Savings";
 import Settings from "./pages/Settings";
+import Users from "./pages/Users";
 import ManageGallery from "./pages/ManageGallery";
 import ManageNews from "./pages/ManageNews";
-import ManageContact from "./pages/ManageContact";
 import ContactMessages from "./pages/ContactMessages";
 
 // Guardian portal pages
