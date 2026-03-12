@@ -59,6 +59,7 @@ const managementItems: MenuItem[] = [
   { title: "Cabang / Branches", url: "/branches", icon: Building2, permission: "branches.view" },
   { title: "Santri / Students", url: "/students", icon: Users, permission: "students.view" },
   { title: "Wali / Guardians", url: "/guardians", icon: Users, permission: "guardians.view" },
+  { title: "Pengguna / Users", url: "/users", icon: UserCog, permission: "users.view" },
 ];
 
 const academicItems: MenuItem[] = [
