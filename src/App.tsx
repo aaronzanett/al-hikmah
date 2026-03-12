@@ -227,14 +227,6 @@ const App = () => (
               }
             />
             <Route
-              path="/content/contact"
-              element={
-                <ProtectedRoute requiredPermissions={["content_contact.view"]}>
-                  <ManageContact />
-                </ProtectedRoute>
-              }
-            />
-            <Route
               path="/content/messages"
               element={
                 <ProtectedRoute requiredPermissions={["content_messages.view"]}>
