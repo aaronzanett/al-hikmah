@@ -84,7 +84,6 @@ const financeItems: MenuItem[] = [
 const contentItems: MenuItem[] = [
   { title: "Galeri / Gallery", url: "/content/gallery", icon: Image, permission: "content_gallery.view" },
   { title: "Berita / News", url: "/content/news", icon: Newspaper, permission: "content_news.view" },
-  { title: "Kontak / Contact", url: "/content/contact", icon: Phone, permission: "content_contact.view" },
   { title: "Pesan Masuk / Messages", url: "/content/messages", icon: MessageSquare, permission: "content_messages.view" },
 ];
 
