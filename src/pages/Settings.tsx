@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Phone, Mail, MapPin, Clock, MessageCircle, Instagram, Youtube, Facebook, Twitter, Globe, Music2, ShieldCheck, Upload, ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, Phone, Mail, MapPin, Clock, Instagram, Youtube, Facebook, Twitter, Globe, Music2, ShieldCheck, Upload, ImageIcon } from "lucide-react";
+import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
+
+// ─── WhatsApp SVG icon component ───
+const WhatsAppIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+  </svg>
+);
 
 // ─── Types ───
 interface ContactInfo {
@@ -29,14 +38,14 @@ interface SocialMedia {
   isActive: boolean;
 }
 
-// ─── Social media platforms (WhatsApp included here) ───
+// ─── Social media platforms ───
 const socialPlatforms = [
   { value: "Instagram", icon: Instagram },
   { value: "YouTube", icon: Youtube },
   { value: "Facebook", icon: Facebook },
   { value: "Twitter / X", icon: Twitter },
   { value: "TikTok", icon: Music2 },
-  { value: "WhatsApp", icon: MessageCircle },
+  { value: "WhatsApp", icon: WhatsAppIcon },
   { value: "Website", icon: Globe },
 ];
 
@@ -45,7 +54,7 @@ const getSocialIcon = (platform: string) => {
   return found ? found.icon : Globe;
 };
 
-// ─── Contact types (phone, email, hours only — no WhatsApp) ───
+// ─── Contact types ───
 const contactTypes = [
   { value: "Telepon", label: "Telepon / Phone" },
   { value: "Email", label: "Email" },
@@ -75,11 +84,52 @@ const initialSocials: SocialMedia[] = [
   { id: "S004", platform: "WhatsApp", username: "+62 812-3456-7890", url: "https://wa.me/6281234567890", isActive: true },
 ];
 
+// ─── Logo format options ───
+const imageFormats = [
+  { value: "image/png", label: "PNG" },
+  { value: "image/jpeg", label: "JPG" },
+  { value: "image/webp", label: "WebP" },
+];
+
+// ─── Crop helper ───
+function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number) {
+  return centerCrop(
+    makeAspectCrop({ unit: "%", width: 80 }, aspect, mediaWidth, mediaHeight),
+    mediaWidth,
+    mediaHeight
+  );
+}
+
+function getCroppedImage(image: HTMLImageElement, crop: PixelCrop, format: string): Promise<string> {
+  const canvas = document.createElement("canvas");
+  const scaleX = image.naturalWidth / image.width;
+  const scaleY = image.naturalHeight / image.height;
+  canvas.width = crop.width * scaleX;
+  canvas.height = crop.height * scaleY;
+  const ctx = canvas.getContext("2d")!;
+  ctx.drawImage(
+    image,
+    crop.x * scaleX,
+    crop.y * scaleY,
+    crop.width * scaleX,
+    crop.height * scaleY,
+    0, 0,
+    canvas.width,
+    canvas.height
+  );
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+      if (blob) resolve(URL.createObjectURL(blob));
+    }, format, 0.92);
+  });
+}
+
 const Settings = () => {
   const { toast } = useToast();
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const cropImageRef = useRef<HTMLImageElement>(null);
 
-  // ─── Institution info state (no phone/email/whatsapp here) ───
+  // ─── Institution info state ───
   const [settings, setSettings] = useState({
     institutionName: "Pesantren Al-Hikmah",
     tagline: "Modern Islamic Boarding School",
@@ -91,7 +141,13 @@ const Settings = () => {
     timezone: "Asia/Jakarta",
   });
 
+  // ─── Logo state ───
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [cropDialogOpen, setCropDialogOpen] = useState(false);
+  const [cropSrc, setCropSrc] = useState<string>("");
+  const [crop, setCrop] = useState<Crop>();
+  const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
+  const [logoFormat, setLogoFormat] = useState("image/png");
 
   // ─── Contacts state ───
   const [contacts, setContacts] = useState<ContactInfo[]>(initialContacts);
@@ -107,13 +163,34 @@ const Settings = () => {
 
   const update = (key: string, value: string) => setSettings((p) => ({ ...p, [key]: value }));
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // ─── Logo handlers ───
+  const handleLogoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => setLogoPreview(reader.result as string);
+      reader.onloadend = () => {
+        setCropSrc(reader.result as string);
+        setCrop(undefined);
+        setCompletedCrop(undefined);
+        setCropDialogOpen(true);
+      };
       reader.readAsDataURL(file);
-      toast({ title: "Logo berhasil diunggah / Logo uploaded" });
+    }
+    // Reset input so same file can be re-selected
+    e.target.value = "";
+  };
+
+  const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    const { width, height } = e.currentTarget;
+    setCrop(centerAspectCrop(width, height, 1));
+  }, []);
+
+  const handleCropConfirm = async () => {
+    if (cropImageRef.current && completedCrop) {
+      const croppedUrl = await getCroppedImage(cropImageRef.current, completedCrop, logoFormat);
+      setLogoPreview(croppedUrl);
+      setCropDialogOpen(false);
+      toast({ title: "Logo berhasil di-crop dan disimpan / Logo cropped & saved" });
     }
   };
 
@@ -175,7 +252,7 @@ const Settings = () => {
     toast({ title: "Media sosial dihapus / Social media deleted" });
   };
 
-  // ─── Derived data for footer preview (only active items) ───
+  // ─── Derived data for footer preview ───
   const activeContacts = contacts.filter(c => c.isActive);
   const activeSocials = socials.filter(s => s.isActive);
 
@@ -219,7 +296,7 @@ const Settings = () => {
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={handleLogoUpload}
+                  onChange={handleLogoSelect}
                 />
                 <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => logoInputRef.current?.click()}>
                   <Upload className="h-3 w-3 mr-1" /> Unggah Logo
@@ -250,7 +327,7 @@ const Settings = () => {
             </div>
           </div>
 
-          {/* ── Additional Contacts (Phone, Email, Hours) ── */}
+          {/* ── Contacts ── */}
           <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold">Kontak / Contacts</h3>
@@ -336,7 +413,7 @@ const Settings = () => {
             </Table>
           </div>
 
-          {/* ── Social Media (includes WhatsApp) ── */}
+          {/* ── Social Media ── */}
           <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold">Media Sosial / Social Media</h3>
@@ -355,10 +432,10 @@ const Settings = () => {
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {socialPlatforms.map(p => {
-                            const Icon = p.icon;
+                            const PIcon = p.icon;
                             return (
                               <SelectItem key={p.value} value={p.value}>
-                                <span className="flex items-center gap-2"><Icon className="h-4 w-4" />{p.value}</span>
+                                <span className="flex items-center gap-2"><PIcon className="h-4 w-4" />{p.value}</span>
                               </SelectItem>
                             );
                           })}
@@ -402,12 +479,12 @@ const Settings = () => {
               </TableHeader>
               <TableBody>
                 {socials.map((s) => {
-                  const Icon = getSocialIcon(s.platform);
+                  const SIcon = getSocialIcon(s.platform);
                   return (
                     <TableRow key={s.id}>
                       <TableCell>
                         <span className="flex items-center gap-2">
-                          <Icon className="h-4 w-4 text-muted-foreground" />
+                          <SIcon className="h-4 w-4 text-muted-foreground" />
                           <span className="text-sm font-medium">{s.platform}</span>
                         </span>
                       </TableCell>
@@ -469,7 +546,7 @@ const Settings = () => {
                       </ul>
                     </div>
 
-                    {/* Column 3: Contact (from contacts table only) */}
+                    {/* Column 3: Contact */}
                     <div>
                       <h4 className="text-xs font-semibold text-foreground mb-3">Kontak</h4>
                       <ul className="space-y-1.5 text-[11px] text-muted-foreground">
@@ -477,9 +554,9 @@ const Settings = () => {
                           <li className="flex items-start gap-1.5"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /> {settings.address}</li>
                         )}
                         {activeContacts.map(c => {
-                          const Icon = getContactIcon(c.type);
+                          const CIcon = getContactIcon(c.type);
                           return (
-                            <li key={c.id} className="flex items-center gap-1.5"><Icon className="h-3 w-3 shrink-0" /> {c.value}</li>
+                            <li key={c.id} className="flex items-center gap-1.5"><CIcon className="h-3 w-3 shrink-0" /> {c.value}</li>
                           );
                         })}
                       </ul>
@@ -491,10 +568,10 @@ const Settings = () => {
                       {activeSocials.length > 0 ? (
                         <div className="flex flex-wrap gap-2">
                           {activeSocials.map(s => {
-                            const Icon = getSocialIcon(s.platform);
+                            const SIcon = getSocialIcon(s.platform);
                             return (
                               <div key={s.id} className="flex items-center gap-1.5 text-[11px] text-muted-foreground bg-muted/50 rounded-md px-2 py-1">
-                                <Icon className="h-3.5 w-3.5" />
+                                <SIcon className="h-3.5 w-3.5" />
                                 <span>{s.username}</span>
                               </div>
                             );
@@ -510,10 +587,10 @@ const Settings = () => {
                     <p className="text-[10px] text-muted-foreground">© {new Date().getFullYear()} {settings.institutionName}. All rights reserved.</p>
                     <div className="flex items-center gap-2">
                       {activeSocials.map(s => {
-                        const Icon = getSocialIcon(s.platform);
+                        const SIcon = getSocialIcon(s.platform);
                         return (
                           <div key={s.id} className="h-6 w-6 rounded-full bg-muted flex items-center justify-center" title={s.platform}>
-                            <Icon className="h-3 w-3 text-muted-foreground" />
+                            <SIcon className="h-3 w-3 text-muted-foreground" />
                           </div>
                         );
                       })}
@@ -588,6 +665,51 @@ const Settings = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* ═══════════ CROP DIALOG ═══════════ */}
+      <Dialog open={cropDialogOpen} onOpenChange={setCropDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Crop Logo</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <Label>Format Output</Label>
+              <Select value={logoFormat} onValueChange={setLogoFormat}>
+                <SelectTrigger className="w-28"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {imageFormats.map(f => (
+                    <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {cropSrc && (
+              <div className="flex justify-center bg-muted/30 rounded-lg p-2 max-h-[400px] overflow-auto">
+                <ReactCrop
+                  crop={crop}
+                  onChange={(c) => setCrop(c)}
+                  onComplete={(c) => setCompletedCrop(c)}
+                  aspect={1}
+                  circularCrop={false}
+                >
+                  <img
+                    ref={cropImageRef}
+                    src={cropSrc}
+                    alt="Crop preview"
+                    onLoad={onImageLoad}
+                    className="max-h-[350px] object-contain"
+                  />
+                </ReactCrop>
+              </div>
+            )}
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setCropDialogOpen(false)}>Batal / Cancel</Button>
+              <Button onClick={handleCropConfirm} disabled={!completedCrop}>Terapkan / Apply</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 };
