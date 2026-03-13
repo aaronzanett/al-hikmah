@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Phone, Mail, MapPin, Clock, MessageCircle, Instagram, Youtube, Facebook, Twitter, Globe, Music2, ShieldCheck } from "lucide-react";
+import { Plus, Pencil, Trash2, Phone, Mail, MapPin, Clock, MessageCircle, Instagram, Youtube, Facebook, Twitter, Globe, Music2, ShieldCheck, Upload, ImageIcon } from "lucide-react";
 
 // ─── Types ───
 interface ContactInfo {
@@ -18,7 +18,6 @@ interface ContactInfo {
   type: string;
   label: string;
   value: string;
-  url?: string;
   isActive: boolean;
 }
 
@@ -30,13 +29,14 @@ interface SocialMedia {
   isActive: boolean;
 }
 
-// ─── Social media platforms ───
+// ─── Social media platforms (WhatsApp included here) ───
 const socialPlatforms = [
   { value: "Instagram", icon: Instagram },
   { value: "YouTube", icon: Youtube },
   { value: "Facebook", icon: Facebook },
   { value: "Twitter / X", icon: Twitter },
   { value: "TikTok", icon: Music2 },
+  { value: "WhatsApp", icon: MessageCircle },
   { value: "Website", icon: Globe },
 ];
 
@@ -45,10 +45,9 @@ const getSocialIcon = (platform: string) => {
   return found ? found.icon : Globe;
 };
 
-// ─── Contact types (non-social) ───
+// ─── Contact types (phone, email, hours only — no WhatsApp) ───
 const contactTypes = [
   { value: "Telepon", label: "Telepon / Phone" },
-  { value: "WhatsApp", label: "WhatsApp" },
   { value: "Email", label: "Email" },
   { value: "Jam Operasional", label: "Jam Operasional / Hours" },
 ];
@@ -56,7 +55,6 @@ const contactTypes = [
 const getContactIcon = (type: string) => {
   switch (type) {
     case "Telepon": return Phone;
-    case "WhatsApp": return MessageCircle;
     case "Email": return Mail;
     case "Jam Operasional": return Clock;
     default: return Phone;
@@ -66,34 +64,34 @@ const getContactIcon = (type: string) => {
 // ─── Initial data ───
 const initialContacts: ContactInfo[] = [
   { id: "C001", type: "Telepon", label: "Telepon Kantor", value: "(021) 8888-1234", isActive: true },
-  { id: "C002", type: "WhatsApp", label: "WhatsApp Pendaftaran", value: "+62 812-3456-7890", isActive: true },
-  { id: "C003", type: "Email", label: "Email Resmi", value: "info@alhikmah.sch.id", isActive: true },
-  { id: "C004", type: "Jam Operasional", label: "Jam Kerja", value: "Senin–Sabtu: 07.00–16.00 WIB", isActive: true },
+  { id: "C002", type: "Email", label: "Email Resmi", value: "info@alhikmah.sch.id", isActive: true },
+  { id: "C003", type: "Jam Operasional", label: "Jam Kerja", value: "Senin–Sabtu: 07.00–16.00 WIB", isActive: true },
 ];
 
 const initialSocials: SocialMedia[] = [
   { id: "S001", platform: "Instagram", username: "@pesantren.alhikmah", url: "https://instagram.com/pesantren.alhikmah", isActive: true },
   { id: "S002", platform: "YouTube", username: "Pesantren Al-Hikmah Official", url: "https://youtube.com/@alhikmah", isActive: true },
   { id: "S003", platform: "Facebook", username: "Pesantren Al-Hikmah", url: "https://facebook.com/pesantren.alhikmah", isActive: false },
+  { id: "S004", platform: "WhatsApp", username: "+62 812-3456-7890", url: "https://wa.me/6281234567890", isActive: true },
 ];
 
 const Settings = () => {
   const { toast } = useToast();
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
-  // ─── Institution info state ───
+  // ─── Institution info state (no phone/email/whatsapp here) ───
   const [settings, setSettings] = useState({
     institutionName: "Pesantren Al-Hikmah",
     tagline: "Modern Islamic Boarding School",
     description: "Mencetak generasi Qur'ani yang berilmu, beramal, dan berakhlak mulia sejak 1985.",
     address: "Jl. Pondok Pesantren No. 123, Kec. Cikarang, Kabupaten Bekasi, Jawa Barat 17530",
-    phone: "(021) 8888-1234",
-    email: "info@alhikmah.sch.id",
-    whatsapp: "+62 812-3456-7890",
     microFee: "500",
     paymentGateway: "midtrans",
     language: "bilingual",
     timezone: "Asia/Jakarta",
   });
+
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
 
   // ─── Contacts state ───
   const [contacts, setContacts] = useState<ContactInfo[]>(initialContacts);
@@ -108,6 +106,16 @@ const Settings = () => {
   const [socialForm, setSocialForm] = useState({ platform: "Instagram", username: "", url: "", isActive: true });
 
   const update = (key: string, value: string) => setSettings((p) => ({ ...p, [key]: value }));
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setLogoPreview(reader.result as string);
+      reader.readAsDataURL(file);
+      toast({ title: "Logo berhasil diunggah / Logo uploaded" });
+    }
+  };
 
   const handleSave = () => {
     toast({ title: "Pengaturan berhasil disimpan / Settings saved successfully" });
@@ -167,7 +175,7 @@ const Settings = () => {
     toast({ title: "Media sosial dihapus / Social media deleted" });
   };
 
-  // ─── Derived data for footer preview ───
+  // ─── Derived data for footer preview (only active items) ───
   const activeContacts = contacts.filter(c => c.isActive);
   const activeSocials = socials.filter(s => s.isActive);
 
@@ -187,47 +195,65 @@ const Settings = () => {
 
         {/* ═══════════ GENERAL TAB ═══════════ */}
         <TabsContent value="general" className="space-y-6 mt-4">
-          {/* ── Institution Profile ── */}
+          {/* ── Institution Profile with Logo ── */}
           <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
             <h3 className="text-sm font-semibold">Profil Pesantren / Institution Profile</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Nama Pesantren / Institution Name</Label>
-                <Input value={settings.institutionName} onChange={(e) => update("institutionName", e.target.value)} />
+            <div className="flex flex-col sm:flex-row gap-5">
+              {/* Logo upload & preview */}
+              <div className="flex flex-col items-center gap-2">
+                <div
+                  className="relative h-28 w-28 rounded-xl border-2 border-dashed border-muted-foreground/30 bg-muted/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-colors"
+                  onClick={() => logoInputRef.current?.click()}
+                >
+                  {logoPreview ? (
+                    <img src={logoPreview} alt="Logo" className="h-full w-full object-contain p-1" />
+                  ) : (
+                    <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                      <ImageIcon className="h-8 w-8" />
+                      <span className="text-[10px]">Logo</span>
+                    </div>
+                  )}
+                </div>
+                <input
+                  ref={logoInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleLogoUpload}
+                />
+                <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => logoInputRef.current?.click()}>
+                  <Upload className="h-3 w-3 mr-1" /> Unggah Logo
+                </Button>
               </div>
-              <div className="space-y-2">
-                <Label>Tagline</Label>
-                <Input value={settings.tagline} onChange={(e) => update("tagline", e.target.value)} />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Deskripsi / Description</Label>
-              <Textarea value={settings.description} onChange={(e) => update("description", e.target.value)} rows={2} />
-            </div>
-            <div className="space-y-2">
-              <Label>Alamat / Address</Label>
-              <Textarea value={settings.address} onChange={(e) => update("address", e.target.value)} rows={2} />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label>Telepon / Phone</Label>
-                <Input value={settings.phone} onChange={(e) => update("phone", e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>Email</Label>
-                <Input value={settings.email} onChange={(e) => update("email", e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>WhatsApp</Label>
-                <Input value={settings.whatsapp} onChange={(e) => update("whatsapp", e.target.value)} />
+
+              {/* Profile fields */}
+              <div className="flex-1 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Nama Pesantren / Institution Name</Label>
+                    <Input value={settings.institutionName} onChange={(e) => update("institutionName", e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Tagline</Label>
+                    <Input value={settings.tagline} onChange={(e) => update("tagline", e.target.value)} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Deskripsi / Description</Label>
+                  <Textarea value={settings.description} onChange={(e) => update("description", e.target.value)} rows={2} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Alamat / Address</Label>
+                  <Textarea value={settings.address} onChange={(e) => update("address", e.target.value)} rows={2} />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* ── Additional Contacts ── */}
+          {/* ── Additional Contacts (Phone, Email, Hours) ── */}
           <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold">Kontak Tambahan / Additional Contacts</h3>
+              <h3 className="text-sm font-semibold">Kontak / Contacts</h3>
               <Dialog open={contactDialogOpen} onOpenChange={setContactDialogOpen}>
                 <DialogTrigger asChild>
                   <Button size="sm" onClick={handleAddContact}><Plus className="h-4 w-4 mr-1" /> Tambah / Add</Button>
@@ -282,27 +308,35 @@ const Settings = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {contacts.map((c) => (
-                  <TableRow key={c.id}>
-                    <TableCell><Badge variant="secondary" className="text-xs">{c.type}</Badge></TableCell>
-                    <TableCell className="font-medium">{c.label}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground max-w-[250px] truncate">{c.value}</TableCell>
-                    <TableCell>
-                      <Badge variant={c.isActive ? "default" : "outline"} className="text-xs">{c.isActive ? "Aktif" : "Nonaktif"}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditContact(c)}><Pencil className="h-3.5 w-3.5" /></Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteContact(c.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {contacts.map((c) => {
+                  const Icon = getContactIcon(c.type);
+                  return (
+                    <TableRow key={c.id}>
+                      <TableCell>
+                        <span className="flex items-center gap-2">
+                          <Icon className="h-4 w-4 text-muted-foreground" />
+                          <Badge variant="secondary" className="text-xs">{c.type}</Badge>
+                        </span>
+                      </TableCell>
+                      <TableCell className="font-medium">{c.label}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground max-w-[250px] truncate">{c.value}</TableCell>
+                      <TableCell>
+                        <Badge variant={c.isActive ? "default" : "outline"} className="text-xs">{c.isActive ? "Aktif" : "Nonaktif"}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditContact(c)}><Pencil className="h-3.5 w-3.5" /></Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteContact(c.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>
 
-          {/* ── Social Media ── */}
+          {/* ── Social Media (includes WhatsApp) ── */}
           <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold">Media Sosial / Social Media</h3>
@@ -409,9 +443,13 @@ const Settings = () => {
                     {/* Column 1: Brand */}
                     <div>
                       <div className="flex items-center gap-2 mb-3">
-                        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
-                          <span className="text-[9px] font-bold text-primary-foreground">B</span>
-                        </div>
+                        {logoPreview ? (
+                          <img src={logoPreview} alt="Logo" className="h-7 w-7 rounded-md object-contain" />
+                        ) : (
+                          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
+                            <span className="text-[9px] font-bold text-primary-foreground">B</span>
+                          </div>
+                        )}
                         <div>
                           <span className="text-xs font-bold text-foreground block leading-none">{settings.institutionName}</span>
                           <span className="text-[9px] text-muted-foreground">{settings.tagline}</span>
@@ -431,19 +469,10 @@ const Settings = () => {
                       </ul>
                     </div>
 
-                    {/* Column 3: Contact */}
+                    {/* Column 3: Contact (from contacts table only) */}
                     <div>
                       <h4 className="text-xs font-semibold text-foreground mb-3">Kontak</h4>
                       <ul className="space-y-1.5 text-[11px] text-muted-foreground">
-                        {settings.phone && (
-                          <li className="flex items-center gap-1.5"><Phone className="h-3 w-3 shrink-0" /> {settings.phone}</li>
-                        )}
-                        {settings.email && (
-                          <li className="flex items-center gap-1.5"><Mail className="h-3 w-3 shrink-0" /> {settings.email}</li>
-                        )}
-                        {settings.whatsapp && (
-                          <li className="flex items-center gap-1.5"><MessageCircle className="h-3 w-3 shrink-0" /> {settings.whatsapp}</li>
-                        )}
                         {settings.address && (
                           <li className="flex items-start gap-1.5"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /> {settings.address}</li>
                         )}
@@ -460,18 +489,16 @@ const Settings = () => {
                     <div>
                       <h4 className="text-xs font-semibold text-foreground mb-3">Media Sosial</h4>
                       {activeSocials.length > 0 ? (
-                        <div className="space-y-2">
-                          <div className="flex flex-wrap gap-2">
-                            {activeSocials.map(s => {
-                              const Icon = getSocialIcon(s.platform);
-                              return (
-                                <div key={s.id} className="flex items-center gap-1.5 text-[11px] text-muted-foreground bg-muted/50 rounded-md px-2 py-1">
-                                  <Icon className="h-3.5 w-3.5" />
-                                  <span>{s.username}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
+                        <div className="flex flex-wrap gap-2">
+                          {activeSocials.map(s => {
+                            const Icon = getSocialIcon(s.platform);
+                            return (
+                              <div key={s.id} className="flex items-center gap-1.5 text-[11px] text-muted-foreground bg-muted/50 rounded-md px-2 py-1">
+                                <Icon className="h-3.5 w-3.5" />
+                                <span>{s.username}</span>
+                              </div>
+                            );
+                          })}
                         </div>
                       ) : (
                         <p className="text-[11px] text-muted-foreground italic">Belum ada media sosial aktif</p>
