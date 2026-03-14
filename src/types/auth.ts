@@ -195,6 +195,7 @@ export const routePermissions: Record<string, Permission[]> = {
   '/content/news': ['content_news.view'],
   '/content/contact': ['content_contact.view'],
   '/content/messages': ['content_messages.view'],
+  '/content/programs': ['content_programs.view'],
   // Guardian portal routes
   '/portal': ['guardian_portal.view'],
   '/portal/child': ['child_profile.view'],

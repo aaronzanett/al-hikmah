@@ -235,6 +235,14 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/content/programs"
+              element={
+                <ProtectedRoute requiredPermissions={["content_programs.view"]}>
+                  <ManagePrograms />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           {/* Guardian portal routes */}
