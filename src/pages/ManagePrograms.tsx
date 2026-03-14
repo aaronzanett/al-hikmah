@@ -140,7 +140,6 @@ const ManagePrograms = () => {
   return (
     <CrudPage<ProgramItem>
       title="Program / Programs"
-      description="Kelola program unggulan yang ditampilkan di halaman depan website."
       columns={columns}
       formFields={formFields}
       initialData={initialData}
