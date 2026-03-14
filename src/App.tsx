@@ -38,6 +38,7 @@ import Users from "./pages/Users";
 import ManageGallery from "./pages/ManageGallery";
 import ManageNews from "./pages/ManageNews";
 import ContactMessages from "./pages/ContactMessages";
+import ManagePrograms from "./pages/ManagePrograms";
 
 // Guardian portal pages
 import GuardianPortal from "./pages/portal/GuardianPortal";
