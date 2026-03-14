@@ -140,11 +140,15 @@ const ManagePrograms = () => {
   return (
     <CrudPage<ProgramItem>
       title="Program / Programs"
+      subtitle="Kelola program unggulan yang ditampilkan di halaman depan website."
       columns={columns}
       formFields={formFields}
       initialData={initialData}
       filters={filters}
       searchKeys={["title", "category", "description"]}
+      searchPlaceholder="Cari program..."
+      idKey="id"
+      addLabel="Tambah Program"
     />
   );
 };
