@@ -9,6 +9,12 @@ const mockClasses = [
   { id: "CLS006", name: "XII-A", branch: "Pusat", level: "XII", year: "2024/2025", teacher: "Ust. Yusuf", students: "30" },
   { id: "CLS007", name: "XII-B", branch: "Pusat", level: "XII", year: "2024/2025", teacher: "Ustz. Aisyah", students: "29" },
   { id: "CLS008", name: "X-A", branch: "Cabang 1", level: "X", year: "2024/2025", teacher: "Ust. Bilal", students: "26" },
+  { id: "CLS009", name: "X-B", branch: "Cabang 1", level: "X", year: "2024/2025", teacher: "Ustz. Maryam", students: "24" },
+  { id: "CLS010", name: "XI-A", branch: "Cabang 1", level: "XI", year: "2024/2025", teacher: "Ust. Ridwan", students: "28" },
+  { id: "CLS011", name: "XI-A", branch: "Cabang 2", level: "XI", year: "2024/2025", teacher: "Ust. Salman", students: "26" },
+  { id: "CLS012", name: "XII-A", branch: "Cabang 1", level: "XII", year: "2024/2025", teacher: "Ustz. Hafsa", students: "22" },
+  { id: "CLS013", name: "X-A", branch: "Pusat", level: "X", year: "2023/2024", teacher: "Ust. Ahmad Syafii", students: "31" },
+  { id: "CLS014", name: "XII-A", branch: "Cabang 2", level: "XII", year: "2024/2025", teacher: "Ust. Zubair", students: "20" },
 ];
 
 const Classes = () => (
@@ -20,6 +26,11 @@ const Classes = () => (
     searchKeys={["name", "branch", "teacher"]}
     addLabel="Tambah Kelas"
     initialData={mockClasses}
+    filters={[
+      { key: "branch", label: "Cabang", options: [{ value: "Pusat", label: "Pusat" }, { value: "Cabang 1", label: "Cabang 1" }, { value: "Cabang 2", label: "Cabang 2" }] },
+      { key: "level", label: "Tingkat", options: [{ value: "X", label: "X" }, { value: "XI", label: "XI" }, { value: "XII", label: "XII" }] },
+      { key: "year", label: "Tahun Ajaran", options: [{ value: "2024/2025", label: "2024/2025" }, { value: "2023/2024", label: "2023/2024" }] },
+    ]}
     columns={[
       { key: "name", label: "Nama Kelas / Class", className: "font-medium" },
       { key: "branch", label: "Cabang / Branch" },

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Search, ChevronLeft, ChevronRight, Eye, Trash2, Mail, MailOpen, Calendar, User } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Eye, Trash2, Mail, MailOpen, Calendar, User, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -12,6 +12,9 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +36,12 @@ const initialMessages: Message[] = [
   { id: "M004", name: "Fatimah Zahra", email: "fatimah.z@email.com", phone: "089012345678", subject: "Beasiswa Santri", message: "Assalamu'alaikum, apakah pesantren menyediakan program beasiswa untuk santri kurang mampu? Anak saya berprestasi di sekolah dan ingin melanjutkan pendidikan di pesantren. Mohon informasinya.", date: "2026-03-05", status: "Dibaca" },
   { id: "M005", name: "Usman Hakim", email: "usman.h@email.com", phone: "081345678901", subject: "Program Tahfidz", message: "Assalamu'alaikum, saya ingin mengetahui lebih detail tentang program tahfidz Al-Qur'an di pesantren. Berapa lama waktu yang dibutuhkan untuk menyelesaikan hafalan 30 juz? Syukron.", date: "2026-03-04", status: "Dibaca" },
   { id: "M006", name: "Aisyah Putri", email: "aisyah@email.com", phone: "082456789012", subject: "Fasilitas Asrama Putri", message: "Assalamu'alaikum, saya ingin bertanya mengenai fasilitas asrama putri. Apakah sudah tersedia asrama baru yang ber-AC? Mohon informasinya. Terima kasih.", date: "2026-03-03", status: "Belum Dibaca" },
+  { id: "M007", name: "Bambang Sutrisno", email: "bambang.s@email.com", phone: "081567890123", subject: "Informasi Pendaftaran", message: "Assalamu'alaikum, saya ingin mendaftarkan anak saya ke pesantren. Kapan periode pendaftaran gelombang kedua dibuka? Terima kasih.", date: "2026-03-02", status: "Belum Dibaca" },
+  { id: "M008", name: "Dewi Rahmawati", email: "dewi.r@email.com", phone: "082678901234", subject: "Kerja Sama Pendidikan", message: "Assalamu'alaikum, kami dari penerbit buku ingin menawarkan kerjasama pengadaan buku kurikulum terbaru. Mohon bisa dijadwalkan pertemuan.", date: "2026-03-01", status: "Dibaca" },
+  { id: "M009", name: "Lukman Hakim", email: "lukman@email.com", phone: "083789012345", subject: "Program Tahfidz", message: "Assalamu'alaikum, anak saya sudah hafal 10 juz. Apakah ada program akselerasi tahfidz di pesantren ini?", date: "2026-02-28", status: "Dibaca" },
+  { id: "M010", name: "Nurjanah", email: "nurjanah@email.com", phone: "084890123456", subject: "Beasiswa Santri", message: "Assalamu'alaikum, kami dari daerah terpencil. Apakah ada beasiswa penuh untuk santri yatim? Mohon informasinya.", date: "2026-02-27", status: "Belum Dibaca" },
+  { id: "M011", name: "Rudi Hartono", email: "rudi.h@email.com", phone: "085901234567", subject: "Kunjungan Pesantren", message: "Assalamu'alaikum, rombongan dari masjid kami ingin berkunjung dan study banding. Bisa untuk 20 orang?", date: "2026-02-25", status: "Dibaca" },
+  { id: "M012", name: "Sari Mulyani", email: "sari.m@email.com", phone: "086012345678", subject: "Fasilitas Asrama Putri", message: "Assalamu'alaikum, apakah ada fasilitas laundry dan kantin khusus di asrama putri? Terima kasih.", date: "2026-02-23", status: "Dibaca" },
 ];
 
 const PAGE_SIZE = 10;
@@ -42,21 +51,34 @@ export default function ContactMessages() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [subjectFilter, setSubjectFilter] = useState<string>("all");
   const [viewMessage, setViewMessage] = useState<Message | null>(null);
   const [deleteMessage, setDeleteMessage] = useState<Message | null>(null);
 
   const filtered = useMemo(() => {
-    if (!search) return messages;
-    const q = search.toLowerCase();
-    return messages.filter((m) =>
-      m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q) || m.subject.toLowerCase().includes(q)
-    );
-  }, [messages, search]);
+    let result = messages;
+    if (statusFilter !== "all") {
+      result = result.filter((m) => m.status === statusFilter);
+    }
+    if (subjectFilter !== "all") {
+      result = result.filter((m) => m.subject === subjectFilter);
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter((m) =>
+        m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q) || m.subject.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [messages, search, statusFilter, subjectFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const unreadCount = messages.filter(m => m.status === "Belum Dibaca").length;
+
+  const subjects = useMemo(() => [...new Set(messages.map(m => m.subject))].sort(), [messages]);
 
   const handleView = (msg: Message) => {
     setViewMessage(msg);
@@ -87,7 +109,7 @@ export default function ContactMessages() {
         </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+      <div className="flex flex-col gap-3 mb-4">
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
@@ -97,6 +119,35 @@ export default function ContactMessages() {
             placeholder="Cari pesan... / Search messages..."
             className="w-full rounded-lg border bg-card pl-9 pr-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
           />
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+            <SelectTrigger className="h-8 w-auto min-w-[120px] text-xs">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Status</SelectItem>
+              <SelectItem value="Belum Dibaca">Belum Dibaca</SelectItem>
+              <SelectItem value="Dibaca">Dibaca</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={subjectFilter} onValueChange={(v) => { setSubjectFilter(v); setPage(1); }}>
+            <SelectTrigger className="h-8 w-auto min-w-[140px] text-xs">
+              <SelectValue placeholder="Subjek" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Subjek</SelectItem>
+              {subjects.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {(statusFilter !== "all" || subjectFilter !== "all") && (
+            <Button variant="ghost" size="sm" className="h-8 text-xs text-muted-foreground" onClick={() => { setStatusFilter("all"); setSubjectFilter("all"); setPage(1); }}>
+              Reset Filter
+            </Button>
+          )}
         </div>
       </div>
 

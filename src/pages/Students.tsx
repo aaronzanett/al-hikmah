@@ -10,6 +10,13 @@ const mockStudents = [
   { id: "2024006", nis: "2024006", name: "Khadijah Nur", gender: "P", branch: "Cabang 1", class: "X-A", room: "Asrama 4 - K.01", year: "2024", status: "Aktif" },
   { id: "2022007", nis: "2022007", name: "Ibrahim Malik", gender: "L", branch: "Pusat", class: "XII-B", room: "Asrama 1 - K.06", year: "2022", status: "Alumni" },
   { id: "2024008", nis: "2024008", name: "Aisyah Putri", gender: "P", branch: "Cabang 2", class: "X-C", room: "Asrama 4 - K.03", year: "2024", status: "Aktif" },
+  { id: "2024009", nis: "2024009", name: "Zainab Amira", gender: "P", branch: "Pusat", class: "XI-A", room: "Asrama 2 - K.02", year: "2023", status: "Aktif" },
+  { id: "2024010", nis: "2024010", name: "Yusuf Rahman", gender: "L", branch: "Pusat", class: "XII-A", room: "Asrama 1 - K.07", year: "2022", status: "Aktif" },
+  { id: "2024011", nis: "2024011", name: "Halimah Sadia", gender: "P", branch: "Cabang 1", class: "X-B", room: "Asrama 3 - K.05", year: "2024", status: "Aktif" },
+  { id: "2024012", nis: "2024012", name: "Bilal Hakim", gender: "L", branch: "Cabang 2", class: "XI-B", room: "Asrama 4 - K.02", year: "2023", status: "Aktif" },
+  { id: "2023013", nis: "2023013", name: "Ruqayyah Hasan", gender: "P", branch: "Pusat", class: "XII-A", room: "Asrama 2 - K.06", year: "2022", status: "Alumni" },
+  { id: "2024014", nis: "2024014", name: "Hamzah Ridwan", gender: "L", branch: "Cabang 1", class: "X-C", room: "Asrama 3 - K.04", year: "2024", status: "Aktif" },
+  { id: "2024015", nis: "2024015", name: "Maryam Azzahra", gender: "P", branch: "Pusat", class: "XI-A", room: "Asrama 2 - K.03", year: "2023", status: "Cuti" },
 ];
 
 const statusVariant = (status: string) => {
@@ -30,6 +37,11 @@ const Students = () => (
     searchKeys={["name", "nis", "branch", "class"]}
     addLabel="Tambah Santri"
     initialData={mockStudents}
+    filters={[
+      { key: "gender", label: "Gender", options: [{ value: "L", label: "Laki-laki" }, { value: "P", label: "Perempuan" }] },
+      { key: "branch", label: "Cabang", options: [{ value: "Pusat", label: "Pusat" }, { value: "Cabang 1", label: "Cabang 1" }, { value: "Cabang 2", label: "Cabang 2" }] },
+      { key: "status", label: "Status", options: [{ value: "Aktif", label: "Aktif" }, { value: "Cuti", label: "Cuti" }, { value: "Alumni", label: "Alumni" }] },
+    ]}
     columns={[
       { key: "nis", label: "NIS", className: "font-mono text-xs" },
       { key: "name", label: "Nama / Name", className: "font-medium" },

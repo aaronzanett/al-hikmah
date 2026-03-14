@@ -17,6 +17,13 @@ const initialData: UserAccount[] = [
   { id: "U004", name: "Dewi Lestari", email: "dewi@boardingcore.id", role: "Staff Akademik", branch: "Cabang Pusat", status: "Aktif", lastLogin: "2026-03-08" },
   { id: "U005", name: "Rizki Ramadhan", email: "rizki@boardingcore.id", role: "Musyrif Asrama", branch: "Cabang Timur", status: "Aktif", lastLogin: "2026-03-07" },
   { id: "U006", name: "Fatimah Zahra", email: "fatimah@boardingcore.id", role: "Admin Cabang", branch: "Cabang Timur", status: "Nonaktif", lastLogin: "2026-02-15" },
+  { id: "U007", name: "Hasan Basri", email: "hasan@boardingcore.id", role: "Staff Akademik", branch: "Cabang Barat", status: "Aktif", lastLogin: "2026-03-06" },
+  { id: "U008", name: "Aisyah Rahmawati", email: "aisyah@boardingcore.id", role: "Bendahara", branch: "Cabang Timur", status: "Aktif", lastLogin: "2026-03-05" },
+  { id: "U009", name: "Umar Faruq", email: "umar@boardingcore.id", role: "Musyrif Asrama", branch: "Cabang Pusat", status: "Aktif", lastLogin: "2026-03-04" },
+  { id: "U010", name: "Khadijah Amalia", email: "khadijah@boardingcore.id", role: "Admin Cabang", branch: "Cabang Barat", status: "Aktif", lastLogin: "2026-03-03" },
+  { id: "U011", name: "Yusuf Abdillah", email: "yusuf@boardingcore.id", role: "Musyrif Asrama", branch: "Cabang Barat", status: "Nonaktif", lastLogin: "2026-01-20" },
+  { id: "U012", name: "Maryam Salwa", email: "maryam@boardingcore.id", role: "Staff Akademik", branch: "Cabang Timur", status: "Aktif", lastLogin: "2026-03-02" },
+  { id: "U013", name: "Ibrahim Hakim", email: "ibrahim@boardingcore.id", role: "Bendahara", branch: "Cabang Barat", status: "Aktif", lastLogin: "2026-03-01" },
 ];
 
 const columns: CrudColumn<UserAccount>[] = [
@@ -73,6 +80,10 @@ export default function Users() {
       searchKeys={["name", "email", "role", "branch"]}
       idKey="id"
       addLabel="Tambah Pengguna / Add User"
+      filters={[
+        { key: "role", label: "Peran", options: [{ value: "Super Admin", label: "Super Admin" }, { value: "Admin Cabang", label: "Admin Cabang" }, { value: "Bendahara", label: "Bendahara" }, { value: "Staff Akademik", label: "Staff Akademik" }, { value: "Musyrif Asrama", label: "Musyrif Asrama" }] },
+        { key: "status", label: "Status", options: [{ value: "Aktif", label: "Aktif" }, { value: "Nonaktif", label: "Nonaktif" }] },
+      ]}
     />
   );
 }
