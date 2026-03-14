@@ -20,6 +20,7 @@ import {
   Newspaper,
   Phone,
   MessageSquare,
+  Layers,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -82,6 +83,7 @@ const financeItems: MenuItem[] = [
 ];
 
 const contentItems: MenuItem[] = [
+  { title: "Program / Programs", url: "/content/programs", icon: Layers, permission: "content_programs.view" },
   { title: "Galeri / Gallery", url: "/content/gallery", icon: Image, permission: "content_gallery.view" },
   { title: "Berita / News", url: "/content/news", icon: Newspaper, permission: "content_news.view" },
   { title: "Pesan Masuk / Messages", url: "/content/messages", icon: MessageSquare, permission: "content_messages.view" },
