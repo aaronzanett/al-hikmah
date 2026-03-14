@@ -61,6 +61,12 @@ export interface CrudFormField {
   placeholder?: string;
 }
 
+export interface CrudFilter {
+  key: string;
+  label: string;
+  options: { value: string; label: string }[];
+}
+
 interface CrudPageProps<T extends Record<string, any>> {
   title: string;
   subtitle: string;
@@ -72,6 +78,7 @@ interface CrudPageProps<T extends Record<string, any>> {
   idKey: keyof T & string;
   addLabel: string;
   pageSize?: number;
+  filters?: CrudFilter[];
 }
 
 export function CrudPage<T extends Record<string, any>>({
