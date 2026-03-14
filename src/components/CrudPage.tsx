@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Search, Plus, MoreHorizontal, ChevronLeft, ChevronRight, Pencil, Trash2 } from "lucide-react";
+import { Search, Plus, MoreHorizontal, ChevronLeft, ChevronRight, Pencil, Trash2, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
