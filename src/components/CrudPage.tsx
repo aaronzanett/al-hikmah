@@ -99,7 +99,6 @@ export function CrudPage<T extends Record<string, any>>({
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
-  const [page, setPage] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editItem, setEditItem] = useState<T | null>(null);
@@ -107,12 +106,22 @@ export function CrudPage<T extends Record<string, any>>({
   const [formData, setFormData] = useState<Record<string, any>>({});
 
   const filtered = useMemo(() => {
-    if (!search) return data;
-    const q = search.toLowerCase();
-    return data.filter((item) =>
-      searchKeys.some((key) => String(item[key]).toLowerCase().includes(q))
-    );
-  }, [data, search, searchKeys]);
+    let result = data;
+    // Apply filters
+    for (const [key, value] of Object.entries(activeFilters)) {
+      if (value && value !== "all") {
+        result = result.filter((item) => String(item[key]) === value);
+      }
+    }
+    // Apply search
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter((item) =>
+        searchKeys.some((key) => String(item[key]).toLowerCase().includes(q))
+      );
+    }
+    return result;
+  }, [data, search, searchKeys, activeFilters]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
