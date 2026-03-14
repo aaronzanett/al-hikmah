@@ -100,6 +100,7 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     'content_news.view', 'content_news.manage',
     'content_contact.view', 'content_contact.manage',
     'content_messages.view', 'content_messages.manage',
+    'content_programs.view', 'content_programs.manage',
   ],
   
   branch_admin: [
