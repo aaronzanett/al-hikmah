@@ -227,21 +227,58 @@ export function CrudPage<T extends Record<string, any>>({
         <p className="text-sm text-muted-foreground">{subtitle}</p>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-        <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            placeholder={searchPlaceholder}
-            className="w-full rounded-lg border bg-card pl-9 pr-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-          />
+      <div className="flex flex-col gap-3 mb-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              placeholder={searchPlaceholder}
+              className="w-full rounded-lg border bg-card pl-9 pr-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+          <Button size="sm" onClick={openAdd}>
+            <Plus className="h-4 w-4 mr-1" />
+            {addLabel}
+          </Button>
         </div>
-        <Button size="sm" onClick={openAdd}>
-          <Plus className="h-4 w-4 mr-1" />
-          {addLabel}
-        </Button>
+        {filters.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            {filters.map((filter) => (
+              <Select
+                key={filter.key}
+                value={activeFilters[filter.key] || "all"}
+                onValueChange={(v) => {
+                  setActiveFilters((prev) => ({ ...prev, [filter.key]: v }));
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="h-8 w-auto min-w-[120px] text-xs">
+                  <SelectValue placeholder={filter.label} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua {filter.label}</SelectItem>
+                  {filter.options.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ))}
+            {Object.values(activeFilters).some((v) => v && v !== "all") && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs text-muted-foreground"
+                onClick={() => { setActiveFilters({}); setPage(1); }}
+              >
+                Reset Filter
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="bg-card border rounded-xl shadow-card overflow-hidden">
