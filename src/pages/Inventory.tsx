@@ -10,9 +10,19 @@ const mockInventory = [
   { id: "INV006", code: "INV-006", name: "Kipas Angin", category: "Elektronik", quantity: "30", condition: "Sebagian Rusak", location: "Asrama 1-4" },
   { id: "INV007", code: "INV-007", name: "Proyektor", category: "Elektronik", quantity: "5", condition: "Baik", location: "Ruang Kelas" },
   { id: "INV008", code: "INV-008", name: "Sajadah", category: "Ibadah", quantity: "100", condition: "Baik", location: "Musholla" },
+  { id: "INV009", code: "INV-009", name: "Papan Tulis", category: "Furniture", quantity: "20", condition: "Baik", location: "Ruang Kelas" },
+  { id: "INV010", code: "INV-010", name: "Kursi Lipat", category: "Furniture", quantity: "60", condition: "Sebagian Rusak", location: "Aula" },
+  { id: "INV011", code: "INV-011", name: "Dispenser", category: "Elektronik", quantity: "12", condition: "Baik", location: "Asrama 1-4" },
+  { id: "INV012", code: "INV-012", name: "Mukena", category: "Ibadah", quantity: "50", condition: "Baik", location: "Musholla" },
+  { id: "INV013", code: "INV-013", name: "Buku Pelajaran Umum", category: "Buku", quantity: "300", condition: "Baik", location: "Perpustakaan" },
+  { id: "INV014", code: "INV-014", name: "Sound System", category: "Elektronik", quantity: "3", condition: "Rusak", location: "Aula" },
 ];
 
-const conditionColor = (c: string) => c === "Baik" ? "default" : "secondary";
+const conditionColor = (c: string) => {
+  if (c === "Baik") return "default";
+  if (c === "Sebagian Rusak") return "secondary";
+  return "destructive";
+};
 
 const Inventory = () => (
   <CrudPage
@@ -23,6 +33,10 @@ const Inventory = () => (
     searchKeys={["name", "code", "category", "location"]}
     addLabel="Tambah Item"
     initialData={mockInventory}
+    filters={[
+      { key: "category", label: "Kategori", options: [{ value: "Furniture", label: "Furniture" }, { value: "Buku", label: "Buku" }, { value: "Elektronik", label: "Elektronik" }, { value: "Ibadah", label: "Ibadah" }] },
+      { key: "condition", label: "Kondisi", options: [{ value: "Baik", label: "Baik" }, { value: "Sebagian Rusak", label: "Sebagian Rusak" }, { value: "Rusak", label: "Rusak" }] },
+    ]}
     columns={[
       { key: "code", label: "Kode / Code", className: "font-mono text-xs" },
       { key: "name", label: "Nama / Name", className: "font-medium" },

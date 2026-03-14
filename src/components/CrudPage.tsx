@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Search, Plus, MoreHorizontal, ChevronLeft, ChevronRight, Pencil, Trash2 } from "lucide-react";
+import { Search, Plus, MoreHorizontal, ChevronLeft, ChevronRight, Pencil, Trash2, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -61,6 +61,12 @@ export interface CrudFormField {
   placeholder?: string;
 }
 
+export interface CrudFilter {
+  key: string;
+  label: string;
+  options: { value: string; label: string }[];
+}
+
 interface CrudPageProps<T extends Record<string, any>> {
   title: string;
   subtitle: string;
@@ -72,6 +78,7 @@ interface CrudPageProps<T extends Record<string, any>> {
   idKey: keyof T & string;
   addLabel: string;
   pageSize?: number;
+  filters?: CrudFilter[];
 }
 
 export function CrudPage<T extends Record<string, any>>({
@@ -85,11 +92,13 @@ export function CrudPage<T extends Record<string, any>>({
   idKey,
   addLabel,
   pageSize = 10,
+  filters = [],
 }: CrudPageProps<T>) {
   const { toast } = useToast();
   const [data, setData] = useState<T[]>(initialData);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editItem, setEditItem] = useState<T | null>(null);
@@ -97,12 +106,22 @@ export function CrudPage<T extends Record<string, any>>({
   const [formData, setFormData] = useState<Record<string, any>>({});
 
   const filtered = useMemo(() => {
-    if (!search) return data;
-    const q = search.toLowerCase();
-    return data.filter((item) =>
-      searchKeys.some((key) => String(item[key]).toLowerCase().includes(q))
-    );
-  }, [data, search, searchKeys]);
+    let result = data;
+    // Apply filters
+    for (const [key, value] of Object.entries(activeFilters)) {
+      if (value && value !== "all") {
+        result = result.filter((item) => String(item[key]) === value);
+      }
+    }
+    // Apply search
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter((item) =>
+        searchKeys.some((key) => String(item[key]).toLowerCase().includes(q))
+      );
+    }
+    return result;
+  }, [data, search, searchKeys, activeFilters]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
@@ -208,21 +227,58 @@ export function CrudPage<T extends Record<string, any>>({
         <p className="text-sm text-muted-foreground">{subtitle}</p>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-        <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            placeholder={searchPlaceholder}
-            className="w-full rounded-lg border bg-card pl-9 pr-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-          />
+      <div className="flex flex-col gap-3 mb-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              placeholder={searchPlaceholder}
+              className="w-full rounded-lg border bg-card pl-9 pr-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+          <Button size="sm" onClick={openAdd}>
+            <Plus className="h-4 w-4 mr-1" />
+            {addLabel}
+          </Button>
         </div>
-        <Button size="sm" onClick={openAdd}>
-          <Plus className="h-4 w-4 mr-1" />
-          {addLabel}
-        </Button>
+        {filters.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            {filters.map((filter) => (
+              <Select
+                key={filter.key}
+                value={activeFilters[filter.key] || "all"}
+                onValueChange={(v) => {
+                  setActiveFilters((prev) => ({ ...prev, [filter.key]: v }));
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="h-8 w-auto min-w-[120px] text-xs">
+                  <SelectValue placeholder={filter.label} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua {filter.label}</SelectItem>
+                  {filter.options.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ))}
+            {Object.values(activeFilters).some((v) => v && v !== "all") && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs text-muted-foreground"
+                onClick={() => { setActiveFilters({}); setPage(1); }}
+              >
+                Reset Filter
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="bg-card border rounded-xl shadow-card overflow-hidden">

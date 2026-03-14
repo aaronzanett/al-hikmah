@@ -12,6 +12,11 @@ const mockBills = [
   { id: "BLL008", student: "Aisyah Putri", category: "SPP", amount: "600000", discount: "0", total: "600000", dueDate: "2026-03-15", status: "Lunas" },
   { id: "BLL009", student: "Ahmad Fauzi", category: "Makan", amount: "300000", discount: "0", total: "300000", dueDate: "2026-03-10", status: "Lunas" },
   { id: "BLL010", student: "Siti Aisyah", category: "Buku", amount: "150000", discount: "0", total: "150000", dueDate: "2026-03-20", status: "Belum Bayar" },
+  { id: "BLL011", student: "Zainab Amira", category: "SPP", amount: "600000", discount: "0", total: "600000", dueDate: "2026-04-15", status: "Belum Bayar" },
+  { id: "BLL012", student: "Yusuf Rahman", category: "Makan", amount: "300000", discount: "0", total: "300000", dueDate: "2026-04-10", status: "Lunas" },
+  { id: "BLL013", student: "Halimah Sadia", category: "SPP", amount: "600000", discount: "75000", total: "525000", dueDate: "2026-04-15", status: "Lunas" },
+  { id: "BLL014", student: "Bilal Hakim", category: "Lainnya", amount: "200000", discount: "0", total: "200000", dueDate: "2026-03-25", status: "Jatuh Tempo" },
+  { id: "BLL015", student: "Hamzah Ridwan", category: "SPP", amount: "600000", discount: "0", total: "600000", dueDate: "2026-04-15", status: "Belum Bayar" },
 ];
 
 const statusColor = (s: string) => {
@@ -34,6 +39,10 @@ const Bills = () => (
     searchKeys={["student", "category", "status"]}
     addLabel="Tambah Tagihan"
     initialData={mockBills}
+    filters={[
+      { key: "category", label: "Kategori", options: [{ value: "SPP", label: "SPP" }, { value: "Makan", label: "Makan" }, { value: "Buku", label: "Buku" }, { value: "Lainnya", label: "Lainnya" }] },
+      { key: "status", label: "Status", options: [{ value: "Lunas", label: "Lunas" }, { value: "Belum Bayar", label: "Belum Bayar" }, { value: "Jatuh Tempo", label: "Jatuh Tempo" }] },
+    ]}
     columns={[
       { key: "student", label: "Santri / Student", className: "font-medium" },
       { key: "category", label: "Kategori / Category" },

@@ -19,6 +19,10 @@ const initialData: NewsItem[] = [
   { id: "N006", title: "Peresmian Gedung Asrama Baru Putri", category: "Pengumuman", excerpt: "Pesantren meresmikan gedung asrama baru putri dengan kapasitas 200 santri.", date: "2026-02-10", author: "Admin", status: "Terbit" },
   { id: "N007", title: "Bakti Sosial di Desa Tertinggal", category: "Kegiatan", excerpt: "Ratusan santri mengikuti program bakti sosial dan mengajar di desa-desa tertinggal.", date: "2026-02-05", author: "Admin", status: "Draft" },
   { id: "N008", title: "Wisuda 50 Hafidz dan Hafidzah Baru", category: "Prestasi", excerpt: "Pesantren menggelar wisuda tahfidz untuk 50 santri yang berhasil menghafal 30 juz.", date: "2026-02-01", author: "Admin", status: "Terbit" },
+  { id: "N009", title: "Pelatihan Kepemimpinan Santri Senior", category: "Kegiatan", excerpt: "Program leadership camp untuk santri kelas XII sebagai bekal di masyarakat.", date: "2026-01-28", author: "Admin", status: "Terbit" },
+  { id: "N010", title: "Kerjasama dengan Universitas Al-Azhar", category: "Berita", excerpt: "Penandatanganan MoU dengan Universitas Al-Azhar Kairo untuk program beasiswa.", date: "2026-01-25", author: "Admin", status: "Terbit" },
+  { id: "N011", title: "Jadwal Ujian Semester Genap 2025/2026", category: "Pengumuman", excerpt: "Informasi jadwal ujian akhir semester genap tahun ajaran 2025/2026.", date: "2026-01-20", author: "Staff", status: "Draft" },
+  { id: "N012", title: "Festival Seni Islami Antar Pesantren", category: "Kegiatan", excerpt: "Pesantren menjadi tuan rumah festival seni islami se-Jawa Barat.", date: "2026-01-15", author: "Admin", status: "Terbit" },
 ];
 
 const columns: CrudColumn<NewsItem>[] = [
@@ -71,6 +75,10 @@ export default function ManageNews() {
       searchKeys={["title", "category", "author"]}
       idKey="id"
       addLabel="Tambah Berita / Add News"
+      filters={[
+        { key: "category", label: "Kategori", options: [{ value: "Prestasi", label: "Prestasi" }, { value: "Pengumuman", label: "Pengumuman" }, { value: "Kegiatan", label: "Kegiatan" }, { value: "Berita", label: "Berita" }] },
+        { key: "status", label: "Status", options: [{ value: "Terbit", label: "Terbit" }, { value: "Draft", label: "Draft" }] },
+      ]}
     />
   );
 }

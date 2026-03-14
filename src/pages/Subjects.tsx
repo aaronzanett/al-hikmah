@@ -10,6 +10,11 @@ const mockSubjects = [
   { id: "SBJ007", code: "BIN", name: "Bahasa Indonesia", category: "Umum", hoursPerWeek: "3" },
   { id: "SBJ008", code: "BAR", name: "Bahasa Arab", category: "Bahasa", hoursPerWeek: "4" },
   { id: "SBJ009", code: "BIG", name: "Bahasa Inggris", category: "Bahasa", hoursPerWeek: "3" },
+  { id: "SBJ010", code: "SKI", name: "Sejarah Kebudayaan Islam", category: "Agama", hoursPerWeek: "2" },
+  { id: "SBJ011", code: "IPS", name: "Ilmu Pengetahuan Sosial", category: "Umum", hoursPerWeek: "3" },
+  { id: "SBJ012", code: "PKN", name: "Pendidikan Kewarganegaraan", category: "Umum", hoursPerWeek: "2" },
+  { id: "SBJ013", code: "TIK", name: "Teknologi Informasi", category: "Umum", hoursPerWeek: "2" },
+  { id: "SBJ014", code: "NHW", name: "Nahwu Shorof", category: "Bahasa", hoursPerWeek: "4" },
 ];
 
 const Subjects = () => (
@@ -21,6 +26,9 @@ const Subjects = () => (
     searchKeys={["name", "code", "category"]}
     addLabel="Tambah Mapel"
     initialData={mockSubjects}
+    filters={[
+      { key: "category", label: "Kategori", options: [{ value: "Agama", label: "Agama" }, { value: "Umum", label: "Umum" }, { value: "Bahasa", label: "Bahasa" }] },
+    ]}
     columns={[
       { key: "code", label: "Kode / Code", className: "font-mono text-xs" },
       { key: "name", label: "Nama / Name", className: "font-medium" },

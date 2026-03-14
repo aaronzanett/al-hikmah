@@ -17,6 +17,11 @@ const initialData: ContactInfo[] = [
   { id: "C005", type: "Jam Operasional", label: "Jam Kerja", value: "Senin–Sabtu: 07.00–16.00 WIB", icon: "Clock", isActive: "Aktif" },
   { id: "C006", type: "Media Sosial", label: "Instagram", value: "@pesantren.alhikmah", icon: "Globe", isActive: "Aktif" },
   { id: "C007", type: "Media Sosial", label: "YouTube", value: "Pesantren Al-Hikmah Official", icon: "Globe", isActive: "Nonaktif" },
+  { id: "C008", type: "Telepon", label: "Telepon Asrama Putra", value: "(021) 8888-5678", icon: "Phone", isActive: "Aktif" },
+  { id: "C009", type: "WhatsApp", label: "WhatsApp Informasi Umum", value: "+62 813-4567-8901", icon: "Phone", isActive: "Aktif" },
+  { id: "C010", type: "Email", label: "Email Akademik", value: "akademik@alhikmah.sch.id", icon: "Mail", isActive: "Aktif" },
+  { id: "C011", type: "Media Sosial", label: "Facebook", value: "Pesantren Al-Hikmah", icon: "Globe", isActive: "Aktif" },
+  { id: "C012", type: "Media Sosial", label: "TikTok", value: "@alhikmah.pesantren", icon: "Globe", isActive: "Nonaktif" },
 ];
 
 const columns: CrudColumn<ContactInfo>[] = [
@@ -68,6 +73,10 @@ export default function ManageContact() {
       searchKeys={["type", "label", "value"]}
       idKey="id"
       addLabel="Tambah Kontak / Add Contact"
+      filters={[
+        { key: "type", label: "Tipe", options: [{ value: "Alamat", label: "Alamat" }, { value: "Telepon", label: "Telepon" }, { value: "WhatsApp", label: "WhatsApp" }, { value: "Email", label: "Email" }, { value: "Jam Operasional", label: "Jam Operasional" }, { value: "Media Sosial", label: "Media Sosial" }] },
+        { key: "isActive", label: "Status", options: [{ value: "Aktif", label: "Aktif" }, { value: "Nonaktif", label: "Nonaktif" }] },
+      ]}
     />
   );
 }

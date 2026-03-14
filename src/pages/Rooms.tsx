@@ -11,6 +11,11 @@ const mockRooms = [
   { id: "RM008", name: "Asrama 3 - K.02", branch: "Cabang 1", floor: "1", capacity: "8", occupied: "6" },
   { id: "RM009", name: "Asrama 4 - K.01", branch: "Cabang 2", floor: "1", capacity: "6", occupied: "5" },
   { id: "RM010", name: "Asrama 4 - K.03", branch: "Cabang 2", floor: "1", capacity: "6", occupied: "4" },
+  { id: "RM011", name: "Asrama 1 - K.05", branch: "Pusat", floor: "2", capacity: "8", occupied: "8" },
+  { id: "RM012", name: "Asrama 1 - K.06", branch: "Pusat", floor: "2", capacity: "8", occupied: "6" },
+  { id: "RM013", name: "Asrama 2 - K.02", branch: "Pusat", floor: "1", capacity: "6", occupied: "5" },
+  { id: "RM014", name: "Asrama 3 - K.03", branch: "Cabang 1", floor: "2", capacity: "8", occupied: "7" },
+  { id: "RM015", name: "Asrama 4 - K.02", branch: "Cabang 2", floor: "1", capacity: "6", occupied: "3" },
 ];
 
 const Rooms = () => (
@@ -22,6 +27,10 @@ const Rooms = () => (
     searchKeys={["name", "branch"]}
     addLabel="Tambah Kamar"
     initialData={mockRooms}
+    filters={[
+      { key: "branch", label: "Cabang", options: [{ value: "Pusat", label: "Pusat" }, { value: "Cabang 1", label: "Cabang 1" }, { value: "Cabang 2", label: "Cabang 2" }] },
+      { key: "floor", label: "Lantai", options: [{ value: "1", label: "Lantai 1" }, { value: "2", label: "Lantai 2" }] },
+    ]}
     columns={[
       { key: "name", label: "Nama Kamar / Room", className: "font-medium" },
       { key: "branch", label: "Cabang / Branch" },

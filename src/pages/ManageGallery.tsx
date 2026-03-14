@@ -19,6 +19,10 @@ const initialData: GalleryItem[] = [
   { id: "G006", title: "Kampus Pesantren", category: "Fasilitas", description: "Panorama kampus Pesantren Al-Hikmah yang asri dan hijau.", imageUrl: "/assets/hero-pesantren.jpg", status: "Nonaktif", createdAt: "2026-02-20" },
   { id: "G007", title: "Laboratorium Komputer", category: "Fasilitas", description: "Lab komputer modern untuk mendukung program keterampilan digital santri.", imageUrl: "/assets/gallery-classroom.jpg", status: "Aktif", createdAt: "2026-02-18" },
   { id: "G008", title: "Wisuda Tahfidz", category: "Kegiatan", description: "Acara wisuda tahfidz tahunan untuk santri yang menyelesaikan hafalan 30 juz.", imageUrl: "/assets/gallery-quran.jpg", status: "Aktif", createdAt: "2026-02-15" },
+  { id: "G009", title: "Perpustakaan Pesantren", category: "Fasilitas", description: "Perpustakaan lengkap dengan koleksi kitab kuning dan buku modern.", imageUrl: "/assets/gallery-classroom.jpg", status: "Aktif", createdAt: "2026-02-12" },
+  { id: "G010", title: "Lomba Pidato", category: "Kegiatan", description: "Lomba pidato 3 bahasa dalam peringatan hari santri nasional.", imageUrl: "/assets/gallery-sports.jpg", status: "Aktif", createdAt: "2026-02-10" },
+  { id: "G011", title: "Kantin Santri", category: "Fasilitas", description: "Kantin bersih dan higienis menyediakan makanan bergizi untuk santri.", imageUrl: "/assets/gallery-dormitory.jpg", status: "Aktif", createdAt: "2026-02-08" },
+  { id: "G012", title: "Kelas Kaligrafi", category: "Akademik", description: "Pelatihan seni kaligrafi Arab untuk mengasah kreativitas santri.", imageUrl: "/assets/gallery-quran.jpg", status: "Nonaktif", createdAt: "2026-02-05" },
 ];
 
 const columns: CrudColumn<GalleryItem>[] = [
@@ -69,6 +73,10 @@ export default function ManageGallery() {
       searchKeys={["title", "category", "description"]}
       idKey="id"
       addLabel="Tambah Foto / Add Photo"
+      filters={[
+        { key: "category", label: "Kategori", options: [{ value: "Akademik", label: "Akademik" }, { value: "Fasilitas", label: "Fasilitas" }, { value: "Kegiatan", label: "Kegiatan" }] },
+        { key: "status", label: "Status", options: [{ value: "Aktif", label: "Aktif" }, { value: "Nonaktif", label: "Nonaktif" }] },
+      ]}
     />
   );
 }
