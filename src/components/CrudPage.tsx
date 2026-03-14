@@ -92,10 +92,13 @@ export function CrudPage<T extends Record<string, any>>({
   idKey,
   addLabel,
   pageSize = 10,
+  filters = [],
 }: CrudPageProps<T>) {
   const { toast } = useToast();
   const [data, setData] = useState<T[]>(initialData);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
   const [page, setPage] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
