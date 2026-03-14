@@ -20,6 +20,7 @@ import {
   Newspaper,
   Phone,
   MessageSquare,
+  Layers,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
