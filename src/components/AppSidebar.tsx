@@ -21,6 +21,8 @@ import {
   Phone,
   MessageSquare,
   Layers,
+  FileCheck,
+  ClipboardList as ClipboardListIcon,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -84,9 +86,14 @@ const financeItems: MenuItem[] = [
 
 const contentItems: MenuItem[] = [
   { title: "Program / Programs", url: "/content/programs", icon: Layers, permission: "content_programs.view" },
+  { title: "Pendaftaran / Registration", url: "/content/registration", icon: FileCheck, permission: "content_registration.view" },
   { title: "Galeri / Gallery", url: "/content/gallery", icon: Image, permission: "content_gallery.view" },
   { title: "Berita / News", url: "/content/news", icon: Newspaper, permission: "content_news.view" },
   { title: "Pesan Masuk / Messages", url: "/content/messages", icon: MessageSquare, permission: "content_messages.view" },
+];
+
+const registrationItems: MenuItem[] = [
+  { title: "Data Pendaftar / Registrations", url: "/registrations", icon: ClipboardListIcon, permission: "registrations.view" },
 ];
 
 interface NavGroupProps {
@@ -179,6 +186,7 @@ export function AppSidebar() {
     dormitory: true,
     finance: true,
     content: true,
+    registration: true,
   });
 
   const handleOpenChange = (key: string) => (open: boolean) => {
@@ -199,6 +207,7 @@ export function AppSidebar() {
   const showDormitory = dormitoryItems.some(item => can(item.permission));
   const showFinance = financeItems.some(item => can(item.permission));
   const showContent = contentItems.some(item => can(item.permission));
+  const showRegistration = registrationItems.some(item => can(item.permission));
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
@@ -291,6 +300,16 @@ export function AppSidebar() {
             collapsed={collapsed} 
             open={openGroups.content} 
             onOpenChange={handleOpenChange("content")} 
+          />
+        )}
+
+        {showRegistration && (
+          <NavGroup 
+            label="PSB / Admissions" 
+            items={registrationItems} 
+            collapsed={collapsed} 
+            open={openGroups.registration} 
+            onOpenChange={handleOpenChange("registration")} 
           />
         )}
       </SidebarContent>

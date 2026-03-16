@@ -31,6 +31,10 @@ import {
   Calendar,
   ArrowRight,
   Quote,
+  Rocket,
+  Target,
+  Lightbulb,
+  CheckCircle2,
 } from "lucide-react";
 import PublicNavbar from "@/components/PublicNavbar";
 
@@ -116,7 +120,7 @@ function HeroCarousel() {
                     </p>
                   </motion.div>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <Link to="/login">
+                    <Link to="/registration">
                       <Button size="lg" className="w-full sm:w-auto gap-2 shadow-lg">
                         Daftar Sekarang <ArrowRight className="h-4 w-4" />
                       </Button>
@@ -161,33 +165,62 @@ const programs = [
     title: "Tahfidz Al-Qur'an",
     desc: "Program intensif hafalan Al-Qur'an 30 juz dengan metode modern dan bimbingan ustadz berpengalaman.",
     badge: "Unggulan",
+    category: "Keagamaan",
+    highlights: ["Hafalan 30 juz", "Metode Mutqin", "Sanad bersambung"],
   },
   {
     icon: GraduationCap,
     title: "Kurikulum Nasional + Diniyah",
     desc: "Perpaduan kurikulum Kementerian Pendidikan dan kurikulum pesantren untuk keseimbangan ilmu.",
+    category: "Akademik",
+    highlights: ["Ijazah formal", "Kurikulum diniyah", "UN & UAMBN"],
   },
   {
     icon: Globe,
     title: "Bahasa Arab & Inggris",
     desc: "Program bilingual aktif dengan native speaker dan sertifikasi TOEFL & TOAFL.",
+    category: "Bahasa",
+    highlights: ["Native speaker", "TOEFL prep", "Daily conversation"],
   },
   {
     icon: Heart,
     title: "Pendidikan Karakter",
     desc: "Pembentukan akhlak mulia melalui pembiasaan ibadah, kedisiplinan, dan kemandirian.",
+    category: "Keagamaan",
+    highlights: ["Pembiasaan ibadah", "Leadership", "Kemandirian"],
   },
   {
     icon: Award,
     title: "Olimpiade & Kompetisi",
     desc: "Pembinaan santri berprestasi untuk kompetisi sains, bahasa, dan keagamaan tingkat nasional.",
+    category: "Akademik",
+    highlights: ["OSN", "KSM", "Kompetisi bahasa"],
   },
   {
     icon: BarChart3,
     title: "Keterampilan Digital",
     desc: "Pembekalan teknologi informasi, coding, dan desain grafis untuk menghadapi era digital.",
+    category: "Keterampilan",
+    highlights: ["Coding", "Desain grafis", "Digital literacy"],
+  },
+  {
+    icon: Rocket,
+    title: "Entrepreneurship Santri",
+    desc: "Program kewirausahaan yang melatih santri mengelola usaha koperasi dan UMKM pesantren.",
+    category: "Keterampilan",
+    highlights: ["Bisnis plan", "Koperasi", "UMKM pesantren"],
+  },
+  {
+    icon: Lightbulb,
+    title: "Robotika & Sains",
+    desc: "Klub robotika dan eksperimen sains untuk menumbuhkan minat STEM di kalangan santri.",
+    badge: "Baru",
+    category: "Akademik",
+    highlights: ["Robotika", "Lab sains", "IoT project"],
   },
 ];
+
+const programCategories = ["Semua", "Keagamaan", "Akademik", "Bahasa", "Keterampilan"];
 
 const facilities = [
   { icon: BedDouble, title: "Asrama Modern", desc: "Kamar nyaman ber-AC dengan fasilitas lengkap" },
@@ -318,6 +351,149 @@ function GalleryLightbox({
   );
 }
 
+// ─── Programs Section (Redesigned) ─────────────────────
+function ProgramsSection() {
+  const [activeCategory, setActiveCategory] = useState("Semua");
+  const [selectedProgram, setSelectedProgram] = useState<typeof programs[0] | null>(null);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
+
+  const filteredPrograms = activeCategory === "Semua"
+    ? programs
+    : programs.filter((p) => p.category === activeCategory);
+
+  return (
+    <section id="programs" className="py-20 lg:py-28 bg-muted/30 islamic-pattern">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="text-center mb-10">
+          <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">Program Unggulan</span>
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-4">
+            Kurikulum Terintegrasi untuk Masa Depan
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Santri kami dibekali dengan ilmu agama yang kuat, penguasaan sains & teknologi, serta keterampilan kepemimpinan.
+          </p>
+        </div>
+
+        {/* Category Tabs */}
+        <div className="flex flex-wrap justify-center gap-2 mb-10">
+          {programCategories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                activeCategory === cat
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "bg-card border text-muted-foreground hover:text-foreground hover:border-primary/50"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Program Cards */}
+        <motion.div
+          ref={ref}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {filteredPrograms.map((p) => (
+            <motion.div
+              key={p.title}
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
+              onClick={() => setSelectedProgram(p)}
+              className="group cursor-pointer rounded-2xl border bg-card p-6 shadow-card hover:shadow-card-hover transition-all hover:-translate-y-1 relative overflow-hidden"
+            >
+              {/* Decorative gradient */}
+              <div className="absolute top-0 left-0 right-0 h-1 gradient-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl gradient-primary shadow-md">
+                  <p.icon className="h-5 w-5 text-primary-foreground" />
+                </div>
+                {p.badge && (
+                  <span className="text-[9px] font-bold uppercase tracking-wider gradient-gold text-accent-foreground px-2 py-0.5 rounded-full">
+                    {p.badge}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-primary/60 mb-1 block">{p.category}</span>
+              <h3 className="font-bold text-foreground mb-2 text-sm group-hover:text-primary transition-colors">{p.title}</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed mb-3 line-clamp-2">{p.desc}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {p.highlights.map((h) => (
+                  <span key={h} className="text-[10px] font-medium bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+                    {h}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Program Detail Modal */}
+        {selectedProgram && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={() => setSelectedProgram(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-card rounded-2xl border shadow-xl max-w-lg w-full p-8 relative"
+            >
+              <button
+                onClick={() => setSelectedProgram(null)}
+                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <div className="flex items-center gap-4 mb-5">
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl gradient-primary shadow-md">
+                  <selectedProgram.icon className="h-7 w-7 text-primary-foreground" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-primary/60">{selectedProgram.category}</span>
+                  <h3 className="text-xl font-bold text-foreground">{selectedProgram.title}</h3>
+                </div>
+                {selectedProgram.badge && (
+                  <span className="text-[10px] font-bold uppercase tracking-wider gradient-gold text-accent-foreground px-2.5 py-1 rounded-full ml-auto">
+                    {selectedProgram.badge}
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-5">{selectedProgram.desc}</p>
+              <div className="mb-6">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-foreground mb-3">Keunggulan Program</h4>
+                <div className="grid grid-cols-3 gap-2">
+                  {selectedProgram.highlights.map((h) => (
+                    <div key={h} className="flex items-center gap-2 rounded-lg bg-primary/5 p-2.5">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" />
+                      <span className="text-xs font-medium text-foreground">{h}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <Link to="/registration">
+                <Button className="w-full gap-2">
+                  Daftar Program Ini <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </motion.div>
+          </motion.div>
+        )}
+      </div>
+    </section>
+  );
+}
+
 // ─── Main Page ─────────────────────────────────────────
 const Index = () => {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -408,47 +584,7 @@ const Index = () => {
       </section>
 
       {/* ─── Programs ─── */}
-      <section id="programs" className="py-20 lg:py-28 bg-muted/30 islamic-pattern">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="text-center mb-14">
-            <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">Program Unggulan</span>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Kurikulum Terintegrasi untuk Masa Depan
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Santri kami dibekali dengan ilmu agama yang kuat, penguasaan sains & teknologi, serta keterampilan kepemimpinan.
-            </p>
-          </div>
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {programs.map((p) => (
-              <motion.div
-                key={p.title}
-                variants={staggerItem}
-                className="group rounded-2xl border bg-card p-7 shadow-card hover:shadow-card-hover transition-all hover:-translate-y-1"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-primary shadow-md">
-                    <p.icon className="h-6 w-6 text-primary-foreground" />
-                  </div>
-                  {p.badge && (
-                    <span className="text-[10px] font-bold uppercase tracking-wider gradient-gold text-accent-foreground px-2.5 py-1 rounded-full">
-                      {p.badge}
-                    </span>
-                  )}
-                </div>
-                <h3 className="font-bold text-foreground mb-2">{p.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+      <ProgramsSection />
 
       {/* ─── Facilities ─── */}
       <section className="py-20 lg:py-28 islamic-pattern-arabesque">
@@ -663,7 +799,7 @@ const Index = () => {
                 Kuota terbatas, segera amankan tempat untuk anak Anda.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link to="/login">
+                <Link to="/registration">
                   <Button size="lg" className="w-full sm:w-auto gap-2 bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg">
                     Daftar Online <ArrowRight className="h-4 w-4" />
                   </Button>

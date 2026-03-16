@@ -39,6 +39,10 @@ import ManageGallery from "./pages/ManageGallery";
 import ManageNews from "./pages/ManageNews";
 import ContactMessages from "./pages/ContactMessages";
 import ManagePrograms from "./pages/ManagePrograms";
+import ManageRegistrations from "./pages/ManageRegistrations";
+import ManageRegistrationInfo from "./pages/ManageRegistrationInfo";
+import Registration from "./pages/Registration";
+import RegistrationForm from "./pages/RegistrationForm";
 
 // Guardian portal pages
 import GuardianPortal from "./pages/portal/GuardianPortal";
@@ -74,6 +78,8 @@ const App = () => (
           <Route path="/news/:id" element={<NewsDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/login/admin" element={<AdminLogin />} />
+          <Route path="/registration" element={<Registration />} />
+          <Route path="/registration/form" element={<RegistrationForm />} />
 
           {/* Admin dashboard routes (requires admin-level role) */}
           <Route
@@ -240,6 +246,22 @@ const App = () => (
               element={
                 <ProtectedRoute requiredPermissions={["content_programs.view"]}>
                   <ManagePrograms />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/content/registration"
+              element={
+                <ProtectedRoute requiredPermissions={["content_registration.view"]}>
+                  <ManageRegistrationInfo />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/registrations"
+              element={
+                <ProtectedRoute requiredPermissions={["registrations.view"]}>
+                  <ManageRegistrations />
                 </ProtectedRoute>
               }
             />

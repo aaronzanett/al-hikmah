@@ -61,6 +61,10 @@ export type Permission =
   | 'content_messages.manage'
   | 'content_programs.view'
   | 'content_programs.manage'
+  | 'content_registration.view'
+  | 'content_registration.manage'
+  | 'registrations.view'
+  | 'registrations.manage'
   // Guardian-specific permissions
   | 'guardian_portal.view'
   | 'child_profile.view'
@@ -101,6 +105,8 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     'content_contact.view', 'content_contact.manage',
     'content_messages.view', 'content_messages.manage',
     'content_programs.view', 'content_programs.manage',
+    'content_registration.view', 'content_registration.manage',
+    'registrations.view', 'registrations.manage',
   ],
   
   branch_admin: [
@@ -196,6 +202,8 @@ export const routePermissions: Record<string, Permission[]> = {
   '/content/contact': ['content_contact.view'],
   '/content/messages': ['content_messages.view'],
   '/content/programs': ['content_programs.view'],
+  '/content/registration': ['content_registration.view'],
+  '/registrations': ['registrations.view'],
   // Guardian portal routes
   '/portal': ['guardian_portal.view'],
   '/portal/child': ['child_profile.view'],
