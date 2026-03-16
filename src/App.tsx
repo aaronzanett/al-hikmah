@@ -78,6 +78,8 @@ const App = () => (
           <Route path="/news/:id" element={<NewsDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/login/admin" element={<AdminLogin />} />
+          <Route path="/registration" element={<Registration />} />
+          <Route path="/registration/form" element={<RegistrationForm />} />
 
           {/* Admin dashboard routes (requires admin-level role) */}
           <Route
