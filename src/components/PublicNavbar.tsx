@@ -7,6 +7,7 @@ import { ChevronRight, Menu, XIcon } from "lucide-react";
 const navLinks = [
   { label: "Tentang", href: "#about", type: "anchor" },
   { label: "Program", href: "#programs", type: "anchor" },
+  { label: "Pendaftaran", href: "/registration", type: "route" },
   { label: "Galeri", href: "/gallery", type: "route" },
   { label: "Berita", href: "/news", type: "route" },
   { label: "Kontak", href: "#contact", type: "anchor" },
