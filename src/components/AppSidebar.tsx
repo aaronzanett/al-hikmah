@@ -21,6 +21,8 @@ import {
   Phone,
   MessageSquare,
   Layers,
+  FileCheck,
+  ClipboardList as ClipboardListIcon,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
