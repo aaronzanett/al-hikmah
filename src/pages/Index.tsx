@@ -408,47 +408,7 @@ const Index = () => {
       </section>
 
       {/* ─── Programs ─── */}
-      <section id="programs" className="py-20 lg:py-28 bg-muted/30 islamic-pattern">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="text-center mb-14">
-            <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">Program Unggulan</span>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Kurikulum Terintegrasi untuk Masa Depan
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Santri kami dibekali dengan ilmu agama yang kuat, penguasaan sains & teknologi, serta keterampilan kepemimpinan.
-            </p>
-          </div>
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {programs.map((p) => (
-              <motion.div
-                key={p.title}
-                variants={staggerItem}
-                className="group rounded-2xl border bg-card p-7 shadow-card hover:shadow-card-hover transition-all hover:-translate-y-1"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-primary shadow-md">
-                    <p.icon className="h-6 w-6 text-primary-foreground" />
-                  </div>
-                  {p.badge && (
-                    <span className="text-[10px] font-bold uppercase tracking-wider gradient-gold text-accent-foreground px-2.5 py-1 rounded-full">
-                      {p.badge}
-                    </span>
-                  )}
-                </div>
-                <h3 className="font-bold text-foreground mb-2">{p.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+      <ProgramsSection />
 
       {/* ─── Facilities ─── */}
       <section className="py-20 lg:py-28 islamic-pattern-arabesque">
