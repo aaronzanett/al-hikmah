@@ -186,6 +186,7 @@ export function AppSidebar() {
     dormitory: true,
     finance: true,
     content: true,
+    registration: true,
   });
 
   const handleOpenChange = (key: string) => (open: boolean) => {
@@ -206,6 +207,7 @@ export function AppSidebar() {
   const showDormitory = dormitoryItems.some(item => can(item.permission));
   const showFinance = financeItems.some(item => can(item.permission));
   const showContent = contentItems.some(item => can(item.permission));
+  const showRegistration = registrationItems.some(item => can(item.permission));
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
