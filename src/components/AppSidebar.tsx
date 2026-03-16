@@ -302,6 +302,16 @@ export function AppSidebar() {
             onOpenChange={handleOpenChange("content")} 
           />
         )}
+
+        {showRegistration && (
+          <NavGroup 
+            label="PSB / Admissions" 
+            items={registrationItems} 
+            collapsed={collapsed} 
+            open={openGroups.registration} 
+            onOpenChange={handleOpenChange("registration")} 
+          />
+        )}
       </SidebarContent>
 
       <SidebarFooter className={collapsed ? "p-2" : "p-3"}>
