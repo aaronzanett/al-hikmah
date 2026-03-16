@@ -249,6 +249,22 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/content/registration"
+              element={
+                <ProtectedRoute requiredPermissions={["content_registration.view"]}>
+                  <ManageRegistrationInfo />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/registrations"
+              element={
+                <ProtectedRoute requiredPermissions={["registrations.view"]}>
+                  <ManageRegistrations />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           {/* Guardian portal routes */}
