@@ -799,7 +799,7 @@ const Index = () => {
                 Kuota terbatas, segera amankan tempat untuk anak Anda.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link to="/login">
+                <Link to="/registration">
                   <Button size="lg" className="w-full sm:w-auto gap-2 bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg">
                     Daftar Online <ArrowRight className="h-4 w-4" />
                   </Button>
