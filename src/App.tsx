@@ -39,6 +39,10 @@ import ManageGallery from "./pages/ManageGallery";
 import ManageNews from "./pages/ManageNews";
 import ContactMessages from "./pages/ContactMessages";
 import ManagePrograms from "./pages/ManagePrograms";
+import ManageRegistrations from "./pages/ManageRegistrations";
+import ManageRegistrationInfo from "./pages/ManageRegistrationInfo";
+import Registration from "./pages/Registration";
+import RegistrationForm from "./pages/RegistrationForm";
 
 // Guardian portal pages
 import GuardianPortal from "./pages/portal/GuardianPortal";
