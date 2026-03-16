@@ -120,7 +120,7 @@ function HeroCarousel() {
                     </p>
                   </motion.div>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <Link to="/login">
+                    <Link to="/registration">
                       <Button size="lg" className="w-full sm:w-auto gap-2 shadow-lg">
                         Daftar Sekarang <ArrowRight className="h-4 w-4" />
                       </Button>
