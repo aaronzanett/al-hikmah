@@ -31,6 +31,9 @@ import {
   Calendar,
   ArrowRight,
   Quote,
+  Rocket,
+  Target,
+  Lightbulb,
 } from "lucide-react";
 import PublicNavbar from "@/components/PublicNavbar";
 
