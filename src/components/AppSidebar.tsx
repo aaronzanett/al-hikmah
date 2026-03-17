@@ -85,6 +85,7 @@ const financeItems: MenuItem[] = [
 ];
 
 const contentItems: MenuItem[] = [
+  { title: "Hero Carousel", url: "/content/hero", icon: PanelTop, permission: "content_hero.view" },
   { title: "Program / Programs", url: "/content/programs", icon: Layers, permission: "content_programs.view" },
   { title: "Pendaftaran / Registration", url: "/content/registration", icon: FileCheck, permission: "content_registration.view" },
   { title: "Galeri / Gallery", url: "/content/gallery", icon: Image, permission: "content_gallery.view" },
