@@ -18,11 +18,11 @@ import {
   UserCog,
   Image,
   Newspaper,
-  Phone,
   MessageSquare,
   Layers,
   FileCheck,
   ClipboardList as ClipboardListIcon,
+  PanelTop,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
