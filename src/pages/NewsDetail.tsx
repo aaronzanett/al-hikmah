@@ -1,4 +1,4 @@
-import { useParams, Link, Navigate } from "react-router-dom";
+import { useParams, Link, Navigate, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Clock, ArrowRight } from "lucide-react";
@@ -6,6 +6,7 @@ import { allNewsItems } from "./News";
 
 export default function NewsDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const article = allNewsItems.find(n => n.id === id);
   const currentIndex = allNewsItems.findIndex(n => n.id === id);
 
@@ -14,21 +15,20 @@ export default function NewsDetail() {
   const relatedArticles = allNewsItems.filter(n => n.id !== id).slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
-          <Link to="/news" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="h-4 w-4" /> Semua Berita
-          </Link>
-          <h1 className="text-base font-bold text-foreground hidden sm:block">Berita Pesantren</h1>
-          <div className="w-20" />
-        </div>
-      </div>
-
+    <div className="bg-background">
       {/* Article */}
       <article className="mx-auto max-w-4xl px-4 lg:px-8 py-10 lg:py-16">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          {/* Back button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(-1)}
+            className="gap-1.5 text-muted-foreground hover:text-foreground mb-6 -ml-2"
+          >
+            <ArrowLeft className="h-4 w-4" /> Kembali
+          </Button>
+
           {/* Meta */}
           <div className="flex items-center gap-3 mb-5">
             <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2.5 py-1 rounded-full">{article.category}</span>

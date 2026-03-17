@@ -8,6 +8,7 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { GuardianLayout } from "@/components/GuardianLayout";
 import { ProtectedRoute, AdminRoute, GuardianRoute } from "@/components/ProtectedRoute";
 import { StudentLayout } from "@/components/StudentLayout";
+import PublicLayout from "@/components/PublicLayout";
 
 // Public pages
 import Index from "./pages/Index";
@@ -71,15 +72,19 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<Index />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/news/:id" element={<NewsDetail />} />
+          {/* Public routes with shared navbar + footer */}
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/news/:id" element={<NewsDetail />} />
+            <Route path="/registration" element={<Registration />} />
+            <Route path="/registration/form" element={<RegistrationForm />} />
+          </Route>
+
+          {/* Auth routes (no shared layout) */}
           <Route path="/login" element={<Login />} />
           <Route path="/login/admin" element={<AdminLogin />} />
-          <Route path="/registration" element={<Registration />} />
-          <Route path="/registration/form" element={<RegistrationForm />} />
 
           {/* Admin dashboard routes (requires admin-level role) */}
           <Route

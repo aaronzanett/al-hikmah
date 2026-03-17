@@ -8,7 +8,7 @@ import Autoplay from "embla-carousel-autoplay";
 import {
   GraduationCap,
   Users,
-  ShieldCheck,
+  
   BookOpen,
   Building2,
   Wallet,
@@ -36,7 +36,7 @@ import {
   Lightbulb,
   CheckCircle2,
 } from "lucide-react";
-import PublicNavbar from "@/components/PublicNavbar";
+
 
 import heroPesantren from "@/assets/hero-pesantren.jpg";
 import galleryClassroom from "@/assets/gallery-classroom.jpg";
@@ -499,10 +499,7 @@ const Index = () => {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* ─── Navbar ─── */}
-      <PublicNavbar />
-
+    <div className="bg-background">
       {/* ─── Hero Carousel ─── */}
       <HeroCarousel />
 
@@ -896,60 +893,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── Footer ─── */}
-      <footer className="border-t bg-card">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8 py-12">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-md gradient-gold">
-                  <span className="text-[10px] font-bold text-accent-foreground">B</span>
-                </div>
-                <div>
-                  <span className="text-sm font-bold text-foreground block leading-none">Pesantren Al-Hikmah</span>
-                  <span className="text-[10px] text-muted-foreground">Modern Islamic Boarding School</span>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Mencetak generasi Qur'ani yang berilmu, beramal, dan berakhlak mulia sejak 1985.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-foreground mb-4">Menu</h4>
-              <ul className="space-y-2.5 text-sm text-muted-foreground">
-                <li><a href="#about" className="hover:text-foreground transition-colors">Tentang</a></li>
-                <li><a href="#programs" className="hover:text-foreground transition-colors">Program</a></li>
-                <li><Link to="/gallery" className="hover:text-foreground transition-colors">Galeri</Link></li>
-                <li><Link to="/news" className="hover:text-foreground transition-colors">Berita</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-foreground mb-4">Portal</h4>
-              <ul className="space-y-2.5 text-sm text-muted-foreground">
-                <li><Link to="/login" className="hover:text-foreground transition-colors">Santri & Wali</Link></li>
-                <li><Link to="/login/admin" className="hover:text-foreground transition-colors flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5" /> Administrator</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-foreground mb-4">Kontak</h4>
-              <ul className="space-y-2.5 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2"><Phone className="h-3.5 w-3.5" /> (021) 8888-1234</li>
-                <li className="flex items-center gap-2"><Mail className="h-3.5 w-3.5" /> info@alhikmah.sch.id</li>
-                <li className="flex items-start gap-2"><MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0" /> Jl. Pondok Pesantren No. 123, Bekasi</li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-xs text-muted-foreground">© 2026 Pesantren Al-Hikmah. All rights reserved.</p>
-            <Link to="/login/admin">
-              <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground hover:text-foreground">
-                <ShieldCheck className="h-3.5 w-3.5" />
-                Login Administrator
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

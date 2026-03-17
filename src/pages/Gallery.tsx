@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import PublicNavbar from "@/components/PublicNavbar";
+
 
 import galleryClassroom from "@/assets/gallery-classroom.jpg";
 import galleryMosque from "@/assets/gallery-mosque.jpg";
@@ -66,9 +66,7 @@ export default function Gallery() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navbar */}
-      <PublicNavbar />
+    <div className="bg-background">
 
       {/* Hero with mosque door pattern */}
       <section className="relative overflow-hidden py-16 lg:py-24 bg-muted/30 islamic-pattern-door">

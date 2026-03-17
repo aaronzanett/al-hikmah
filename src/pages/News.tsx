@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Calendar, ArrowRight, Clock, ChevronLeft, ChevronRight } from "lucide-react";
-import PublicNavbar from "@/components/PublicNavbar";
+
 
 import galleryQuran from "@/assets/gallery-quran.jpg";
 import heroPesantren from "@/assets/hero-pesantren.jpg";
@@ -188,9 +188,7 @@ export default function News() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navbar */}
-      <PublicNavbar />
+    <div className="bg-background">
 
       {/* Hero */}
       <section className="py-16 lg:py-24 islamic-pattern-door bg-muted/30">
