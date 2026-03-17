@@ -1,46 +1,24 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
-import { Search, Plus, MoreHorizontal, ChevronLeft, ChevronRight, Pencil, Trash2, Filter } from "lucide-react";
+import { Search, Plus, MoreHorizontal, ChevronLeft, ChevronRight, Pencil, Trash2, Filter, Upload, ImageIcon, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -56,7 +34,7 @@ export interface CrudColumn<T> {
 export interface CrudFormField {
   key: string;
   label: string;
-  type: "text" | "number" | "select" | "date" | "textarea";
+  type: "text" | "number" | "select" | "date" | "textarea" | "image";
   options?: { value: string; label: string }[];
   placeholder?: string;
 }
@@ -65,6 +43,103 @@ export interface CrudFilter {
   key: string;
   label: string;
   options: { value: string; label: string }[];
+}
+
+// ─── Image Upload Field Component ───
+function ImageUploadField({
+  value,
+  onChange,
+  label,
+}: {
+  value: string;
+  onChange: (url: string) => void;
+  label: string;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [dragActive, setDragActive] = useState(false);
+
+  const handleFile = (file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    const url = URL.createObjectURL(file);
+    onChange(url);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragActive(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+    e.target.value = "";
+  };
+
+  return (
+    <div className="space-y-2">
+      {value ? (
+        <div className="relative group">
+          <img
+            src={value}
+            alt={label}
+            className="w-full h-40 object-cover rounded-lg border"
+          />
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => inputRef.current?.click()}
+              className="h-8 text-xs"
+            >
+              <Upload className="h-3 w-3 mr-1" /> Ganti
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              onClick={() => onChange("")}
+              className="h-8 text-xs"
+            >
+              <X className="h-3 w-3 mr-1" /> Hapus
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div
+          onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
+          onDragLeave={() => setDragActive(false)}
+          onDrop={handleDrop}
+          onClick={() => inputRef.current?.click()}
+          className={cn(
+            "flex flex-col items-center justify-center gap-2 h-40 rounded-lg border-2 border-dashed cursor-pointer transition-colors",
+            dragActive
+              ? "border-primary bg-primary/5"
+              : "border-muted-foreground/30 hover:border-primary/50 bg-muted/20"
+          )}
+        >
+          <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
+          <div className="text-center">
+            <p className="text-xs font-medium text-muted-foreground">
+              Klik atau seret gambar ke sini
+            </p>
+            <p className="text-[10px] text-muted-foreground/60 mt-0.5">
+              PNG, JPG, WebP (maks. 5MB)
+            </p>
+          </div>
+        </div>
+      )}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleChange}
+      />
+    </div>
+  );
 }
 
 interface CrudPageProps<T extends Record<string, any>> {
@@ -82,17 +157,8 @@ interface CrudPageProps<T extends Record<string, any>> {
 }
 
 export function CrudPage<T extends Record<string, any>>({
-  title,
-  subtitle,
-  columns,
-  initialData,
-  formFields,
-  searchPlaceholder,
-  searchKeys,
-  idKey,
-  addLabel,
-  pageSize = 10,
-  filters = [],
+  title, subtitle, columns, initialData, formFields, searchPlaceholder,
+  searchKeys, idKey, addLabel, pageSize = 10, filters = [],
 }: CrudPageProps<T>) {
   const { toast } = useToast();
   const [data, setData] = useState<T[]>(initialData);
@@ -107,13 +173,11 @@ export function CrudPage<T extends Record<string, any>>({
 
   const filtered = useMemo(() => {
     let result = data;
-    // Apply filters
     for (const [key, value] of Object.entries(activeFilters)) {
       if (value && value !== "all") {
         result = result.filter((item) => String(item[key]) === value);
       }
     }
-    // Apply search
     if (search) {
       const q = search.toLowerCase();
       result = result.filter((item) =>
@@ -172,6 +236,14 @@ export function CrudPage<T extends Record<string, any>>({
   const renderFormField = (field: CrudFormField) => {
     const value = formData[field.key] ?? "";
     switch (field.type) {
+      case "image":
+        return (
+          <ImageUploadField
+            value={value}
+            onChange={(url) => setFormData((p) => ({ ...p, [field.key]: url }))}
+            label={field.label}
+          />
+        );
       case "select":
         return (
           <Select value={String(value)} onValueChange={(v) => setFormData((p) => ({ ...p, [field.key]: v }))}>
