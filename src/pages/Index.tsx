@@ -8,7 +8,7 @@ import Autoplay from "embla-carousel-autoplay";
 import {
   GraduationCap,
   Users,
-  ShieldCheck,
+  
   BookOpen,
   Building2,
   Wallet,
