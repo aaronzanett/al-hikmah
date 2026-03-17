@@ -224,6 +224,14 @@ const App = () => (
               }
             />
             <Route
+              path="/content/hero"
+              element={
+                <ProtectedRoute requiredPermissions={["content_hero.view"]}>
+                  <ManageHero />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/content/gallery"
               element={
                 <ProtectedRoute requiredPermissions={["content_gallery.view"]}>
