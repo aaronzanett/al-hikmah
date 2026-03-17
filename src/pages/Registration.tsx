@@ -450,19 +450,6 @@ const Registration = () => {
         </div>
       </section>
 
-      {/* Footer - same style */}
-      <footer className="border-t bg-card">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8 py-10">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-xs text-muted-foreground">© 2026 Pesantren Al-Hikmah. All rights reserved.</p>
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-              <Link to="/" className="hover:text-foreground transition-colors">Beranda</Link>
-              <Link to="/news" className="hover:text-foreground transition-colors">Berita</Link>
-              <Link to="/gallery" className="hover:text-foreground transition-colors">Galeri</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
