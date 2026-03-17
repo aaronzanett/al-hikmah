@@ -36,7 +36,7 @@ import {
   Lightbulb,
   CheckCircle2,
 } from "lucide-react";
-import PublicNavbar from "@/components/PublicNavbar";
+
 
 import heroPesantren from "@/assets/hero-pesantren.jpg";
 import galleryClassroom from "@/assets/gallery-classroom.jpg";

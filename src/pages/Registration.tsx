@@ -1,7 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import PublicNavbar from "@/components/PublicNavbar";
+
 import { useRef, useState } from "react";
 import {
   ArrowRight,

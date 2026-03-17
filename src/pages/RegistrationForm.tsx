@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import PublicNavbar from "@/components/PublicNavbar";
+
 import {
   ArrowLeft,
   ArrowRight,

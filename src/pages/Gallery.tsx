@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import PublicNavbar from "@/components/PublicNavbar";
+
 
 import galleryClassroom from "@/assets/gallery-classroom.jpg";
 import galleryMosque from "@/assets/gallery-mosque.jpg";
