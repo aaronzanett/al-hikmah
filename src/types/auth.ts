@@ -51,6 +51,8 @@ export type Permission =
   | 'users.view'
   | 'users.manage'
   // Content management permissions (super admin)
+  | 'content_hero.view'
+  | 'content_hero.manage'
   | 'content_gallery.view'
   | 'content_gallery.manage'
   | 'content_news.view'
