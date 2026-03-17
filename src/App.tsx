@@ -36,6 +36,7 @@ import Expenses from "./pages/Expenses";
 import Savings from "./pages/Savings";
 import Settings from "./pages/Settings";
 import Users from "./pages/Users";
+import ManageHero from "./pages/ManageHero";
 import ManageGallery from "./pages/ManageGallery";
 import ManageNews from "./pages/ManageNews";
 import ContactMessages from "./pages/ContactMessages";
@@ -219,6 +220,14 @@ const App = () => (
               element={
                 <ProtectedRoute requiredPermissions={["users.view"]}>
                   <Users />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/content/hero"
+              element={
+                <ProtectedRoute requiredPermissions={["content_hero.view"]}>
+                  <ManageHero />
                 </ProtectedRoute>
               }
             />

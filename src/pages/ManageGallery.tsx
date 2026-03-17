@@ -27,6 +27,17 @@ const initialData: GalleryItem[] = [
 
 const columns: CrudColumn<GalleryItem>[] = [
   { key: "id", label: "ID", className: "w-20" },
+  {
+    key: "imageUrl",
+    label: "Gambar",
+    className: "w-20",
+    render: (val) =>
+      val ? (
+        <img src={val} alt="" className="h-10 w-16 rounded object-cover border" />
+      ) : (
+        <span className="text-xs text-muted-foreground">-</span>
+      ),
+  },
   { key: "title", label: "Judul / Title" },
   { key: "category", label: "Kategori / Category",
     render: (val) => (
@@ -53,7 +64,7 @@ const formFields: CrudFormField[] = [
     { value: "Fasilitas", label: "Fasilitas" },
     { value: "Kegiatan", label: "Kegiatan" },
   ]},
-  { key: "imageUrl", label: "URL Gambar / Image URL", type: "text", placeholder: "https://..." },
+  { key: "imageUrl", label: "Gambar / Image", type: "image" },
   { key: "description", label: "Deskripsi / Description", type: "textarea", placeholder: "Deskripsi foto..." },
   { key: "status", label: "Status", type: "select", options: [
     { value: "Aktif", label: "Aktif / Active" },

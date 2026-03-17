@@ -51,6 +51,8 @@ export type Permission =
   | 'users.view'
   | 'users.manage'
   // Content management permissions (super admin)
+  | 'content_hero.view'
+  | 'content_hero.manage'
   | 'content_gallery.view'
   | 'content_gallery.manage'
   | 'content_news.view'
@@ -100,6 +102,7 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     'savings.view', 'savings.manage',
     'settings.view', 'settings.manage',
     'users.view', 'users.manage',
+    'content_hero.view', 'content_hero.manage',
     'content_gallery.view', 'content_gallery.manage',
     'content_news.view', 'content_news.manage',
     'content_contact.view', 'content_contact.manage',
