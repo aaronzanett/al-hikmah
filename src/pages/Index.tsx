@@ -499,10 +499,7 @@ const Index = () => {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* ─── Navbar ─── */}
-      <PublicNavbar />
-
+    <div className="bg-background">
       {/* ─── Hero Carousel ─── */}
       <HeroCarousel />
 
