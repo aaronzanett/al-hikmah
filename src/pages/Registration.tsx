@@ -189,8 +189,7 @@ function FAQ() {
 
 const Registration = () => {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <PublicNavbar />
+    <div className="bg-background">
 
       {/* Hero */}
       <section className="relative overflow-hidden">

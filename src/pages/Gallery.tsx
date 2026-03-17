@@ -66,9 +66,7 @@ export default function Gallery() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navbar */}
-      <PublicNavbar />
+    <div className="bg-background">
 
       {/* Hero with mosque door pattern */}
       <section className="relative overflow-hidden py-16 lg:py-24 bg-muted/30 islamic-pattern-door">

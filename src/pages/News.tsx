@@ -188,9 +188,7 @@ export default function News() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navbar */}
-      <PublicNavbar />
+    <div className="bg-background">
 
       {/* Hero */}
       <section className="py-16 lg:py-24 islamic-pattern-door bg-muted/30">
