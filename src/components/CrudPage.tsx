@@ -1,12 +1,16 @@
 import { useState, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
-import { Search, Plus, MoreHorizontal, ChevronLeft, ChevronRight, Pencil, Trash2, Filter, Upload, ImageIcon, X } from "lucide-react";
+import * as XLSX from "xlsx";
+import {
+  Search, Plus, MoreHorizontal, ChevronLeft, ChevronRight, Pencil, Trash2,
+  Filter, Upload, ImageIcon, X, Download, Send, FileSpreadsheet, Eye, CheckCircle2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
 } from "@/components/ui/dialog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -21,6 +25,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +48,20 @@ export interface CrudFilter {
   key: string;
   label: string;
   options: { value: string; label: string }[];
+}
+
+// Excel column mapping for import
+export interface ExcelColumnMap {
+  excelHeader: string[]; // possible header names in Excel (e.g. ["Nama", "Name", "nama"])
+  dataKey: string; // key in data object
+}
+
+export interface ExcelConfig<T> {
+  enabled: true;
+  columnMap: ExcelColumnMap[];
+  exportColumns: { header: string; key: keyof T & string }[];
+  templateData?: Record<string, string>[];
+  fileName?: string;
 }
 
 // ─── Image Upload Field Component ───
@@ -154,11 +173,12 @@ interface CrudPageProps<T extends Record<string, any>> {
   addLabel: string;
   pageSize?: number;
   filters?: CrudFilter[];
+  excelConfig?: ExcelConfig<T>;
 }
 
 export function CrudPage<T extends Record<string, any>>({
   title, subtitle, columns, initialData, formFields, searchPlaceholder,
-  searchKeys, idKey, addLabel, pageSize = 10, filters = [],
+  searchKeys, idKey, addLabel, pageSize = 10, filters = [], excelConfig,
 }: CrudPageProps<T>) {
   const { toast } = useToast();
   const [data, setData] = useState<T[]>(initialData);
@@ -170,6 +190,16 @@ export function CrudPage<T extends Record<string, any>>({
   const [editItem, setEditItem] = useState<T | null>(null);
   const [deleteItem, setDeleteItem] = useState<T | null>(null);
   const [formData, setFormData] = useState<Record<string, any>>({});
+
+  // Excel states
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [importData, setImportData] = useState<T[]>([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [confirmImportOpen, setConfirmImportOpen] = useState(false);
+  const [importFileName, setImportFileName] = useState("");
+  const [sendOpen, setSendOpen] = useState(false);
+  const [sendMethod, setSendMethod] = useState<"whatsapp" | "email">("whatsapp");
+  const [sendTarget, setSendTarget] = useState("");
 
   const filtered = useMemo(() => {
     let result = data;
@@ -231,6 +261,93 @@ export function CrudPage<T extends Record<string, any>>({
       toast({ title: "Data berhasil dihapus / Data deleted", duration: 2500 });
     }
     setDeleteOpen(false);
+  };
+
+  // ─── Excel Functions ───
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!excelConfig) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImportFileName(file.name);
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const binaryData = evt.target?.result;
+      const workbook = XLSX.read(binaryData, { type: "binary" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json<Record<string, string>>(sheet);
+
+      const parsed: T[] = json.map((row, i) => {
+        const obj: Record<string, any> = { [idKey]: `IMP-${Date.now()}-${i}` };
+        for (const map of excelConfig.columnMap) {
+          const foundKey = map.excelHeader.find((h) => row[h] !== undefined);
+          obj[map.dataKey] = foundKey ? String(row[foundKey]) : "";
+        }
+        return obj as T;
+      });
+
+      setImportData(parsed);
+      setPreviewOpen(true);
+    };
+    reader.readAsBinaryString(file);
+    e.target.value = "";
+  };
+
+  const confirmImport = () => {
+    setData((prev) => [...importData, ...prev]);
+    toast({ title: `${importData.length} data berhasil diimpor`, duration: 2500 });
+    setImportData([]);
+    setPreviewOpen(false);
+    setConfirmImportOpen(false);
+  };
+
+  const downloadExcel = (items: T[]) => {
+    if (!excelConfig) return;
+    const exportData = items.map((item) => {
+      const row: Record<string, any> = {};
+      for (const col of excelConfig.exportColumns) {
+        row[col.header] = String(item[col.key] ?? "");
+      }
+      return row;
+    });
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Data");
+    const fileName = excelConfig.fileName || "data-export";
+    XLSX.writeFile(wb, `${fileName}-${new Date().toISOString().slice(0, 10)}.xlsx`);
+    toast({ title: "File Excel berhasil diunduh", duration: 2500 });
+  };
+
+  const downloadTemplate = () => {
+    if (!excelConfig?.templateData) return;
+    const ws = XLSX.utils.json_to_sheet(excelConfig.templateData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Template");
+    XLSX.writeFile(wb, `template-import-${excelConfig.fileName || "data"}.xlsx`);
+    toast({ title: "Template Excel berhasil diunduh", duration: 2500 });
+  };
+
+  const handleSend = () => {
+    downloadExcel(filtered);
+
+    if (sendMethod === "whatsapp") {
+      const message = encodeURIComponent(
+        `📋 *Data ${title}*\n\nFile Excel berisi ${filtered.length} data telah disiapkan.\nSilakan cek file yang terunduh.`
+      );
+      const url = sendTarget
+        ? `https://wa.me/${sendTarget.replace(/[^0-9]/g, "")}?text=${message}`
+        : `https://wa.me/?text=${message}`;
+      window.open(url, "_blank");
+    } else {
+      const subject = encodeURIComponent(`Data ${title}`);
+      const body = encodeURIComponent(
+        `Assalamu'alaikum,\n\nTerlampir file Excel berisi data ${title.toLowerCase()}.\nTotal: ${filtered.length} data.\n\nJazakumullah khairan.`
+      );
+      window.open(`mailto:${sendTarget}?subject=${subject}&body=${body}`, "_self");
+    }
+
+    setSendOpen(false);
+    toast({ title: `Data berhasil dikirim via ${sendMethod === "whatsapp" ? "WhatsApp" : "Email"}`, duration: 2500 });
   };
 
   const renderFormField = (field: CrudFormField) => {
@@ -311,10 +428,30 @@ export function CrudPage<T extends Record<string, any>>({
               className="w-full rounded-lg border bg-card pl-9 pr-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
-          <Button size="sm" onClick={openAdd}>
-            <Plus className="h-4 w-4 mr-1" />
-            {addLabel}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            {excelConfig && (
+              <>
+                {excelConfig.templateData && (
+                  <Button size="sm" variant="outline" onClick={downloadTemplate}>
+                    <FileSpreadsheet className="h-4 w-4 mr-1" /> Template
+                  </Button>
+                )}
+                <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="h-4 w-4 mr-1" /> Import
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => downloadExcel(filtered)}>
+                  <Download className="h-4 w-4 mr-1" /> Download
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => { setSendTarget(""); setSendOpen(true); }}>
+                  <Send className="h-4 w-4 mr-1" /> Kirim
+                </Button>
+              </>
+            )}
+            <Button size="sm" onClick={openAdd}>
+              <Plus className="h-4 w-4 mr-1" />
+              {addLabel}
+            </Button>
+          </div>
         </div>
         {filters.length > 0 && (
           <div className="flex flex-wrap items-center gap-2">
@@ -352,6 +489,11 @@ export function CrudPage<T extends Record<string, any>>({
           </div>
         )}
       </div>
+
+      {/* Hidden file input for Excel import */}
+      {excelConfig && (
+        <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" className="hidden" onChange={handleFileUpload} />
+      )}
 
       <div className="bg-card border rounded-xl shadow-card overflow-hidden">
         <Table>
@@ -428,6 +570,7 @@ export function CrudPage<T extends Record<string, any>>({
         </div>
       </div>
 
+      {/* Add/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-h-[85vh] overflow-y-auto">
           <DialogHeader>
@@ -448,6 +591,7 @@ export function CrudPage<T extends Record<string, any>>({
         </DialogContent>
       </Dialog>
 
+      {/* Delete Dialog */}
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -464,6 +608,120 @@ export function CrudPage<T extends Record<string, any>>({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* ─── Import Preview Dialog ─── */}
+      {excelConfig && (
+        <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+          <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Eye className="h-5 w-5" /> Preview Import: {importFileName}
+              </DialogTitle>
+              <DialogDescription>
+                {importData.length} data terdeteksi. Periksa sebelum mengkonfirmasi.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="overflow-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    {columns.map((col) => (
+                      <TableHead key={col.key} className="text-xs">{col.label}</TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {importData.map((row, idx) => (
+                    <TableRow key={idx}>
+                      {columns.map((col) => (
+                        <TableCell key={col.key} className="text-sm">
+                          {col.render ? col.render(row[col.key], row) : String(row[col.key] ?? "")}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            <DialogFooter className="flex-col sm:flex-row gap-2">
+              <Button variant="outline" onClick={() => { setPreviewOpen(false); setImportData([]); }}>
+                <X className="h-4 w-4 mr-1" /> Batal
+              </Button>
+              <Button onClick={() => { setPreviewOpen(false); setConfirmImportOpen(true); }}>
+                <CheckCircle2 className="h-4 w-4 mr-1" /> Konfirmasi Import
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* ─── Confirm Import Dialog ─── */}
+      {excelConfig && (
+        <AlertDialog open={confirmImportOpen} onOpenChange={setConfirmImportOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Konfirmasi Import Data</AlertDialogTitle>
+              <AlertDialogDescription>
+                Anda akan mengimpor <strong>{importData.length} data</strong> baru. Lanjutkan?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Batal</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmImport}>Ya, Import Sekarang</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+
+      {/* ─── Send Dialog ─── */}
+      {excelConfig && (
+        <Dialog open={sendOpen} onOpenChange={setSendOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Kirim Data via WhatsApp / Email</DialogTitle>
+              <DialogDescription>
+                File Excel berisi {filtered.length} data akan diunduh dan dikirim.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-2">
+              <Tabs value={sendMethod} onValueChange={(v) => setSendMethod(v as "whatsapp" | "email")}>
+                <TabsList className="w-full">
+                  <TabsTrigger value="whatsapp" className="flex-1">WhatsApp</TabsTrigger>
+                  <TabsTrigger value="email" className="flex-1">Email</TabsTrigger>
+                </TabsList>
+                <TabsContent value="whatsapp" className="space-y-3 mt-3">
+                  <div className="space-y-2">
+                    <Label>Nomor WhatsApp / Grup (opsional)</Label>
+                    <Input
+                      placeholder="6281234567890"
+                      value={sendTarget}
+                      onChange={(e) => setSendTarget(e.target.value)}
+                    />
+                    <p className="text-[11px] text-muted-foreground">Kosongkan untuk memilih kontak di WhatsApp</p>
+                  </div>
+                </TabsContent>
+                <TabsContent value="email" className="space-y-3 mt-3">
+                  <div className="space-y-2">
+                    <Label>Alamat Email</Label>
+                    <Input
+                      type="email"
+                      placeholder="admin@pesantren.id"
+                      value={sendTarget}
+                      onChange={(e) => setSendTarget(e.target.value)}
+                    />
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setSendOpen(false)}>Batal</Button>
+              <Button onClick={handleSend}>
+                <Send className="h-4 w-4 mr-1" /> Kirim & Download
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </motion.div>
   );
 }
