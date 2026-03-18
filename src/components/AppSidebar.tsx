@@ -23,6 +23,7 @@ import {
   FileCheck,
   ClipboardList as ClipboardListIcon,
   PanelTop,
+  KeyRound,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
