@@ -216,11 +216,11 @@ export function CrudPage<T extends Record<string, any>>({
           item[idKey] === editItem[idKey] ? { ...item, ...formData } as T : item
         )
       );
-      toast({ title: "Data berhasil diperbarui / Data updated" });
+      toast({ title: "Data berhasil diperbarui / Data updated", duration: 2500 });
     } else {
       const newItem = { ...formData, [idKey]: `NEW-${Date.now()}` } as T;
       setData((prev) => [newItem, ...prev]);
-      toast({ title: "Data berhasil ditambahkan / Data added" });
+      toast({ title: "Data berhasil ditambahkan / Data added", duration: 2500 });
     }
     setDialogOpen(false);
   };
@@ -228,7 +228,7 @@ export function CrudPage<T extends Record<string, any>>({
   const handleDelete = () => {
     if (deleteItem) {
       setData((prev) => prev.filter((item) => item[idKey] !== deleteItem[idKey]));
-      toast({ title: "Data berhasil dihapus / Data deleted" });
+      toast({ title: "Data berhasil dihapus / Data deleted", duration: 2500 });
     }
     setDeleteOpen(false);
   };
