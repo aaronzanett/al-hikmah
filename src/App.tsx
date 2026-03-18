@@ -279,14 +279,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/accounts"
-              element={
-                <ProtectedRoute requiredPermissions={["accounts.view"]}>
-                  <ManageAccounts />
-                </ProtectedRoute>
-              }
-            />
+          </Route>
           </Route>
 
           {/* Guardian portal routes */}
