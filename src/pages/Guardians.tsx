@@ -1,4 +1,4 @@
-import { CrudPage } from "@/components/CrudPage";
+import { CrudPage, ExcelConfig } from "@/components/CrudPage";
 
 const mockGuardians = [
   { id: "WL001", name: "Hasan Abdullah", phone: "081234567890", email: "hasan@email.com", address: "Bandung", children: "Ahmad Fauzi" },
@@ -18,8 +18,33 @@ const mockGuardians = [
   { id: "WL015", name: "Lukman Hakim", phone: "082567890123", email: "lukman.h@email.com", address: "Bandung", children: "Maryam Azzahra" },
 ];
 
+type Guardian = typeof mockGuardians[0];
+
+const excelConfig: ExcelConfig<Guardian> = {
+  enabled: true,
+  columnMap: [
+    { excelHeader: ["Nama", "Name", "nama", "name"], dataKey: "name" },
+    { excelHeader: ["Telepon", "Phone", "phone", "telepon", "No. Telepon", "HP"], dataKey: "phone" },
+    { excelHeader: ["Email", "email"], dataKey: "email" },
+    { excelHeader: ["Alamat", "Address", "address", "alamat"], dataKey: "address" },
+    { excelHeader: ["Anak", "Children", "children", "Santri", "santri"], dataKey: "children" },
+  ],
+  exportColumns: [
+    { header: "Nama", key: "name" },
+    { header: "Telepon", key: "phone" },
+    { header: "Email", key: "email" },
+    { header: "Alamat", key: "address" },
+    { header: "Anak / Santri", key: "children" },
+  ],
+  templateData: [
+    { "Nama": "Hasan Abdullah", "Telepon": "081234567890", "Email": "hasan@email.com", "Alamat": "Bandung", "Anak": "Ahmad Fauzi" },
+    { "Nama": "Aminah Sari", "Telepon": "081298765432", "Email": "aminah@email.com", "Alamat": "Garut", "Anak": "Siti Aisyah" },
+  ],
+  fileName: "data-wali",
+};
+
 const Guardians = () => (
-  <CrudPage
+  <CrudPage<Guardian>
     title="Wali Santri / Guardians"
     subtitle="Kelola data wali santri"
     idKey="id"
@@ -27,6 +52,7 @@ const Guardians = () => (
     searchKeys={["name", "phone", "children"]}
     addLabel="Tambah Wali"
     initialData={mockGuardians}
+    excelConfig={excelConfig}
     filters={[
       { key: "address", label: "Kota", options: [{ value: "Bandung", label: "Bandung" }, { value: "Garut", label: "Garut" }, { value: "Tasikmalaya", label: "Tasikmalaya" }] },
     ]}

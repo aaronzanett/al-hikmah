@@ -1,4 +1,4 @@
-import { CrudPage } from "@/components/CrudPage";
+import { CrudPage, ExcelConfig } from "@/components/CrudPage";
 import { Badge } from "@/components/ui/badge";
 
 const mockStudents = [
@@ -28,8 +28,39 @@ const statusVariant = (status: string) => {
   }
 };
 
+type Student = typeof mockStudents[0];
+
+const excelConfig: ExcelConfig<Student> = {
+  enabled: true,
+  columnMap: [
+    { excelHeader: ["NIS", "nis"], dataKey: "nis" },
+    { excelHeader: ["Nama", "Name", "nama", "name"], dataKey: "name" },
+    { excelHeader: ["L/P", "Gender", "gender", "Jenis Kelamin"], dataKey: "gender" },
+    { excelHeader: ["Cabang", "Branch", "branch", "cabang"], dataKey: "branch" },
+    { excelHeader: ["Kelas", "Class", "class", "kelas"], dataKey: "class" },
+    { excelHeader: ["Kamar", "Room", "room", "kamar"], dataKey: "room" },
+    { excelHeader: ["Tahun", "Year", "year", "tahun", "Tahun Masuk"], dataKey: "year" },
+    { excelHeader: ["Status", "status"], dataKey: "status" },
+  ],
+  exportColumns: [
+    { header: "NIS", key: "nis" },
+    { header: "Nama", key: "name" },
+    { header: "L/P", key: "gender" },
+    { header: "Cabang", key: "branch" },
+    { header: "Kelas", key: "class" },
+    { header: "Kamar", key: "room" },
+    { header: "Tahun Masuk", key: "year" },
+    { header: "Status", key: "status" },
+  ],
+  templateData: [
+    { "NIS": "2024001", "Nama": "Ahmad Fauzi", "L/P": "L", "Cabang": "Pusat", "Kelas": "X-A", "Kamar": "Asrama 1 - K.01", "Tahun Masuk": "2024", "Status": "Aktif" },
+    { "NIS": "2024002", "Nama": "Siti Aisyah", "L/P": "P", "Cabang": "Pusat", "Kelas": "X-B", "Kamar": "Asrama 2 - K.05", "Tahun Masuk": "2024", "Status": "Aktif" },
+  ],
+  fileName: "data-santri",
+};
+
 const Students = () => (
-  <CrudPage
+  <CrudPage<Student>
     title="Santri / Students"
     subtitle="Kelola data santri pesantren"
     idKey="id"
@@ -37,6 +68,7 @@ const Students = () => (
     searchKeys={["name", "nis", "branch", "class"]}
     addLabel="Tambah Santri"
     initialData={mockStudents}
+    excelConfig={excelConfig}
     filters={[
       { key: "gender", label: "Gender", options: [{ value: "L", label: "Laki-laki" }, { value: "P", label: "Perempuan" }] },
       { key: "branch", label: "Cabang", options: [{ value: "Pusat", label: "Pusat" }, { value: "Cabang 1", label: "Cabang 1" }, { value: "Cabang 2", label: "Cabang 2" }] },
