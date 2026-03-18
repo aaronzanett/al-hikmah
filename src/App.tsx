@@ -42,6 +42,7 @@ import ManageNews from "./pages/ManageNews";
 import ContactMessages from "./pages/ContactMessages";
 import ManagePrograms from "./pages/ManagePrograms";
 import ManageRegistrations from "./pages/ManageRegistrations";
+import ManageAccounts from "./pages/ManageAccounts";
 import ManageRegistrationInfo from "./pages/ManageRegistrationInfo";
 import Registration from "./pages/Registration";
 import RegistrationForm from "./pages/RegistrationForm";
@@ -276,6 +277,14 @@ const App = () => (
               element={
                 <ProtectedRoute requiredPermissions={["registrations.view"]}>
                   <ManageRegistrations />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/accounts"
+              element={
+                <ProtectedRoute requiredPermissions={["accounts.view"]}>
+                  <ManageAccounts />
                 </ProtectedRoute>
               }
             />

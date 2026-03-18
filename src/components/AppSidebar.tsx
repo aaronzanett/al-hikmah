@@ -23,6 +23,7 @@ import {
   FileCheck,
   ClipboardList as ClipboardListIcon,
   PanelTop,
+  KeyRound,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -63,6 +64,7 @@ const managementItems: MenuItem[] = [
   { title: "Santri / Students", url: "/students", icon: Users, permission: "students.view" },
   { title: "Wali / Guardians", url: "/guardians", icon: Users, permission: "guardians.view" },
   { title: "Pengguna / Users", url: "/users", icon: UserCog, permission: "users.view" },
+  { title: "Akun Portal / Accounts", url: "/accounts", icon: KeyRound, permission: "accounts.view" },
 ];
 
 const academicItems: MenuItem[] = [
