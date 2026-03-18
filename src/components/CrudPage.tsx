@@ -201,6 +201,9 @@ export function CrudPage<T extends Record<string, any>>({
   const [sendOpen, setSendOpen] = useState(false);
   const [sendMethod, setSendMethod] = useState<"whatsapp" | "email">("whatsapp");
   const [sendTarget, setSendTarget] = useState("");
+  const [sendSelectedIds, setSendSelectedIds] = useState<Set<string>>(new Set());
+  const [sendFilters, setSendFilters] = useState<Record<string, string>>({});
+  const [sendSearch, setSendSearch] = useState("");
 
   const filtered = useMemo(() => {
     let result = data;
