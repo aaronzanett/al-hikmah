@@ -67,6 +67,8 @@ export type Permission =
   | 'content_registration.manage'
   | 'registrations.view'
   | 'registrations.manage'
+  | 'accounts.view'
+  | 'accounts.manage'
   // Guardian-specific permissions
   | 'guardian_portal.view'
   | 'child_profile.view'
