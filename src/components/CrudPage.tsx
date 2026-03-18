@@ -331,12 +331,63 @@ export function CrudPage<T extends Record<string, any>>({
     toast({ title: "Template Excel berhasil diunduh", duration: 2500 });
   };
 
+  // Filtered data for send dialog
+  const sendFiltered = useMemo(() => {
+    let result = data;
+    for (const [key, value] of Object.entries(sendFilters)) {
+      if (value && value !== "all") {
+        result = result.filter((item) => String(item[key]) === value);
+      }
+    }
+    if (sendSearch) {
+      const q = sendSearch.toLowerCase();
+      result = result.filter((item) =>
+        searchKeys.some((key) => String(item[key]).toLowerCase().includes(q))
+      );
+    }
+    return result;
+  }, [data, sendFilters, sendSearch, searchKeys]);
+
+  const sendFinalItems = useMemo(() => {
+    if (sendSelectedIds.size === 0) return sendFiltered;
+    return sendFiltered.filter((item) => sendSelectedIds.has(String(item[idKey])));
+  }, [sendFiltered, sendSelectedIds, idKey]);
+
+  const toggleSendSelect = (id: string) => {
+    setSendSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSendSelectAll = () => {
+    if (sendSelectedIds.size === sendFiltered.length) {
+      setSendSelectedIds(new Set());
+    } else {
+      setSendSelectedIds(new Set(sendFiltered.map((item) => String(item[idKey]))));
+    }
+  };
+
+  const openSendDialog = () => {
+    setSendTarget("");
+    setSendSearch("");
+    setSendFilters({});
+    setSendSelectedIds(new Set());
+    setSendOpen(true);
+  };
+
   const handleSend = () => {
-    downloadExcel(filtered);
+    const itemsToSend = sendFinalItems;
+    if (itemsToSend.length === 0) {
+      toast({ title: "Tidak ada data untuk dikirim", variant: "destructive", duration: 2500 });
+      return;
+    }
+    downloadExcel(itemsToSend);
 
     if (sendMethod === "whatsapp") {
       const message = encodeURIComponent(
-        `📋 *Data ${title}*\n\nFile Excel berisi ${filtered.length} data telah disiapkan.\nSilakan cek file yang terunduh.`
+        `📋 *Data ${title}*\n\nFile Excel berisi ${itemsToSend.length} data telah disiapkan.\nSilakan cek file yang terunduh.`
       );
       const url = sendTarget
         ? `https://wa.me/${sendTarget.replace(/[^0-9]/g, "")}?text=${message}`
@@ -345,13 +396,13 @@ export function CrudPage<T extends Record<string, any>>({
     } else {
       const subject = encodeURIComponent(`Data ${title}`);
       const body = encodeURIComponent(
-        `Assalamu'alaikum,\n\nTerlampir file Excel berisi data ${title.toLowerCase()}.\nTotal: ${filtered.length} data.\n\nJazakumullah khairan.`
+        `Assalamu'alaikum,\n\nTerlampir file Excel berisi data ${title.toLowerCase()}.\nTotal: ${itemsToSend.length} data.\n\nJazakumullah khairan.`
       );
       window.open(`mailto:${sendTarget}?subject=${subject}&body=${body}`, "_self");
     }
 
     setSendOpen(false);
-    toast({ title: `Data berhasil dikirim via ${sendMethod === "whatsapp" ? "WhatsApp" : "Email"}`, duration: 2500 });
+    toast({ title: `${itemsToSend.length} data berhasil dikirim via ${sendMethod === "whatsapp" ? "WhatsApp" : "Email"}`, duration: 2500 });
   };
 
   const renderFormField = (field: CrudFormField) => {
