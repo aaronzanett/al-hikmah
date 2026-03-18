@@ -4,6 +4,7 @@ import * as XLSX from "xlsx";
 import {
   Search, Plus, MoreHorizontal, ChevronLeft, ChevronRight, Pencil, Trash2,
   Filter, Upload, ImageIcon, X, Download, Send, FileSpreadsheet, Eye, CheckCircle2,
+  CheckSquare, Square, ListFilter,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -200,6 +201,9 @@ export function CrudPage<T extends Record<string, any>>({
   const [sendOpen, setSendOpen] = useState(false);
   const [sendMethod, setSendMethod] = useState<"whatsapp" | "email">("whatsapp");
   const [sendTarget, setSendTarget] = useState("");
+  const [sendSelectedIds, setSendSelectedIds] = useState<Set<string>>(new Set());
+  const [sendFilters, setSendFilters] = useState<Record<string, string>>({});
+  const [sendSearch, setSendSearch] = useState("");
 
   const filtered = useMemo(() => {
     let result = data;
@@ -327,12 +331,63 @@ export function CrudPage<T extends Record<string, any>>({
     toast({ title: "Template Excel berhasil diunduh", duration: 2500 });
   };
 
+  // Filtered data for send dialog
+  const sendFiltered = useMemo(() => {
+    let result = data;
+    for (const [key, value] of Object.entries(sendFilters)) {
+      if (value && value !== "all") {
+        result = result.filter((item) => String(item[key]) === value);
+      }
+    }
+    if (sendSearch) {
+      const q = sendSearch.toLowerCase();
+      result = result.filter((item) =>
+        searchKeys.some((key) => String(item[key]).toLowerCase().includes(q))
+      );
+    }
+    return result;
+  }, [data, sendFilters, sendSearch, searchKeys]);
+
+  const sendFinalItems = useMemo(() => {
+    if (sendSelectedIds.size === 0) return sendFiltered;
+    return sendFiltered.filter((item) => sendSelectedIds.has(String(item[idKey])));
+  }, [sendFiltered, sendSelectedIds, idKey]);
+
+  const toggleSendSelect = (id: string) => {
+    setSendSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSendSelectAll = () => {
+    if (sendSelectedIds.size === sendFiltered.length) {
+      setSendSelectedIds(new Set());
+    } else {
+      setSendSelectedIds(new Set(sendFiltered.map((item) => String(item[idKey]))));
+    }
+  };
+
+  const openSendDialog = () => {
+    setSendTarget("");
+    setSendSearch("");
+    setSendFilters({});
+    setSendSelectedIds(new Set());
+    setSendOpen(true);
+  };
+
   const handleSend = () => {
-    downloadExcel(filtered);
+    const itemsToSend = sendFinalItems;
+    if (itemsToSend.length === 0) {
+      toast({ title: "Tidak ada data untuk dikirim", variant: "destructive", duration: 2500 });
+      return;
+    }
+    downloadExcel(itemsToSend);
 
     if (sendMethod === "whatsapp") {
       const message = encodeURIComponent(
-        `📋 *Data ${title}*\n\nFile Excel berisi ${filtered.length} data telah disiapkan.\nSilakan cek file yang terunduh.`
+        `📋 *Data ${title}*\n\nFile Excel berisi ${itemsToSend.length} data telah disiapkan.\nSilakan cek file yang terunduh.`
       );
       const url = sendTarget
         ? `https://wa.me/${sendTarget.replace(/[^0-9]/g, "")}?text=${message}`
@@ -341,13 +396,13 @@ export function CrudPage<T extends Record<string, any>>({
     } else {
       const subject = encodeURIComponent(`Data ${title}`);
       const body = encodeURIComponent(
-        `Assalamu'alaikum,\n\nTerlampir file Excel berisi data ${title.toLowerCase()}.\nTotal: ${filtered.length} data.\n\nJazakumullah khairan.`
+        `Assalamu'alaikum,\n\nTerlampir file Excel berisi data ${title.toLowerCase()}.\nTotal: ${itemsToSend.length} data.\n\nJazakumullah khairan.`
       );
       window.open(`mailto:${sendTarget}?subject=${subject}&body=${body}`, "_self");
     }
 
     setSendOpen(false);
-    toast({ title: `Data berhasil dikirim via ${sendMethod === "whatsapp" ? "WhatsApp" : "Email"}`, duration: 2500 });
+    toast({ title: `${itemsToSend.length} data berhasil dikirim via ${sendMethod === "whatsapp" ? "WhatsApp" : "Email"}`, duration: 2500 });
   };
 
   const renderFormField = (field: CrudFormField) => {
@@ -442,7 +497,7 @@ export function CrudPage<T extends Record<string, any>>({
                 <Button size="sm" variant="outline" onClick={() => downloadExcel(filtered)}>
                   <Download className="h-4 w-4 mr-1" /> Download
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => { setSendTarget(""); setSendOpen(true); }}>
+                <Button size="sm" variant="outline" onClick={openSendDialog}>
                   <Send className="h-4 w-4 mr-1" /> Kirim
                 </Button>
               </>
@@ -676,22 +731,26 @@ export function CrudPage<T extends Record<string, any>>({
       {/* ─── Send Dialog ─── */}
       {excelConfig && (
         <Dialog open={sendOpen} onOpenChange={setSendOpen}>
-          <DialogContent>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
             <DialogHeader>
-              <DialogTitle>Kirim Data via WhatsApp / Email</DialogTitle>
+              <DialogTitle className="flex items-center gap-2">
+                <Send className="h-5 w-5" /> Kirim Data via WhatsApp / Email
+              </DialogTitle>
               <DialogDescription>
-                File Excel berisi {filtered.length} data akan diunduh dan dikirim.
+                Pilih data yang ingin dikirim, atau kirim semua hasil filter.
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-2">
+
+            <div className="space-y-4 py-2 flex-1 overflow-hidden flex flex-col">
+              {/* Send method tabs */}
               <Tabs value={sendMethod} onValueChange={(v) => setSendMethod(v as "whatsapp" | "email")}>
                 <TabsList className="w-full">
                   <TabsTrigger value="whatsapp" className="flex-1">WhatsApp</TabsTrigger>
                   <TabsTrigger value="email" className="flex-1">Email</TabsTrigger>
                 </TabsList>
-                <TabsContent value="whatsapp" className="space-y-3 mt-3">
-                  <div className="space-y-2">
-                    <Label>Nomor WhatsApp / Grup (opsional)</Label>
+                <TabsContent value="whatsapp" className="mt-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs">Nomor WhatsApp / Grup (opsional)</Label>
                     <Input
                       placeholder="6281234567890"
                       value={sendTarget}
@@ -700,9 +759,9 @@ export function CrudPage<T extends Record<string, any>>({
                     <p className="text-[11px] text-muted-foreground">Kosongkan untuk memilih kontak di WhatsApp</p>
                   </div>
                 </TabsContent>
-                <TabsContent value="email" className="space-y-3 mt-3">
-                  <div className="space-y-2">
-                    <Label>Alamat Email</Label>
+                <TabsContent value="email" className="mt-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs">Alamat Email</Label>
                     <Input
                       type="email"
                       placeholder="admin@pesantren.id"
@@ -712,11 +771,121 @@ export function CrudPage<T extends Record<string, any>>({
                   </div>
                 </TabsContent>
               </Tabs>
+
+              {/* Filter bar inside send dialog */}
+              <div className="flex flex-wrap items-center gap-2 border rounded-lg p-2 bg-muted/30">
+                <ListFilter className="h-4 w-4 text-muted-foreground" />
+                <div className="relative flex-1 min-w-[140px]">
+                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={sendSearch}
+                    onChange={(e) => setSendSearch(e.target.value)}
+                    placeholder="Cari..."
+                    className="w-full rounded border bg-background pl-7 pr-3 py-1.5 text-xs outline-none focus:ring-1 focus:ring-ring"
+                  />
+                </div>
+                {filters.map((filter) => (
+                  <Select
+                    key={filter.key}
+                    value={sendFilters[filter.key] || "all"}
+                    onValueChange={(v) => {
+                      setSendFilters((prev) => ({ ...prev, [filter.key]: v }));
+                      setSendSelectedIds(new Set());
+                    }}
+                  >
+                    <SelectTrigger className="h-7 w-auto min-w-[100px] text-xs">
+                      <SelectValue placeholder={filter.label} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Semua {filter.label}</SelectItem>
+                      {filter.options.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ))}
+                {(sendSearch || Object.values(sendFilters).some((v) => v && v !== "all")) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-[11px] text-muted-foreground"
+                    onClick={() => { setSendFilters({}); setSendSearch(""); setSendSelectedIds(new Set()); }}
+                  >
+                    Reset
+                  </Button>
+                )}
+              </div>
+
+              {/* Summary */}
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>
+                  {sendSelectedIds.size > 0
+                    ? `${sendSelectedIds.size} dari ${sendFiltered.length} dipilih`
+                    : `${sendFiltered.length} data (semua akan dikirim)`}
+                </span>
+                <Button variant="ghost" size="sm" className="h-6 text-[11px]" onClick={toggleSendSelectAll}>
+                  {sendSelectedIds.size === sendFiltered.length && sendFiltered.length > 0 ? (
+                    <><CheckSquare className="h-3 w-3 mr-1" /> Batal Pilih Semua</>
+                  ) : (
+                    <><Square className="h-3 w-3 mr-1" /> Pilih Semua</>
+                  )}
+                </Button>
+              </div>
+
+              {/* Selectable data table */}
+              <div className="flex-1 overflow-auto border rounded-lg max-h-[280px]">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="hover:bg-transparent">
+                      <TableHead className="w-8 text-xs"></TableHead>
+                      {columns.slice(0, 5).map((col) => (
+                        <TableHead key={col.key} className="text-xs">{col.label}</TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sendFiltered.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center text-xs text-muted-foreground py-6">
+                          Tidak ada data sesuai filter
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      sendFiltered.map((item) => {
+                        const itemId = String(item[idKey]);
+                        const isSelected = sendSelectedIds.has(itemId);
+                        return (
+                          <TableRow
+                            key={itemId}
+                            className={cn("cursor-pointer", isSelected && "bg-primary/5")}
+                            onClick={() => toggleSendSelect(itemId)}
+                          >
+                            <TableCell className="w-8 pr-0">
+                              {isSelected ? (
+                                <CheckSquare className="h-4 w-4 text-primary" />
+                              ) : (
+                                <Square className="h-4 w-4 text-muted-foreground/40" />
+                              )}
+                            </TableCell>
+                            {columns.slice(0, 5).map((col) => (
+                              <TableCell key={col.key} className="text-xs">
+                                {col.render ? col.render(item[col.key], item) : String(item[col.key] ?? "")}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        );
+                      })
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
-            <DialogFooter>
+
+            <DialogFooter className="border-t pt-3">
               <Button variant="outline" onClick={() => setSendOpen(false)}>Batal</Button>
-              <Button onClick={handleSend}>
-                <Send className="h-4 w-4 mr-1" /> Kirim & Download
+              <Button onClick={handleSend} disabled={sendFinalItems.length === 0}>
+                <Send className="h-4 w-4 mr-1" /> Kirim {sendFinalItems.length} Data
               </Button>
             </DialogFooter>
           </DialogContent>
