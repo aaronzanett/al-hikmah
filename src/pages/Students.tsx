@@ -71,6 +71,7 @@ const Students = () => (
     excelConfig={excelConfig}
     filters={[
       { key: "gender", label: "Gender", options: [{ value: "L", label: "Laki-laki" }, { value: "P", label: "Perempuan" }] },
+      { key: "class", label: "Kelas", options: [{ value: "X-A", label: "X-A" }, { value: "X-B", label: "X-B" }, { value: "X-C", label: "X-C" }, { value: "XI-A", label: "XI-A" }, { value: "XI-B", label: "XI-B" }, { value: "XII-A", label: "XII-A" }, { value: "XII-B", label: "XII-B" }] },
       { key: "branch", label: "Cabang", options: [{ value: "Pusat", label: "Pusat" }, { value: "Cabang 1", label: "Cabang 1" }, { value: "Cabang 2", label: "Cabang 2" }] },
       { key: "status", label: "Status", options: [{ value: "Aktif", label: "Aktif" }, { value: "Cuti", label: "Cuti" }, { value: "Alumni", label: "Alumni" }] },
     ]}
