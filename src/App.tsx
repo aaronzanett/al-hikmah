@@ -280,7 +280,6 @@ const App = () => (
               }
             />
           </Route>
-          </Route>
 
           {/* Guardian portal routes */}
           <Route
