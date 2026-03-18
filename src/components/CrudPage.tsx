@@ -497,7 +497,7 @@ export function CrudPage<T extends Record<string, any>>({
                 <Button size="sm" variant="outline" onClick={() => downloadExcel(filtered)}>
                   <Download className="h-4 w-4 mr-1" /> Download
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => { setSendTarget(""); setSendOpen(true); }}>
+                <Button size="sm" variant="outline" onClick={openSendDialog}>
                   <Send className="h-4 w-4 mr-1" /> Kirim
                 </Button>
               </>
