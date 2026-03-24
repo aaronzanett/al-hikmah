@@ -96,7 +96,7 @@ const registrationPhases = [
       "Pembayaran seragam & kitab",
       "Konfirmasi pembayaran",
     ],
-    color: "bg-accent/15 text-accent-foreground",
+    color: "bg-destructive/10 text-destructive",
   },
   {
     step: 6,
