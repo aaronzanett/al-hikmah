@@ -144,6 +144,7 @@ const Settings = () => {
 
   // ─── Logo state ───
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoMode, setLogoMode] = useState<"complete" | "manual">("manual");
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [cropSrc, setCropSrc] = useState<string>("");
   const [crop, setCrop] = useState<Crop>();
