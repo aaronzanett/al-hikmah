@@ -57,7 +57,7 @@ const registrationPhases = [
       "Rapor 2 semester terakhir",
       "Surat keterangan sehat",
     ],
-    color: "bg-accent/15 text-accent-foreground",
+    color: "bg-warning/10 text-warning",
   },
   {
     step: 3,
@@ -96,7 +96,7 @@ const registrationPhases = [
       "Pembayaran seragam & kitab",
       "Konfirmasi pembayaran",
     ],
-    color: "bg-accent/15 text-accent-foreground",
+    color: "bg-destructive/10 text-destructive",
   },
   {
     step: 6,
@@ -239,8 +239,8 @@ const Registration = () => {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15 shrink-0">
-                <Users className="h-6 w-6 text-accent-foreground" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-info/10 shrink-0">
+                <Users className="h-6 w-6 text-info" />
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Kuota Tersedia</p>

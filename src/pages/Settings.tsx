@@ -10,7 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Phone, Mail, MapPin, Clock, Instagram, Youtube, Facebook, Twitter, Globe, Music2, ShieldCheck, Upload, ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, Phone, Mail, MapPin, Clock, Instagram, Youtube, Facebook, Twitter, Globe, Music2, ShieldCheck, Upload, ImageIcon, Info } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
@@ -143,6 +144,7 @@ const Settings = () => {
 
   // ─── Logo state ───
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoMode, setLogoMode] = useState<"complete" | "manual">("manual");
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [cropSrc, setCropSrc] = useState<string>("");
   const [crop, setCrop] = useState<Crop>();
@@ -275,11 +277,42 @@ const Settings = () => {
           {/* ── Institution Profile with Logo ── */}
           <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
             <h3 className="text-sm font-semibold">Profil Pesantren / Institution Profile</h3>
+
+            {/* Logo Mode Toggle */}
+            <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-foreground">Mode Logo / Logo Mode</p>
+                  <p className="text-xs text-muted-foreground">
+                    {logoMode === "complete"
+                      ? "Logo sudah lengkap (gambar berisi nama & tagline)"
+                      : "Logo terpisah (gambar + nama & tagline manual)"}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs ${logoMode === "manual" ? "text-foreground font-medium" : "text-muted-foreground"}`}>Manual</span>
+                  <Switch
+                    checked={logoMode === "complete"}
+                    onCheckedChange={(checked) => setLogoMode(checked ? "complete" : "manual")}
+                  />
+                  <span className={`text-xs ${logoMode === "complete" ? "text-foreground font-medium" : "text-muted-foreground"}`}>Lengkap</span>
+                </div>
+              </div>
+              <div className="flex items-start gap-2 rounded-md bg-info/10 p-3">
+                <Info className="h-4 w-4 text-info shrink-0 mt-0.5" />
+                <p className="text-xs text-muted-foreground">
+                  {logoMode === "complete"
+                    ? "Gunakan mode ini jika logo Anda sudah menyertakan nama dan tagline dalam satu gambar. Nama & tagline tidak akan ditampilkan di navbar."
+                    : "Gunakan mode ini jika logo hanya berupa ikon/simbol. Nama pesantren dan tagline akan ditampilkan di samping logo."}
+                </p>
+              </div>
+            </div>
+
             <div className="flex flex-col sm:flex-row gap-5">
               {/* Logo upload & preview */}
               <div className="flex flex-col items-center gap-2">
                 <div
-                  className="relative h-28 w-28 rounded-xl border-2 border-dashed border-muted-foreground/30 bg-muted/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-colors"
+                  className={`relative ${logoMode === "complete" ? "h-28 w-48" : "h-28 w-28"} rounded-xl border-2 border-dashed border-muted-foreground/30 bg-muted/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all`}
                   onClick={() => logoInputRef.current?.click()}
                 >
                   {logoPreview ? (
@@ -287,7 +320,7 @@ const Settings = () => {
                   ) : (
                     <div className="flex flex-col items-center gap-1 text-muted-foreground">
                       <ImageIcon className="h-8 w-8" />
-                      <span className="text-[10px]">Logo</span>
+                      <span className="text-[10px]">{logoMode === "complete" ? "Logo Lengkap" : "Logo Ikon"}</span>
                     </div>
                   )}
                 </div>
@@ -309,10 +342,16 @@ const Settings = () => {
                   <div className="space-y-2">
                     <Label>Nama Pesantren / Institution Name</Label>
                     <Input value={settings.institutionName} onChange={(e) => update("institutionName", e.target.value)} />
+                    {logoMode === "complete" && (
+                      <p className="text-[10px] text-muted-foreground">Tidak ditampilkan di navbar (sudah ada di logo)</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label>Tagline</Label>
                     <Input value={settings.tagline} onChange={(e) => update("tagline", e.target.value)} />
+                    {logoMode === "complete" && (
+                      <p className="text-[10px] text-muted-foreground">Tidak ditampilkan di navbar (sudah ada di logo)</p>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -323,6 +362,38 @@ const Settings = () => {
                   <Label>Alamat / Address</Label>
                   <Textarea value={settings.address} onChange={(e) => update("address", e.target.value)} rows={2} />
                 </div>
+              </div>
+            </div>
+
+            {/* Preview */}
+            <div className="rounded-lg border bg-muted/20 p-4">
+              <p className="text-xs font-medium text-muted-foreground mb-3">Preview Navbar Logo</p>
+              <div className="flex items-center gap-3 bg-background rounded-lg border p-3 w-fit">
+                {logoPreview ? (
+                  logoMode === "complete" ? (
+                    <img src={logoPreview} alt="Logo" className="h-9 object-contain" />
+                  ) : (
+                    <>
+                      <img src={logoPreview} alt="Logo" className="h-9 w-9 rounded-lg object-contain" />
+                      <div>
+                        <span className="text-sm font-bold text-foreground leading-none block">{settings.institutionName}</span>
+                        <span className="text-[10px] text-muted-foreground leading-tight block">{settings.tagline}</span>
+                      </div>
+                    </>
+                  )
+                ) : (
+                  <>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-gold shadow-md">
+                      <span className="text-sm font-bold text-accent-foreground">B</span>
+                    </div>
+                    {logoMode === "manual" && (
+                      <div>
+                        <span className="text-sm font-bold text-foreground leading-none block">{settings.institutionName}</span>
+                        <span className="text-[10px] text-muted-foreground leading-tight block">{settings.tagline}</span>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </div>
