@@ -57,7 +57,7 @@ const registrationPhases = [
       "Rapor 2 semester terakhir",
       "Surat keterangan sehat",
     ],
-    color: "bg-accent/15 text-accent-foreground",
+    color: "bg-warning/10 text-warning",
   },
   {
     step: 3,
