@@ -1,151 +1,27 @@
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
   ArrowRight,
   CheckCircle2,
-  ClipboardList,
-  FileText,
-  Users,
-  CreditCard,
-  Trophy,
-  GraduationCap,
   Calendar,
   Clock,
-  Phone,
-  Mail,
-  MapPin,
+  Users,
   Star,
-  ShieldCheck,
-  BookOpen,
-  Globe,
-  Heart,
-  Award,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
 
 import heroPesantren from "@/assets/hero-pesantren.jpg";
-import galleryClassroom from "@/assets/gallery-classroom.jpg";
-import galleryMosque from "@/assets/gallery-mosque.jpg";
 
-// ─── Registration Steps ───
-const registrationPhases = [
-  {
-    step: 1,
-    icon: ClipboardList,
-    title: "Pendaftaran Online",
-    desc: "Isi formulir pendaftaran online dengan data lengkap calon santri dan wali/orang tua.",
-    details: [
-      "Pilih program yang diminati",
-      "Isi data pribadi calon santri",
-      "Isi data wali/orang tua",
-      "Upload pas foto terbaru",
-    ],
-    color: "bg-primary/10 text-primary",
-  },
-  {
-    step: 2,
-    icon: FileText,
-    title: "Upload Dokumen",
-    desc: "Lengkapi berkas persyaratan secara digital melalui portal pendaftaran.",
-    details: [
-      "Akta kelahiran",
-      "Kartu keluarga",
-      "Rapor 2 semester terakhir",
-      "Surat keterangan sehat",
-    ],
-    color: "bg-warning/10 text-warning",
-  },
-  {
-    step: 3,
-    icon: Users,
-    title: "Tes Seleksi",
-    desc: "Ikuti tes seleksi yang meliputi tes akademik, baca Al-Qur'an, dan wawancara.",
-    details: [
-      "Tes kemampuan akademik dasar",
-      "Tes baca Al-Qur'an & hafalan",
-      "Wawancara calon santri",
-      "Wawancara orang tua/wali",
-    ],
-    color: "bg-info/10 text-info",
-  },
-  {
-    step: 4,
-    icon: Trophy,
-    title: "Pengumuman Hasil",
-    desc: "Hasil seleksi akan diumumkan melalui website dan notifikasi ke email/WhatsApp terdaftar.",
-    details: [
-      "Pengumuman via website & email",
-      "Notifikasi WhatsApp",
-      "Surat kelulusan digital",
-      "Panduan langkah selanjutnya",
-    ],
-    color: "bg-success/10 text-success",
-  },
-  {
-    step: 5,
-    icon: CreditCard,
-    title: "Daftar Ulang & Pembayaran",
-    desc: "Lakukan pembayaran biaya pendaftaran dan perlengkapan sesuai gelombang yang dipilih.",
-    details: [
-      "Pembayaran biaya pendidikan",
-      "Pembayaran perlengkapan santri",
-      "Pembayaran seragam & kitab",
-      "Konfirmasi pembayaran",
-    ],
-    color: "bg-destructive/10 text-destructive",
-  },
-  {
-    step: 6,
-    icon: GraduationCap,
-    title: "Orientasi & Masuk Pesantren",
-    desc: "Ikuti kegiatan orientasi dan mulai kehidupan sebagai santri di pesantren.",
-    details: [
-      "Orientasi santri baru (3 hari)",
-      "Penempatan kamar asrama",
-      "Penerimaan jadwal pelajaran",
-      "Perkenalan lingkungan pesantren",
-    ],
-    color: "bg-primary/10 text-primary",
-  },
-];
-
-const scheduleData = [
-  { wave: "Gelombang 1", period: "1 Januari – 28 Februari 2026", test: "8 Maret 2026", result: "15 Maret 2026", status: "Dibuka" },
-  { wave: "Gelombang 2", period: "1 Maret – 30 April 2026", test: "10 Mei 2026", result: "17 Mei 2026", status: "Segera" },
-  { wave: "Gelombang 3", period: "1 Mei – 30 Juni 2026", test: "12 Juli 2026", result: "19 Juli 2026", status: "Tertutup" },
-];
-
-const costItems = [
-  { item: "Biaya Pendaftaran", amount: "Rp 350.000", note: "Sekali bayar" },
-  { item: "SPP Bulanan", amount: "Rp 1.500.000", note: "Per bulan" },
-  { item: "Biaya Pembangunan", amount: "Rp 5.000.000", note: "Sekali bayar" },
-  { item: "Perlengkapan Santri", amount: "Rp 2.500.000", note: "Sekali bayar" },
-  { item: "Seragam & Kitab", amount: "Rp 1.800.000", note: "Sekali bayar" },
-];
-
-const requirements = [
-  "Fotokopi akta kelahiran (2 lembar)",
-  "Fotokopi kartu keluarga (2 lembar)",
-  "Fotokopi rapor 2 semester terakhir yang dilegalisir",
-  "Surat keterangan sehat dari dokter",
-  "Pas foto 3x4 dan 4x6 (masing-masing 4 lembar, background biru)",
-  "Fotokopi KTP orang tua/wali (2 lembar)",
-  "Surat keterangan berkelakuan baik dari sekolah asal",
-  "Mengisi formulir pendaftaran online",
-];
-
-const faqData = [
-  { q: "Berapa usia minimal untuk mendaftar?", a: "Calon santri minimal berusia 12 tahun atau setara kelas 7 SMP pada saat masuk pesantren." },
-  { q: "Apakah ada beasiswa untuk santri berprestasi?", a: "Ya, kami menyediakan beasiswa prestasi akademik, tahfidz, dan bantuan bagi keluarga kurang mampu. Informasi lebih lanjut bisa ditanyakan saat pendaftaran." },
-  { q: "Bagaimana sistem pembayaran SPP?", a: "Pembayaran SPP dilakukan setiap bulan melalui transfer bank, virtual account, atau e-wallet. Kami juga menerima pembayaran per semester." },
-  { q: "Apakah orang tua bisa berkunjung?", a: "Kunjungan orang tua dijadwalkan setiap 2 minggu sekali pada hari Ahad. Kunjungan di luar jadwal bisa diatur melalui koordinasi dengan pihak pesantren." },
-  { q: "Apa kurikulum yang digunakan?", a: "Kami menggunakan kurikulum nasional (Kemendikbud) yang dipadukan dengan kurikulum pesantren (Diniyah), sehingga santri mendapat ijazah formal dan kemampuan keagamaan." },
-  { q: "Apakah ada program tahfidz?", a: "Ya, program tahfidz adalah salah satu program unggulan kami dengan target hafalan 30 juz selama masa pendidikan." },
-];
+import {
+  registrationSteps,
+  scheduleData,
+  requirementsData,
+  costData,
+  faqData,
+} from "@/data/registrationData";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -157,15 +33,16 @@ const fadeUp = {
 
 function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const activeFaqs = faqData.filter(f => f.status === "Aktif");
   return (
     <div className="space-y-3">
-      {faqData.map((faq, i) => (
-        <div key={i} className="rounded-xl border bg-card overflow-hidden">
+      {activeFaqs.map((faq, i) => (
+        <div key={faq.id} className="rounded-xl border bg-card overflow-hidden">
           <button
             onClick={() => setOpenIndex(openIndex === i ? null : i)}
             className="w-full text-left flex items-center justify-between p-5 hover:bg-muted/50 transition-colors"
           >
-            <span className="text-sm font-semibold text-foreground pr-4">{faq.q}</span>
+            <span className="text-sm font-semibold text-foreground pr-4">{faq.question}</span>
             {openIndex === i ? (
               <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" />
             ) : (
@@ -178,7 +55,7 @@ function FAQ() {
               animate={{ opacity: 1, height: "auto" }}
               className="px-5 pb-5"
             >
-              <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">{faq.answer}</p>
             </motion.div>
           )}
         </div>
@@ -188,6 +65,18 @@ function FAQ() {
 }
 
 const Registration = () => {
+  const activeSteps = registrationSteps.filter(s => s.status === "Aktif");
+  const activeSchedule = scheduleData;
+  const activeRequirements = requirementsData.filter(r => r.status === "Aktif");
+  const activeCosts = costData.filter(c => c.status === "Aktif");
+
+  const totalCost = activeCosts
+    .filter(c => c.note !== "Per bulan")
+    .reduce((sum, c) => {
+      const num = parseInt(c.amount.replace(/[^\d]/g, ""), 10);
+      return sum + (isNaN(num) ? 0 : num);
+    }, 0);
+
   return (
     <div className="bg-background">
 
@@ -266,41 +155,44 @@ const Registration = () => {
           <div className="text-center mb-14">
             <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">Alur Pendaftaran</span>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              6 Langkah Menuju Pesantren
+              {activeSteps.length} Langkah Menuju Pesantren
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Proses pendaftaran yang mudah dan terstruktur untuk memastikan setiap calon santri mendapat layanan terbaik.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {registrationPhases.map((phase, i) => (
-              <motion.div
-                key={phase.step}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                className="group rounded-2xl border bg-card p-7 shadow-card hover:shadow-card-hover transition-all hover:-translate-y-1"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${phase.color}`}>
-                    <phase.icon className="h-6 w-6" />
+            {activeSteps.map((phase, i) => {
+              const Icon = phase.icon;
+              return (
+                <motion.div
+                  key={phase.id}
+                  custom={i}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={fadeUp}
+                  className="group rounded-2xl border bg-card p-7 shadow-card hover:shadow-card-hover transition-all hover:-translate-y-1"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${phase.color}`}>
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <span className="text-2xl font-extrabold text-muted-foreground/20">0{phase.step}</span>
                   </div>
-                  <span className="text-2xl font-extrabold text-muted-foreground/20">0{phase.step}</span>
-                </div>
-                <h3 className="font-bold text-foreground mb-2">{phase.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-4">{phase.desc}</p>
-                <ul className="space-y-1.5">
-                  {phase.details.map((d, j) => (
-                    <li key={j} className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" />
-                      {d}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
+                  <h3 className="font-bold text-foreground mb-2">{phase.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{phase.desc}</p>
+                  <ul className="space-y-1.5">
+                    {phase.details.map((d, j) => (
+                      <li key={j} className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" />
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -328,12 +220,12 @@ const Registration = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {scheduleData.map((s) => (
-                      <tr key={s.wave} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                    {activeSchedule.map((s) => (
+                      <tr key={s.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                         <td className="p-4 font-semibold text-foreground">{s.wave}</td>
                         <td className="p-4 text-muted-foreground">{s.period}</td>
-                        <td className="p-4 text-muted-foreground">{s.test}</td>
-                        <td className="p-4 text-muted-foreground">{s.result}</td>
+                        <td className="p-4 text-muted-foreground">{s.testDate}</td>
+                        <td className="p-4 text-muted-foreground">{s.resultDate}</td>
                         <td className="p-4">
                           <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                             s.status === "Dibuka" ? "bg-success/10 text-success" :
@@ -353,7 +245,7 @@ const Registration = () => {
         </div>
       </section>
 
-      {/* Requirements */}
+      {/* Requirements & Costs */}
       <section className="py-20 lg:py-28 islamic-pattern-arabesque">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-start">
@@ -366,9 +258,9 @@ const Registration = () => {
                 Siapkan dokumen-dokumen berikut untuk melengkapi proses pendaftaran calon santri baru.
               </p>
               <div className="space-y-3">
-                {requirements.map((req, i) => (
+                {activeRequirements.map((req, i) => (
                   <motion.div
-                    key={i}
+                    key={req.id}
                     custom={i}
                     initial="hidden"
                     whileInView="visible"
@@ -377,7 +269,7 @@ const Registration = () => {
                     className="flex items-start gap-3 rounded-xl border bg-card p-4"
                   >
                     <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm text-foreground">{req}</span>
+                    <span className="text-sm text-foreground">{req.title}</span>
                   </motion.div>
                 ))}
               </div>
@@ -393,8 +285,8 @@ const Registration = () => {
                 Berikut adalah rincian biaya pendidikan untuk tahun ajaran 2026/2027.
               </p>
               <div className="rounded-2xl border bg-card shadow-card overflow-hidden">
-                {costItems.map((cost, i) => (
-                  <div key={i} className={`flex items-center justify-between p-5 ${i < costItems.length - 1 ? "border-b" : ""}`}>
+                {activeCosts.map((cost, i) => (
+                  <div key={cost.id} className={`flex items-center justify-between p-5 ${i < activeCosts.length - 1 ? "border-b" : ""}`}>
                     <div>
                       <p className="text-sm font-semibold text-foreground">{cost.item}</p>
                       <p className="text-xs text-muted-foreground">{cost.note}</p>
@@ -405,7 +297,9 @@ const Registration = () => {
                 <div className="p-5 bg-primary/5 border-t">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-bold text-foreground">Total Biaya Awal</span>
-                    <span className="text-lg font-extrabold text-primary">Rp 11.150.000</span>
+                    <span className="text-lg font-extrabold text-primary">
+                      Rp {totalCost.toLocaleString("id-ID")}
+                    </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">*Belum termasuk SPP bulanan</p>
                 </div>
