@@ -1,6 +1,6 @@
 import { Outlet, Link } from "react-router-dom";
 import PublicNavbar from "@/components/PublicNavbar";
-import { Phone, Mail, MapPin, ShieldCheck, Instagram, Youtube, Facebook } from "lucide-react";
+import { Phone, Mail, MapPin, ShieldCheck, Instagram, Youtube, Facebook, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
@@ -17,11 +17,17 @@ const footerLinks = [
   { label: "Berita", href: "/news" },
 ];
 
+const contacts = [
+  { icon: MapPin, value: "Jl. Pondok Pesantren No. 123, Kec. Cikarang, Kabupaten Bekasi, Jawa Barat 17530", isAddress: true },
+  { icon: Phone, value: "(021) 8888-1234" },
+  { icon: Mail, value: "info@alhikmah.sch.id" },
+  { icon: Clock, value: "Senin–Sabtu: 07.00–16.00 WIB" },
+];
+
 const socials = [
-  { icon: Instagram, label: "Instagram", href: "https://instagram.com/pesantren.alhikmah" },
-  { icon: Youtube, label: "YouTube", href: "https://youtube.com/@alhikmah" },
-  { icon: Facebook, label: "Facebook", href: "https://facebook.com/pesantren.alhikmah" },
-  { icon: WhatsAppIcon, label: "WhatsApp", href: "https://wa.me/6281234567890" },
+  { icon: Instagram, label: "Instagram", username: "@pesantren.alhikmah", href: "https://instagram.com/pesantren.alhikmah" },
+  { icon: Youtube, label: "YouTube", username: "Pesantren Al-Hikmah Official", href: "https://youtube.com/@alhikmah" },
+  { icon: WhatsAppIcon, label: "WhatsApp", username: "+62 812-3456-7890", href: "https://wa.me/6281234567890" },
 ];
 
 export default function PublicLayout() {
@@ -68,9 +74,15 @@ export default function PublicLayout() {
             <div>
               <h4 className="text-sm font-semibold text-foreground mb-4">Kontak</h4>
               <ul className="space-y-2.5 text-sm text-muted-foreground">
-                <li className="flex items-start gap-2"><MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0" /> Jl. Pondok Pesantren No. 123, Bekasi</li>
-                <li className="flex items-center gap-2"><Phone className="h-3.5 w-3.5" /> (021) 8888-1234</li>
-                <li className="flex items-center gap-2"><Mail className="h-3.5 w-3.5" /> info@alhikmah.sch.id</li>
+                {contacts.map((c, i) => {
+                  const Icon = c.icon;
+                  return (
+                    <li key={i} className={`flex ${c.isAddress ? "items-start" : "items-center"} gap-2`}>
+                      <Icon className={`h-3.5 w-3.5 shrink-0 ${c.isAddress ? "mt-0.5" : ""}`} />
+                      {c.value}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 
