@@ -163,6 +163,26 @@ const Settings = () => {
   const [editingSocial, setEditingSocial] = useState<SocialMedia | null>(null);
   const [socialForm, setSocialForm] = useState({ platform: "Instagram", username: "", url: "", isActive: true });
 
+  // ─── Developer password state ───
+  const [devPasswordInput, setDevPasswordInput] = useState("");
+  const [devUnlocked, setDevUnlocked] = useState(false);
+  const [devPasswordError, setDevPasswordError] = useState(false);
+  const DEV_PASSWORD = "developerganteng";
+
+  // ─── Maintenance mode state ───
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [maintenanceMessage, setMaintenanceMessage] = useState("Website sedang dalam pemeliharaan. Silakan kunjungi kembali nanti.");
+
+  const handleDevPasswordSubmit = () => {
+    if (devPasswordInput === DEV_PASSWORD) {
+      setDevUnlocked(true);
+      setDevPasswordError(false);
+      toast({ title: "Akses diberikan / Access granted" });
+    } else {
+      setDevPasswordError(true);
+    }
+  };
+
   const update = (key: string, value: string) => setSettings((p) => ({ ...p, [key]: value }));
 
   // ─── Logo handlers ───
