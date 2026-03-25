@@ -698,62 +698,178 @@ const Settings = () => {
 
         {/* ═══════════ FINANCE TAB ═══════════ */}
         <TabsContent value="finance" className="space-y-6 mt-4">
-          <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
-            <h3 className="text-sm font-semibold">Keuangan / Finance</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Micro-Fee per Transaksi (Rp)</Label>
-                <Input type="number" value={settings.microFee} onChange={(e) => update("microFee", e.target.value)} />
+          {!devUnlocked ? (
+            <div className="bg-card border rounded-xl p-8 shadow-card flex flex-col items-center gap-5 max-w-md mx-auto">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-warning/10">
+                <Lock className="h-8 w-8 text-warning" />
               </div>
-              <div className="space-y-2">
-                <Label>Payment Gateway</Label>
-                <Select value={settings.paymentGateway} onValueChange={(v) => update("paymentGateway", v)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="midtrans">Midtrans</SelectItem>
-                    <SelectItem value="xendit">Xendit</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="text-center">
+                <h3 className="text-lg font-bold text-foreground mb-1">Akses Terbatas / Restricted Access</h3>
+                <p className="text-sm text-muted-foreground">Menu ini memerlukan password developer untuk mengakses pengaturan keuangan.</p>
+              </div>
+              <div className="w-full space-y-3">
+                <Input
+                  type="password"
+                  placeholder="Masukkan password developer..."
+                  value={devPasswordInput}
+                  onChange={(e) => { setDevPasswordInput(e.target.value); setDevPasswordError(false); }}
+                  onKeyDown={(e) => e.key === "Enter" && handleDevPasswordSubmit()}
+                  className={devPasswordError ? "border-destructive" : ""}
+                />
+                {devPasswordError && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <AlertTriangle className="h-3 w-3" /> Password salah. Coba lagi.
+                  </p>
+                )}
+                <Button onClick={handleDevPasswordSubmit} className="w-full">
+                  <Lock className="h-4 w-4 mr-2" /> Buka Akses / Unlock
+                </Button>
               </div>
             </div>
-          </div>
-          <div className="flex justify-end">
-            <Button onClick={handleSave}>Simpan / Save</Button>
-          </div>
+          ) : (
+            <>
+              <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
+                <h3 className="text-sm font-semibold">Keuangan / Finance</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Micro-Fee per Transaksi (Rp)</Label>
+                    <Input type="number" value={settings.microFee} onChange={(e) => update("microFee", e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Payment Gateway</Label>
+                    <Select value={settings.paymentGateway} onValueChange={(v) => update("paymentGateway", v)}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="midtrans">Midtrans</SelectItem>
+                        <SelectItem value="xendit">Xendit</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button onClick={handleSave}>Simpan / Save</Button>
+              </div>
+            </>
+          )}
         </TabsContent>
 
         {/* ═══════════ SYSTEM TAB ═══════════ */}
         <TabsContent value="system" className="space-y-6 mt-4">
-          <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
-            <h3 className="text-sm font-semibold">Sistem / System</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Bahasa / Language</Label>
-                <Select value={settings.language} onValueChange={(v) => update("language", v)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="bilingual">Bilingual (ID/EN)</SelectItem>
-                    <SelectItem value="id">Bahasa Indonesia</SelectItem>
-                    <SelectItem value="en">English</SelectItem>
-                  </SelectContent>
-                </Select>
+          {!devUnlocked ? (
+            <div className="bg-card border rounded-xl p-8 shadow-card flex flex-col items-center gap-5 max-w-md mx-auto">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-warning/10">
+                <Lock className="h-8 w-8 text-warning" />
               </div>
-              <div className="space-y-2">
-                <Label>Zona Waktu / Timezone</Label>
-                <Select value={settings.timezone} onValueChange={(v) => update("timezone", v)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Asia/Jakarta">WIB (Asia/Jakarta)</SelectItem>
-                    <SelectItem value="Asia/Makassar">WITA (Asia/Makassar)</SelectItem>
-                    <SelectItem value="Asia/Jayapura">WIT (Asia/Jayapura)</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="text-center">
+                <h3 className="text-lg font-bold text-foreground mb-1">Akses Terbatas / Restricted Access</h3>
+                <p className="text-sm text-muted-foreground">Menu ini memerlukan password developer untuk mengakses pengaturan sistem.</p>
+              </div>
+              <div className="w-full space-y-3">
+                <Input
+                  type="password"
+                  placeholder="Masukkan password developer..."
+                  value={devPasswordInput}
+                  onChange={(e) => { setDevPasswordInput(e.target.value); setDevPasswordError(false); }}
+                  onKeyDown={(e) => e.key === "Enter" && handleDevPasswordSubmit()}
+                  className={devPasswordError ? "border-destructive" : ""}
+                />
+                {devPasswordError && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <AlertTriangle className="h-3 w-3" /> Password salah. Coba lagi.
+                  </p>
+                )}
+                <Button onClick={handleDevPasswordSubmit} className="w-full">
+                  <Lock className="h-4 w-4 mr-2" /> Buka Akses / Unlock
+                </Button>
               </div>
             </div>
-          </div>
-          <div className="flex justify-end">
-            <Button onClick={handleSave}>Simpan / Save</Button>
-          </div>
+          ) : (
+            <>
+              {/* Maintenance Mode */}
+              <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${maintenanceMode ? "bg-destructive/10" : "bg-success/10"}`}>
+                      <Power className={`h-5 w-5 ${maintenanceMode ? "text-destructive" : "text-success"}`} />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold">Status Website / Website Status</h3>
+                      <p className="text-xs text-muted-foreground">
+                        {maintenanceMode ? "Website sedang dalam mode pemeliharaan (maintenance)" : "Website aktif dan dapat diakses publik"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-medium ${maintenanceMode ? "text-destructive" : "text-success"}`}>
+                      {maintenanceMode ? "Maintenance" : "Aktif"}
+                    </span>
+                    <Switch
+                      checked={maintenanceMode}
+                      onCheckedChange={(checked) => {
+                        setMaintenanceMode(checked);
+                        toast({
+                          title: checked ? "Website dalam mode Maintenance" : "Website kembali Aktif",
+                          description: checked
+                            ? "Pengunjung akan melihat halaman pemeliharaan."
+                            : "Website dapat diakses kembali oleh publik.",
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+                {maintenanceMode && (
+                  <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-destructive" />
+                      <span className="text-sm font-medium text-destructive">Mode Pemeliharaan Aktif</span>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Pesan Maintenance / Maintenance Message</Label>
+                      <Textarea
+                        value={maintenanceMessage}
+                        onChange={(e) => setMaintenanceMessage(e.target.value)}
+                        rows={2}
+                        placeholder="Pesan yang ditampilkan kepada pengunjung..."
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* System Settings */}
+              <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
+                <h3 className="text-sm font-semibold">Sistem / System</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Bahasa / Language</Label>
+                    <Select value={settings.language} onValueChange={(v) => update("language", v)}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="bilingual">Bilingual (ID/EN)</SelectItem>
+                        <SelectItem value="id">Bahasa Indonesia</SelectItem>
+                        <SelectItem value="en">English</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Zona Waktu / Timezone</Label>
+                    <Select value={settings.timezone} onValueChange={(v) => update("timezone", v)}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Asia/Jakarta">WIB (Asia/Jakarta)</SelectItem>
+                        <SelectItem value="Asia/Makassar">WITA (Asia/Makassar)</SelectItem>
+                        <SelectItem value="Asia/Jayapura">WIT (Asia/Jayapura)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button onClick={handleSave}>Simpan / Save</Button>
+              </div>
+            </>
+          )}
         </TabsContent>
       </Tabs>
 
