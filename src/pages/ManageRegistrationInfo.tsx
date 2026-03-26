@@ -11,6 +11,8 @@ import {
   ListOrdered, Calendar, HelpCircle, DollarSign, Plus, Pencil, Trash2,
   CheckCircle2, ChevronUp, ChevronDown, Eye, EyeOff,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { iconRegistry, iconKeys, getIconComponent, colorPresets } from "@/lib/iconMap";
 
 import {
   registrationSteps,
@@ -18,8 +20,6 @@ import {
   requirementsData,
   costData,
   faqData,
-  stepIcons,
-  stepColors,
   type AlurItem,
   type JadwalItem,
   type PersyaratanItem,
@@ -65,8 +65,7 @@ const ManageRegistrationInfo = () => {
     if (!editDialog) return;
     const { type, data, isNew } = editDialog;
     if (type === "alur") {
-      const newItem = { ...data, icon: stepIcons[data.step - 1] || stepIcons[0], color: stepColors[data.step - 1] || stepColors[0] };
-      setAlur((prev) => isNew ? [...prev, { ...newItem, id: `A${Date.now()}` }] : prev.map((i) => (i.id === data.id ? newItem : i)));
+      setAlur((prev) => isNew ? [...prev, { ...data, id: `A${Date.now()}` }] : prev.map((i) => (i.id === data.id ? data : i)));
     }
     if (type === "jadwal") {
       setJadwal((prev) => isNew ? [...prev, { ...data, id: `J${Date.now()}` }] : prev.map((i) => (i.id === data.id ? data : i)));
@@ -147,20 +146,19 @@ const ManageRegistrationInfo = () => {
             <p className="text-sm text-muted-foreground">Kelola langkah-langkah alur pendaftaran yang ditampilkan di halaman depan.</p>
             <Button size="sm" onClick={() => setEditDialog({
               type: "alur", isNew: true,
-              data: { step: alur.length + 1, title: "", desc: "", details: ["", "", "", ""], status: "Aktif" },
+              data: { step: alur.length + 1, title: "", desc: "", details: ["", "", "", ""], status: "Aktif", iconKey: "ClipboardList", color: "bg-primary/10 text-primary" },
             })}>
               <Plus className="h-4 w-4 mr-1" /> Tambah Langkah
             </Button>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {alur.map((item, i) => {
-              const Icon = stepIcons[i % stepIcons.length];
-              const color = stepColors[i % stepColors.length];
+            {alur.map((item) => {
+              const Icon = getIconComponent(item.iconKey);
               return (
                 <Card key={item.id} className={`relative group ${item.status === "Nonaktif" ? "opacity-50" : ""}`}>
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${color}`}>
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${item.color}`}>
                         <Icon className="h-5 w-5" />
                       </div>
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -398,12 +396,29 @@ const ManageRegistrationInfo = () => {
 
       {/* ═══ EDIT DIALOG ═══ */}
       <Dialog open={!!editDialog} onOpenChange={() => setEditDialog(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editDialog?.isNew ? "Tambah Item Baru" : "Edit Item"}</DialogTitle>
           </DialogHeader>
           {editDialog?.type === "alur" && (
             <div className="space-y-4">
+              {/* Live Preview */}
+              <div className="rounded-xl border bg-muted/30 p-4">
+                <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-2">Preview</p>
+                <div className="flex items-start gap-3">
+                  <div className={cn("flex h-12 w-12 items-center justify-center rounded-xl shrink-0", editDialog.data.color || "bg-primary/10 text-primary")}>
+                    {(() => { const Ic = getIconComponent(editDialog.data.iconKey || "ClipboardList"); return <Ic className="h-6 w-6" />; })()}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-muted-foreground/40">0{editDialog.data.step}</span>
+                      <span className="text-sm font-semibold text-foreground">{editDialog.data.title || "Judul langkah..."}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">{editDialog.data.desc || "Deskripsi langkah..."}</p>
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2"><label className="text-sm font-medium">Langkah</label><Input type="number" value={editDialog.data.step} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, step: parseInt(e.target.value) || 1 } })} /></div>
                 <div className="space-y-2"><label className="text-sm font-medium">Status</label>
@@ -413,8 +428,67 @@ const ManageRegistrationInfo = () => {
                   </Select>
                 </div>
               </div>
+
               <div className="space-y-2"><label className="text-sm font-medium">Judul</label><Input value={editDialog.data.title} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, title: e.target.value } })} /></div>
               <div className="space-y-2"><label className="text-sm font-medium">Deskripsi</label><Textarea value={editDialog.data.desc} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, desc: e.target.value } })} rows={2} /></div>
+
+              {/* Icon Picker */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Ikon</label>
+                <div className="grid grid-cols-7 gap-1.5 max-h-32 overflow-y-auto p-1 rounded-lg border bg-background">
+                  {iconKeys.map((key) => {
+                    const Ic = iconRegistry[key];
+                    const isSelected = editDialog.data.iconKey === key;
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setEditDialog({ ...editDialog, data: { ...editDialog.data, iconKey: key } })}
+                        className={cn(
+                          "flex flex-col items-center gap-0.5 p-1.5 rounded-lg border transition-all",
+                          isSelected
+                            ? "border-primary bg-primary/10 text-primary ring-1 ring-primary/30"
+                            : "border-transparent hover:border-muted-foreground/20 hover:bg-muted/50 text-muted-foreground"
+                        )}
+                        title={key}
+                      >
+                        <Ic className="h-4 w-4" />
+                        <span className="text-[8px] truncate w-full text-center leading-none">{key.replace(/([A-Z])/g, ' $1').trim().split(' ')[0]}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Color Picker */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Warna</label>
+                <div className="grid grid-cols-5 gap-2">
+                  {colorPresets.map((preset) => {
+                    const isSelected = editDialog.data.color === preset.value;
+                    const PreviewIcon = getIconComponent(editDialog.data.iconKey || "ClipboardList");
+                    return (
+                      <button
+                        key={preset.value}
+                        type="button"
+                        onClick={() => setEditDialog({ ...editDialog, data: { ...editDialog.data, color: preset.value } })}
+                        className={cn(
+                          "flex flex-col items-center gap-1 p-2 rounded-lg border transition-all",
+                          isSelected
+                            ? "border-primary ring-1 ring-primary/30"
+                            : "border-transparent hover:border-muted-foreground/20"
+                        )}
+                      >
+                        <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg", preset.value)}>
+                          <PreviewIcon className="h-4 w-4" />
+                        </div>
+                        <span className="text-[9px] text-muted-foreground">{preset.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className="space-y-2"><label className="text-sm font-medium">Detail (satu per baris)</label>
                 <Textarea value={(editDialog.data.details || []).join("\n")} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, details: e.target.value.split("\n") } })} rows={4} />
               </div>
