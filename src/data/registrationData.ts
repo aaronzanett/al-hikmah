@@ -1,11 +1,14 @@
 import {
   ClipboardList, FileText, Users, CreditCard, Trophy, GraduationCap,
+  type LucideIcon,
 } from "lucide-react";
 
 // ─── Shared Types ───
 export interface AlurItem {
   id: string; step: number; title: string; desc: string; details: string[]; status: string;
-  icon: typeof ClipboardList; color: string;
+  iconKey: string; color: string;
+  // legacy compat
+  icon?: typeof ClipboardList;
 }
 export interface JadwalItem {
   id: string; wave: string; period: string; testDate: string; resultDate: string; status: string;
@@ -20,7 +23,7 @@ export interface FAQItem {
   id: string; question: string; answer: string; order: number; status: string;
 }
 
-// ─── Step Icons & Colors ───
+// ─── Step Icons & Colors (legacy arrays kept for backward compat) ───
 export const stepIcons = [ClipboardList, FileText, Users, Trophy, CreditCard, GraduationCap];
 export const stepColors = [
   "bg-primary/10 text-primary",
@@ -31,14 +34,17 @@ export const stepColors = [
   "bg-primary/10 text-primary",
 ];
 
+// ─── Default icon keys for steps ───
+export const defaultStepIconKeys = ["ClipboardList", "FileText", "Users", "Trophy", "CreditCard", "GraduationCap"];
+
 // ─── Shared Data ───
 export const registrationSteps: AlurItem[] = [
-  { id: "A1", step: 1, title: "Pendaftaran Online", desc: "Isi formulir pendaftaran online dengan data lengkap calon santri dan wali/orang tua.", details: ["Pilih program yang diminati", "Isi data pribadi calon santri", "Isi data wali/orang tua", "Upload pas foto terbaru"], status: "Aktif", icon: ClipboardList, color: "bg-primary/10 text-primary" },
-  { id: "A2", step: 2, title: "Upload Dokumen", desc: "Lengkapi berkas persyaratan secara digital melalui portal pendaftaran.", details: ["Akta kelahiran", "Kartu keluarga", "Rapor 2 semester terakhir", "Surat keterangan sehat"], status: "Aktif", icon: FileText, color: "bg-warning/10 text-warning" },
-  { id: "A3", step: 3, title: "Tes Seleksi", desc: "Ikuti tes seleksi yang meliputi tes akademik, baca Al-Qur'an, dan wawancara.", details: ["Tes kemampuan akademik dasar", "Tes baca Al-Qur'an & hafalan", "Wawancara calon santri", "Wawancara orang tua/wali"], status: "Aktif", icon: Users, color: "bg-info/10 text-info" },
-  { id: "A4", step: 4, title: "Pengumuman Hasil", desc: "Hasil seleksi akan diumumkan melalui website dan notifikasi ke email/WhatsApp terdaftar.", details: ["Pengumuman via website & email", "Notifikasi WhatsApp", "Surat kelulusan digital", "Panduan langkah selanjutnya"], status: "Aktif", icon: Trophy, color: "bg-success/10 text-success" },
-  { id: "A5", step: 5, title: "Daftar Ulang & Pembayaran", desc: "Lakukan pembayaran biaya pendaftaran dan perlengkapan sesuai gelombang yang dipilih.", details: ["Pembayaran biaya pendidikan", "Pembayaran perlengkapan santri", "Pembayaran seragam & kitab", "Konfirmasi pembayaran"], status: "Aktif", icon: CreditCard, color: "bg-destructive/10 text-destructive" },
-  { id: "A6", step: 6, title: "Orientasi & Masuk Pesantren", desc: "Ikuti kegiatan orientasi dan mulai kehidupan sebagai santri di pesantren.", details: ["Orientasi santri baru (3 hari)", "Penempatan kamar asrama", "Penerimaan jadwal pelajaran", "Perkenalan lingkungan pesantren"], status: "Aktif", icon: GraduationCap, color: "bg-primary/10 text-primary" },
+  { id: "A1", step: 1, title: "Pendaftaran Online", desc: "Isi formulir pendaftaran online dengan data lengkap calon santri dan wali/orang tua.", details: ["Pilih program yang diminati", "Isi data pribadi calon santri", "Isi data wali/orang tua", "Upload pas foto terbaru"], status: "Aktif", iconKey: "ClipboardList", color: "bg-primary/10 text-primary" },
+  { id: "A2", step: 2, title: "Upload Dokumen", desc: "Lengkapi berkas persyaratan secara digital melalui portal pendaftaran.", details: ["Akta kelahiran", "Kartu keluarga", "Rapor 2 semester terakhir", "Surat keterangan sehat"], status: "Aktif", iconKey: "FileText", color: "bg-warning/10 text-warning" },
+  { id: "A3", step: 3, title: "Tes Seleksi", desc: "Ikuti tes seleksi yang meliputi tes akademik, baca Al-Qur'an, dan wawancara.", details: ["Tes kemampuan akademik dasar", "Tes baca Al-Qur'an & hafalan", "Wawancara calon santri", "Wawancara orang tua/wali"], status: "Aktif", iconKey: "Users", color: "bg-info/10 text-info" },
+  { id: "A4", step: 4, title: "Pengumuman Hasil", desc: "Hasil seleksi akan diumumkan melalui website dan notifikasi ke email/WhatsApp terdaftar.", details: ["Pengumuman via website & email", "Notifikasi WhatsApp", "Surat kelulusan digital", "Panduan langkah selanjutnya"], status: "Aktif", iconKey: "Trophy", color: "bg-success/10 text-success" },
+  { id: "A5", step: 5, title: "Daftar Ulang & Pembayaran", desc: "Lakukan pembayaran biaya pendaftaran dan perlengkapan sesuai gelombang yang dipilih.", details: ["Pembayaran biaya pendidikan", "Pembayaran perlengkapan santri", "Pembayaran seragam & kitab", "Konfirmasi pembayaran"], status: "Aktif", iconKey: "CreditCard", color: "bg-destructive/10 text-destructive" },
+  { id: "A6", step: 6, title: "Orientasi & Masuk Pesantren", desc: "Ikuti kegiatan orientasi dan mulai kehidupan sebagai santri di pesantren.", details: ["Orientasi santri baru (3 hari)", "Penempatan kamar asrama", "Penerimaan jadwal pelajaran", "Perkenalan lingkungan pesantren"], status: "Aktif", iconKey: "GraduationCap", color: "bg-primary/10 text-primary" },
 ];
 
 export const scheduleData: JadwalItem[] = [

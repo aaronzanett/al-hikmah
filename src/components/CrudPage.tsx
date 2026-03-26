@@ -29,6 +29,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { iconRegistry, iconKeys, getIconComponent } from "@/lib/iconMap";
 
 export interface CrudColumn<T> {
   key: keyof T & string;
@@ -40,7 +41,7 @@ export interface CrudColumn<T> {
 export interface CrudFormField {
   key: string;
   label: string;
-  type: "text" | "number" | "select" | "date" | "textarea" | "image";
+  type: "text" | "number" | "select" | "date" | "textarea" | "image" | "icon_select";
   options?: { value: string; label: string }[];
   placeholder?: string;
 }
@@ -416,6 +417,43 @@ export function CrudPage<T extends Record<string, any>>({
             label={field.label}
           />
         );
+      case "icon_select": {
+        const SelectedIcon = getIconComponent(value);
+        return (
+          <div className="space-y-2">
+            {value && (
+              <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 w-fit">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <SelectedIcon className="h-5 w-5" />
+                </div>
+                <span className="text-sm font-medium">{value}</span>
+              </div>
+            )}
+            <div className="grid grid-cols-6 gap-1.5 max-h-40 overflow-y-auto p-1">
+              {iconKeys.map((key) => {
+                const Ic = iconRegistry[key];
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setFormData((p) => ({ ...p, [field.key]: key }))}
+                    className={cn(
+                      "flex flex-col items-center gap-0.5 p-2 rounded-lg border transition-all text-[10px]",
+                      value === key
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-transparent hover:border-muted-foreground/20 hover:bg-muted/50 text-muted-foreground"
+                    )}
+                    title={key}
+                  >
+                    <Ic className="h-4 w-4" />
+                    <span className="truncate w-full text-center">{key.replace(/([A-Z])/g, ' $1').trim().split(' ')[0]}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      }
       case "select":
         return (
           <Select value={String(value)} onValueChange={(v) => setFormData((p) => ({ ...p, [field.key]: v }))}>

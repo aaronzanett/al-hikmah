@@ -1,4 +1,5 @@
 import { CrudPage, CrudColumn, CrudFormField, CrudFilter } from "@/components/CrudPage";
+import { getIconComponent } from "@/lib/iconMap";
 
 interface ProgramItem {
   id: string;
@@ -12,10 +13,6 @@ interface ProgramItem {
   createdAt: string;
 }
 
-const iconOptions = [
-  "BookOpen", "GraduationCap", "Globe", "Heart", "Award", "BarChart3",
-  "Star", "Users", "Shield", "Lightbulb", "Rocket", "Target",
-];
 
 const initialData: ProgramItem[] = [
   { id: "P001", title: "Tahfidz Al-Qur'an", category: "Keagamaan", description: "Program intensif hafalan Al-Qur'an 30 juz dengan metode modern dan bimbingan ustadz berpengalaman.", icon: "BookOpen", badge: "Unggulan", status: "Aktif", order: 1, createdAt: "2026-01-10" },
@@ -51,7 +48,17 @@ const columns: CrudColumn<ProgramItem>[] = [
   {
     key: "icon",
     label: "Ikon / Icon",
-    render: (val) => <span className="text-xs font-mono bg-muted px-2 py-0.5 rounded">{val}</span>,
+    render: (val) => {
+      const Icon = getIconComponent(val);
+      return (
+        <div className="flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-primary">
+            <Icon className="h-4 w-4" />
+          </div>
+          <span className="text-xs font-mono text-muted-foreground">{val}</span>
+        </div>
+      );
+    },
   },
   {
     key: "badge",
@@ -99,8 +106,7 @@ const formFields: CrudFormField[] = [
   {
     key: "icon",
     label: "Ikon / Icon",
-    type: "select",
-    options: iconOptions.map((i) => ({ value: i, label: i })),
+    type: "icon_select",
   },
   { key: "badge", label: "Label / Badge", type: "text", placeholder: "Contoh: Unggulan (kosongkan jika tidak ada)" },
   { key: "order", label: "Urutan / Order", type: "number", placeholder: "Urutan tampil di halaman depan" },

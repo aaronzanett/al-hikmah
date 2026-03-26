@@ -12,6 +12,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+import { getIconComponent } from "@/lib/iconMap";
 
 import heroPesantren from "@/assets/hero-pesantren.jpg";
 
@@ -163,7 +164,7 @@ const Registration = () => {
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {activeSteps.map((phase, i) => {
-              const Icon = phase.icon;
+              const Icon = getIconComponent(phase.iconKey);
               return (
                 <motion.div
                   key={phase.id}
