@@ -356,7 +356,7 @@ function ProgramsSection() {
               
               <div className="flex items-start justify-between mb-4">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl gradient-primary shadow-md">
-                  <p.icon className="h-5 w-5 text-primary-foreground" />
+                  {(() => { const Icon = getIconComponent(p.iconKey); return <Icon className="h-5 w-5 text-primary-foreground" />; })()}
                 </div>
                 {p.badge && (
                   <span className="text-[9px] font-bold uppercase tracking-wider gradient-gold text-accent-foreground px-2 py-0.5 rounded-full">
@@ -401,7 +401,7 @@ function ProgramsSection() {
               </button>
               <div className="flex items-center gap-4 mb-5">
                 <div className="flex h-14 w-14 items-center justify-center rounded-xl gradient-primary shadow-md">
-                  <selectedProgram.icon className="h-7 w-7 text-primary-foreground" />
+                  {(() => { const Icon = getIconComponent(selectedProgram.iconKey); return <Icon className="h-7 w-7 text-primary-foreground" />; })()}
                 </div>
                 <div>
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-primary/60">{selectedProgram.category}</span>
