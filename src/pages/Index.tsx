@@ -591,35 +591,21 @@ const Index = () => {
               <motion.div
                 key={i}
                 variants={staggerItem}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="group relative rounded-2xl overflow-hidden cursor-pointer aspect-[4/3] shadow-md hover:shadow-2xl border border-border/50"
+                className="group relative rounded-2xl overflow-hidden cursor-pointer aspect-[4/3] border shadow-card"
                 onClick={() => setLightboxIndex(i)}
               >
                 <img
                   src={item.src}
                   alt={item.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
                 />
-                {/* Always-visible subtle gradient at bottom */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
-                {/* Category badge - always visible */}
-                <div className="absolute top-3 left-3 z-10">
-                  <span className="px-2.5 py-1 rounded-full bg-primary/90 text-primary-foreground text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">
-                    {item.category}
-                  </span>
-                </div>
-                {/* Title - always visible at bottom */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-                  <p className="text-white font-semibold text-sm lg:text-base drop-shadow-lg transition-transform duration-300 group-hover:translate-y-0 translate-y-0">
-                    {item.title}
-                  </p>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-accent">{item.category}</span>
+                  <p className="text-white font-semibold text-sm lg:text-base">{item.title}</p>
                 </div>
-                {/* Decorative corner accent on hover */}
-                <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-accent/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </motion.div>
             ))}
           </motion.div>
