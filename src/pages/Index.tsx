@@ -8,12 +8,8 @@ import Autoplay from "embla-carousel-autoplay";
 import {
   GraduationCap,
   Users,
-  
-  BookOpen,
   Building2,
-  Wallet,
   BedDouble,
-  BarChart3,
   ChevronRight,
   Star,
   MapPin,
@@ -22,20 +18,17 @@ import {
   Clock,
   Award,
   Heart,
-  Globe,
   Utensils,
   Dumbbell,
   Library,
   X,
   ChevronLeft,
-  Calendar,
   ArrowRight,
   Quote,
-  Rocket,
-  Target,
-  Lightbulb,
   CheckCircle2,
 } from "lucide-react";
+import { programsData, programCategories } from "@/data/programsData";
+import { getIconComponent } from "@/lib/iconMap";
 
 
 import heroPesantren from "@/assets/hero-pesantren.jpg";
