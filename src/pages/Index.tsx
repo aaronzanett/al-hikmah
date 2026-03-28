@@ -296,6 +296,7 @@ function GalleryLightbox({
 }
 
 // ─── Programs Section (Redesigned) ─────────────────────
+import { createPortal } from "react-dom";
 function ProgramsSection() {
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [selectedProgram, setSelectedProgram] = useState<typeof programs[0] | null>(null);
@@ -379,12 +380,12 @@ function ProgramsSection() {
         </motion.div>
 
         {/* Program Detail Modal */}
-        {selectedProgram && (
+        {selectedProgram && createPortal(
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
             onClick={() => setSelectedProgram(null)}
           >
             <motion.div
@@ -431,7 +432,8 @@ function ProgramsSection() {
                 </Button>
               </Link>
             </motion.div>
-          </motion.div>
+          </motion.div>,
+          document.body
         )}
       </div>
     </section>
