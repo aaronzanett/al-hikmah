@@ -1,33 +1,6 @@
 import { CrudPage, CrudColumn, CrudFormField, CrudFilter } from "@/components/CrudPage";
 import { getIconComponent } from "@/lib/iconMap";
-
-interface ProgramItem {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  icon: string;
-  badge: string;
-  status: string;
-  order: number;
-  createdAt: string;
-}
-
-
-const initialData: ProgramItem[] = [
-  { id: "P001", title: "Tahfidz Al-Qur'an", category: "Keagamaan", description: "Program intensif hafalan Al-Qur'an 30 juz dengan metode modern dan bimbingan ustadz berpengalaman.", icon: "BookOpen", badge: "Unggulan", status: "Aktif", order: 1, createdAt: "2026-01-10" },
-  { id: "P002", title: "Kurikulum Nasional + Diniyah", category: "Akademik", description: "Perpaduan kurikulum Kementerian Pendidikan dan kurikulum pesantren untuk keseimbangan ilmu.", icon: "GraduationCap", badge: "", status: "Aktif", order: 2, createdAt: "2026-01-10" },
-  { id: "P003", title: "Bahasa Arab & Inggris", category: "Bahasa", description: "Program bilingual aktif dengan native speaker dan sertifikasi TOEFL & TOAFL.", icon: "Globe", badge: "", status: "Aktif", order: 3, createdAt: "2026-01-12" },
-  { id: "P004", title: "Pendidikan Karakter", category: "Keagamaan", description: "Pembentukan akhlak mulia melalui pembiasaan ibadah, kedisiplinan, dan kemandirian.", icon: "Heart", badge: "", status: "Aktif", order: 4, createdAt: "2026-01-15" },
-  { id: "P005", title: "Olimpiade & Kompetisi", category: "Akademik", description: "Pembinaan santri berprestasi untuk kompetisi sains, bahasa, dan keagamaan tingkat nasional.", icon: "Award", badge: "", status: "Aktif", order: 5, createdAt: "2026-01-18" },
-  { id: "P006", title: "Keterampilan Digital", category: "Keterampilan", description: "Pembekalan teknologi informasi, coding, dan desain grafis untuk menghadapi era digital.", icon: "BarChart3", badge: "", status: "Aktif", order: 6, createdAt: "2026-01-20" },
-  { id: "P007", title: "Kajian Kitab Kuning", category: "Keagamaan", description: "Pengkajian kitab-kitab klasik karya ulama terdahulu dengan metode sorogan dan bandongan.", icon: "BookOpen", badge: "Unggulan", status: "Aktif", order: 7, createdAt: "2026-02-01" },
-  { id: "P008", title: "Public Speaking", category: "Keterampilan", description: "Pelatihan pidato 3 bahasa (Indonesia, Arab, Inggris) untuk membangun kepercayaan diri santri.", icon: "Users", badge: "", status: "Aktif", order: 8, createdAt: "2026-02-05" },
-  { id: "P009", title: "Seni Kaligrafi", category: "Keterampilan", description: "Pelatihan seni kaligrafi Arab dengan berbagai gaya tulis seperti Naskhi, Tsuluts, dan Diwani.", icon: "Star", badge: "", status: "Nonaktif", order: 9, createdAt: "2026-02-10" },
-  { id: "P010", title: "Entrepreneurship Santri", category: "Keterampilan", description: "Program kewirausahaan yang melatih santri mengelola usaha koperasi dan UMKM pesantren.", icon: "Rocket", badge: "", status: "Aktif", order: 10, createdAt: "2026-02-15" },
-  { id: "P011", title: "Tahsin & Tajwid", category: "Keagamaan", description: "Perbaikan bacaan Al-Qur'an dengan kaidah tajwid yang benar bersama pengajar bersertifikat.", icon: "BookOpen", badge: "", status: "Aktif", order: 11, createdAt: "2026-02-20" },
-  { id: "P012", title: "Robotika & Sains", category: "Akademik", description: "Klub robotika dan eksperimen sains untuk menumbuhkan minat STEM di kalangan santri.", icon: "Lightbulb", badge: "", status: "Nonaktif", order: 12, createdAt: "2026-03-01" },
-];
+import { programsData, type ProgramItem, programCategories } from "@/data/programsData";
 
 const columns: CrudColumn<ProgramItem>[] = [
   { key: "id", label: "ID", className: "w-20" },
@@ -46,7 +19,7 @@ const columns: CrudColumn<ProgramItem>[] = [
     render: (val) => <span className="line-clamp-2 text-xs text-muted-foreground">{val}</span>,
   },
   {
-    key: "icon",
+    key: "iconKey",
     label: "Ikon / Icon",
     render: (val) => {
       const Icon = getIconComponent(val);
@@ -95,16 +68,11 @@ const formFields: CrudFormField[] = [
     key: "category",
     label: "Kategori / Category",
     type: "select",
-    options: [
-      { value: "Keagamaan", label: "Keagamaan" },
-      { value: "Akademik", label: "Akademik" },
-      { value: "Bahasa", label: "Bahasa" },
-      { value: "Keterampilan", label: "Keterampilan" },
-    ],
+    options: programCategories.filter(c => c !== "Semua").map(c => ({ value: c, label: c })),
   },
   { key: "description", label: "Deskripsi / Description", type: "textarea", placeholder: "Jelaskan program secara singkat" },
   {
-    key: "icon",
+    key: "iconKey",
     label: "Ikon / Icon",
     type: "icon_select",
   },
@@ -125,12 +93,7 @@ const filters: CrudFilter[] = [
   {
     key: "category",
     label: "Kategori",
-    options: [
-      { value: "Keagamaan", label: "Keagamaan" },
-      { value: "Akademik", label: "Akademik" },
-      { value: "Bahasa", label: "Bahasa" },
-      { value: "Keterampilan", label: "Keterampilan" },
-    ],
+    options: programCategories.filter(c => c !== "Semua").map(c => ({ value: c, label: c })),
   },
   {
     key: "status",
@@ -149,7 +112,7 @@ const ManagePrograms = () => {
       subtitle="Kelola program unggulan yang ditampilkan di halaman depan website."
       columns={columns}
       formFields={formFields}
-      initialData={initialData}
+      initialData={programsData}
       filters={filters}
       searchKeys={["title", "category", "description"]}
       searchPlaceholder="Cari program..."
