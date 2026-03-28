@@ -25,7 +25,14 @@ export default function PublicNavbar() {
       const el = document.querySelector(hash);
       el?.scrollIntoView({ behavior: "smooth" });
     } else {
-      navigate("/" + hash);
+      navigate("/");
+      // Wait for home page to render, then scroll to section
+      setTimeout(() => {
+        const el = document.querySelector(hash);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 300);
     }
   };
 
