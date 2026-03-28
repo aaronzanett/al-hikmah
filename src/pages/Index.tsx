@@ -174,12 +174,12 @@ const facilities = [
 ];
 
 const galleryItems = [
-  { src: galleryQuran, title: "Halaqah Tahfidz", category: "Akademik" },
-  { src: galleryMosque, title: "Masjid Pesantren", category: "Fasilitas" },
-  { src: galleryClassroom, title: "Kegiatan Belajar", category: "Akademik" },
-  { src: galleryDormitory, title: "Asrama Santri", category: "Fasilitas" },
-  { src: gallerySports, title: "Olahraga & Ekstrakurikuler", category: "Kegiatan" },
-  { src: heroPesantren, title: "Kampus Pesantren", category: "Fasilitas" },
+  { src: galleryQuran, title: "Halaqah Tahfidz", category: "Akademik", description: "Para santri menjalani program tahfidz Al-Qur'an dengan bimbingan ustadz berpengalaman." },
+  { src: galleryMosque, title: "Masjid Pesantren", category: "Fasilitas", description: "Masjid utama pesantren yang menjadi pusat kegiatan ibadah dan pengajian." },
+  { src: galleryClassroom, title: "Kegiatan Belajar", category: "Akademik", description: "Proses pembelajaran di kelas dengan kurikulum terintegrasi." },
+  { src: galleryDormitory, title: "Asrama Santri", category: "Fasilitas", description: "Asrama modern yang nyaman dengan fasilitas lengkap." },
+  { src: gallerySports, title: "Olahraga & Ekstrakurikuler", category: "Kegiatan", description: "Kegiatan olahraga untuk menjaga keseimbangan jasmani dan rohani." },
+  { src: heroPesantren, title: "Kampus Pesantren", category: "Fasilitas", description: "Panorama kampus Pesantren Al-Hikmah yang asri dan hijau." },
 ];
 
 const newsItems = allNewsItems.slice(0, 3);
@@ -602,9 +602,10 @@ const Index = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent transition-opacity duration-300" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+                <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-6 z-10">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-accent">{item.category}</span>
                   <p className="text-white font-semibold text-sm lg:text-base">{item.title}</p>
+                  <p className="text-white/60 text-xs mt-1 line-clamp-2 hidden md:block">{item.description}</p>
                 </div>
               </motion.div>
             ))}

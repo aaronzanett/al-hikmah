@@ -45,6 +45,22 @@ const columns: CrudColumn<ProgramItem>[] = [
         <span className="text-xs text-muted-foreground">-</span>
       ),
   },
+  {
+    key: "highlights",
+    label: "Tag / Highlights",
+    render: (val: string[]) =>
+      val && val.length > 0 ? (
+        <div className="flex flex-wrap gap-1">
+          {val.map((h: string) => (
+            <span key={h} className="text-[10px] font-medium bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+              {h}
+            </span>
+          ))}
+        </div>
+      ) : (
+        <span className="text-xs text-muted-foreground">-</span>
+      ),
+  },
   { key: "order", label: "Urutan / Order", className: "w-20 text-center" },
   {
     key: "status",
@@ -77,6 +93,7 @@ const formFields: CrudFormField[] = [
     type: "icon_select",
   },
   { key: "badge", label: "Label / Badge", type: "text", placeholder: "Contoh: Unggulan (kosongkan jika tidak ada)" },
+  { key: "highlights", label: "Tag / Highlights", type: "text", placeholder: "Pisahkan dengan koma, contoh: Hafalan 30 juz, Metode Mutqin, Sanad" },
   { key: "order", label: "Urutan / Order", type: "number", placeholder: "Urutan tampil di halaman depan" },
   {
     key: "status",
