@@ -113,6 +113,8 @@ export default function Gallery() {
             <motion.div
               key={`${item.title}-${i}`}
               variants={staggerItem}
+              whileHover={{ y: -8, scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
               className="group relative rounded-2xl overflow-hidden cursor-pointer aspect-[4/3] shadow-md hover:shadow-2xl border border-border/50"
               onClick={() => setLightboxIndex((currentPage - 1) * ITEMS_PER_PAGE + i)}
             >
