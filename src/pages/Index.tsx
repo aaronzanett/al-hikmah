@@ -8,12 +8,8 @@ import Autoplay from "embla-carousel-autoplay";
 import {
   GraduationCap,
   Users,
-  
-  BookOpen,
   Building2,
-  Wallet,
   BedDouble,
-  BarChart3,
   ChevronRight,
   Star,
   MapPin,
@@ -22,20 +18,18 @@ import {
   Clock,
   Award,
   Heart,
-  Globe,
   Utensils,
   Dumbbell,
   Library,
   X,
   ChevronLeft,
-  Calendar,
   ArrowRight,
   Quote,
-  Rocket,
-  Target,
-  Lightbulb,
   CheckCircle2,
+  Calendar,
 } from "lucide-react";
+import { programsData, programCategories } from "@/data/programsData";
+import { getIconComponent } from "@/lib/iconMap";
 
 
 import heroPesantren from "@/assets/hero-pesantren.jpg";
@@ -159,68 +153,18 @@ const stats = [
   { value: "3", label: "Cabang Pesantren", icon: Building2 },
 ];
 
-const programs = [
-  {
-    icon: BookOpen,
-    title: "Tahfidz Al-Qur'an",
-    desc: "Program intensif hafalan Al-Qur'an 30 juz dengan metode modern dan bimbingan ustadz berpengalaman.",
-    badge: "Unggulan",
-    category: "Keagamaan",
-    highlights: ["Hafalan 30 juz", "Metode Mutqin", "Sanad bersambung"],
-  },
-  {
-    icon: GraduationCap,
-    title: "Kurikulum Nasional + Diniyah",
-    desc: "Perpaduan kurikulum Kementerian Pendidikan dan kurikulum pesantren untuk keseimbangan ilmu.",
-    category: "Akademik",
-    highlights: ["Ijazah formal", "Kurikulum diniyah", "UN & UAMBN"],
-  },
-  {
-    icon: Globe,
-    title: "Bahasa Arab & Inggris",
-    desc: "Program bilingual aktif dengan native speaker dan sertifikasi TOEFL & TOAFL.",
-    category: "Bahasa",
-    highlights: ["Native speaker", "TOEFL prep", "Daily conversation"],
-  },
-  {
-    icon: Heart,
-    title: "Pendidikan Karakter",
-    desc: "Pembentukan akhlak mulia melalui pembiasaan ibadah, kedisiplinan, dan kemandirian.",
-    category: "Keagamaan",
-    highlights: ["Pembiasaan ibadah", "Leadership", "Kemandirian"],
-  },
-  {
-    icon: Award,
-    title: "Olimpiade & Kompetisi",
-    desc: "Pembinaan santri berprestasi untuk kompetisi sains, bahasa, dan keagamaan tingkat nasional.",
-    category: "Akademik",
-    highlights: ["OSN", "KSM", "Kompetisi bahasa"],
-  },
-  {
-    icon: BarChart3,
-    title: "Keterampilan Digital",
-    desc: "Pembekalan teknologi informasi, coding, dan desain grafis untuk menghadapi era digital.",
-    category: "Keterampilan",
-    highlights: ["Coding", "Desain grafis", "Digital literacy"],
-  },
-  {
-    icon: Rocket,
-    title: "Entrepreneurship Santri",
-    desc: "Program kewirausahaan yang melatih santri mengelola usaha koperasi dan UMKM pesantren.",
-    category: "Keterampilan",
-    highlights: ["Bisnis plan", "Koperasi", "UMKM pesantren"],
-  },
-  {
-    icon: Lightbulb,
-    title: "Robotika & Sains",
-    desc: "Klub robotika dan eksperimen sains untuk menumbuhkan minat STEM di kalangan santri.",
-    badge: "Baru",
-    category: "Akademik",
-    highlights: ["Robotika", "Lab sains", "IoT project"],
-  },
-];
-
-const programCategories = ["Semua", "Keagamaan", "Akademik", "Bahasa", "Keterampilan"];
+// Programs are now imported from shared data (programsData, programCategories)
+const programs = programsData
+  .filter((p) => p.status === "Aktif")
+  .sort((a, b) => a.order - b.order)
+  .map((p) => ({
+    iconKey: p.iconKey,
+    title: p.title,
+    desc: p.description,
+    badge: p.badge,
+    category: p.category,
+    highlights: p.highlights,
+  }));
 
 const facilities = [
   { icon: BedDouble, title: "Asrama Modern", desc: "Kamar nyaman ber-AC dengan fasilitas lengkap" },
@@ -412,7 +356,7 @@ function ProgramsSection() {
               
               <div className="flex items-start justify-between mb-4">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl gradient-primary shadow-md">
-                  <p.icon className="h-5 w-5 text-primary-foreground" />
+                  {(() => { const Icon = getIconComponent(p.iconKey); return <Icon className="h-5 w-5 text-primary-foreground" />; })()}
                 </div>
                 {p.badge && (
                   <span className="text-[9px] font-bold uppercase tracking-wider gradient-gold text-accent-foreground px-2 py-0.5 rounded-full">
@@ -457,7 +401,7 @@ function ProgramsSection() {
               </button>
               <div className="flex items-center gap-4 mb-5">
                 <div className="flex h-14 w-14 items-center justify-center rounded-xl gradient-primary shadow-md">
-                  <selectedProgram.icon className="h-7 w-7 text-primary-foreground" />
+                  {(() => { const Icon = getIconComponent(selectedProgram.iconKey); return <Icon className="h-7 w-7 text-primary-foreground" />; })()}
                 </div>
                 <div>
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-primary/60">{selectedProgram.category}</span>
