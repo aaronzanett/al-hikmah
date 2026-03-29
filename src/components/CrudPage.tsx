@@ -223,8 +223,8 @@ export function CrudPage<T extends Record<string, any>>({
     return result;
   }, [data, search, searchKeys, activeFilters]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / currentPageSize));
+  const paginated = filtered.slice((page - 1) * currentPageSize, page * currentPageSize);
 
   const openAdd = () => {
     setEditItem(null);
