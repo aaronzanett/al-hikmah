@@ -303,6 +303,16 @@ function ProgramsSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
+  // Lock body scroll when program modal is open
+  useEffect(() => {
+    if (selectedProgram) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [selectedProgram]);
+
   const filteredPrograms = activeCategory === "Semua"
     ? programs
     : programs.filter((p) => p.category === activeCategory);
