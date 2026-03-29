@@ -273,10 +273,10 @@ function StudentDetailModal({
   };
 
   // Lock scroll
-  useState(() => {
+  useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
-  });
+  }, []);
 
   return createPortal(
     <AnimatePresence>
