@@ -186,6 +186,7 @@ export function CrudPage<T extends Record<string, any>>({
   const [data, setData] = useState<T[]>(initialData);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [currentPageSize, setCurrentPageSize] = useState(pageSize);
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
