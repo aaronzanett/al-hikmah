@@ -699,7 +699,8 @@ const Settings = () => {
         {/* ═══════════ FINANCE TAB ═══════════ */}
         <TabsContent value="finance" className="space-y-6 mt-4">
           {!devUnlocked ? (
-            <div className="bg-card border rounded-xl p-8 shadow-card flex flex-col items-center gap-5 max-w-md mx-auto">
+            <div className="min-h-[60vh] flex items-center justify-center">
+            <div className="bg-card border rounded-xl p-8 shadow-card flex flex-col items-center gap-5 max-w-md w-full">
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-warning/10">
                 <Lock className="h-8 w-8 text-warning" />
               </div>
@@ -725,6 +726,7 @@ const Settings = () => {
                   <Lock className="h-4 w-4 mr-2" /> Buka Akses / Unlock
                 </Button>
               </div>
+            </div>
             </div>
           ) : (
             <>

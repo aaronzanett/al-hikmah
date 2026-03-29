@@ -444,6 +444,16 @@ function ProgramsSection() {
 const Index = () => {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
+  // Lock body scroll when lightbox is open
+  useEffect(() => {
+    if (lightboxIndex !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [lightboxIndex]);
+
   return (
     <div className="bg-background">
       {/* ─── Hero Carousel ─── */}
