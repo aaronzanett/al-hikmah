@@ -787,6 +787,7 @@ const Settings = () => {
                 </Button>
               </div>
             </div>
+            </div>
           ) : (
             <>
               {/* Maintenance Mode */}
