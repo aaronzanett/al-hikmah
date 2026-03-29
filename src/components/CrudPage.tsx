@@ -639,11 +639,26 @@ export function CrudPage<T extends Record<string, any>>({
           </TableBody>
         </Table>
         <div className="flex items-center justify-between px-4 py-3 border-t text-xs text-muted-foreground">
-          <span>
-            {filtered.length > 0
-              ? `Menampilkan ${(page - 1) * pageSize + 1}-${Math.min(page * pageSize, filtered.length)} dari ${filtered.length}`
-              : "Tidak ada data"}
-          </span>
+          <div className="flex items-center gap-3">
+            <span>
+              {filtered.length > 0
+                ? `Menampilkan ${(page - 1) * currentPageSize + 1}-${Math.min(page * currentPageSize, filtered.length)} dari ${filtered.length}`
+                : "Tidak ada data"}
+            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-muted-foreground/70">Baris:</span>
+              <Select value={String(currentPageSize)} onValueChange={(v) => { setCurrentPageSize(Number(v)); setPage(1); }}>
+                <SelectTrigger className="h-7 w-[70px] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[5, 10, 15, 20, 25, 50].map((size) => (
+                    <SelectItem key={size} value={String(size)}>{size}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           <div className="flex items-center gap-1">
             <button className="p-1 rounded hover:bg-muted disabled:opacity-30" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
               <ChevronLeft className="h-4 w-4" />
