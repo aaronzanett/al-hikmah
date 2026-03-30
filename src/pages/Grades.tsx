@@ -1,9 +1,9 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, Plus, MoreHorizontal, ChevronLeft, ChevronRight,
   Pencil, Trash2, Filter, Users, Award, TrendingUp, GraduationCap,
-  X, Download, Share2, FileText, Eye,
+  X, Download, Share2, FileText, Eye, Command, BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +25,6 @@ import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { createPortal } from "react-dom";
@@ -38,10 +37,16 @@ interface GradeEntry {
   dormitory: string;
   subject: string;
   semester: string;
-  type: string; // Tugas, UTS, UAS, Praktik
+  type: string;
   score: number;
   grade: string;
 }
+
+const allSemesters = [
+  "Ganjil 2023", "Genap 2023",
+  "Ganjil 2024", "Genap 2024",
+  "Ganjil 2025", "Genap 2025",
+];
 
 const mockGrades: GradeEntry[] = [
   // Ahmad Fauzi - X-A - Al-Farabi (8 subjects)
@@ -227,24 +232,242 @@ interface StudentSummary {
   subjectCount: number;
 }
 
-// ─── Student Detail Modal ───
+// ─── Semester Slide Selector ───
+function SemesterSlider({
+  semesters,
+  selected,
+  onChange,
+  dataCountBySemester,
+}: {
+  semesters: string[];
+  selected: string;
+  onChange: (s: string) => void;
+  dataCountBySemester: Record<string, number>;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const selectedIdx = semesters.indexOf(selected);
+
+  const scrollTo = (dir: "left" | "right") => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: dir === "left" ? -200 : 200, behavior: "smooth" });
+    }
+  };
+
+  return (
+    <div className="relative flex items-center gap-1">
+      <button
+        onClick={() => scrollTo("left")}
+        className="shrink-0 p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground"
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </button>
+      <div
+        ref={scrollRef}
+        className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 px-1"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {semesters.map((sem, idx) => {
+          const isActive = sem === selected;
+          const count = dataCountBySemester[sem] || 0;
+          return (
+            <motion.button
+              key={sem}
+              onClick={() => onChange(sem)}
+              className={cn(
+                "relative shrink-0 flex flex-col items-center gap-0.5 px-5 py-2.5 rounded-xl text-sm font-medium transition-all border",
+                isActive
+                  ? "bg-primary text-primary-foreground border-primary shadow-md"
+                  : count > 0
+                    ? "bg-card text-foreground border-border hover:border-primary/50 hover:bg-primary/5"
+                    : "bg-muted/30 text-muted-foreground border-transparent"
+              )}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span className="whitespace-nowrap text-xs font-semibold">{sem}</span>
+              <span className={cn("text-[10px]", isActive ? "text-primary-foreground/70" : "text-muted-foreground")}>
+                {count} santri
+              </span>
+              {isActive && (
+                <motion.div
+                  layoutId="semester-indicator"
+                  className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-6 h-1 rounded-full bg-primary-foreground/50"
+                />
+              )}
+            </motion.button>
+          );
+        })}
+      </div>
+      <button
+        onClick={() => scrollTo("right")}
+        className="shrink-0 p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground"
+      >
+        <ChevronRight className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
+// ─── Command Search ───
+function CommandSearch({
+  students,
+  onSelect,
+}: {
+  students: StudentSummary[];
+  onSelect: (s: StudentSummary) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setOpen(true);
+        setTimeout(() => inputRef.current?.focus(), 100);
+      }
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  const results = useMemo(() => {
+    if (!query) return students.slice(0, 8);
+    const q = query.toLowerCase();
+    return students.filter(
+      (s) =>
+        s.student.toLowerCase().includes(q) ||
+        s.class.toLowerCase().includes(q) ||
+        s.dormitory.toLowerCase().includes(q)
+    ).slice(0, 8);
+  }, [students, query]);
+
+  return (
+    <>
+      <button
+        onClick={() => { setOpen(true); setTimeout(() => inputRef.current?.focus(), 100); }}
+        className="flex items-center gap-3 w-full sm:w-96 rounded-xl border border-input bg-card px-4 py-2.5 text-sm text-muted-foreground hover:border-primary/50 hover:bg-primary/5 transition-all group"
+      >
+        <Search className="h-4 w-4 shrink-0" />
+        <span className="flex-1 text-left">Cari santri, kelas, asrama...</span>
+        <kbd className="hidden sm:inline-flex h-5 items-center gap-1 rounded border bg-muted px-1.5 text-[10px] font-medium text-muted-foreground">
+          ⌘K
+        </kbd>
+      </button>
+
+      {open && createPortal(
+        <AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[300] flex items-start justify-center pt-[15vh] bg-black/60 backdrop-blur-sm"
+            onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              className="bg-card border rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden"
+            >
+              <div className="flex items-center gap-3 px-4 py-3 border-b">
+                <Search className="h-5 w-5 text-muted-foreground shrink-0" />
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Cari santri, kelas, asrama..."
+                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                  autoFocus
+                />
+                <button onClick={() => setOpen(false)} className="p-1 rounded-md hover:bg-muted">
+                  <X className="h-4 w-4 text-muted-foreground" />
+                </button>
+              </div>
+              <div className="max-h-80 overflow-y-auto py-2">
+                {results.length === 0 ? (
+                  <div className="py-8 text-center text-sm text-muted-foreground">Tidak ada hasil ditemukan</div>
+                ) : (
+                  results.map((s) => (
+                    <button
+                      key={s.studentId}
+                      onClick={() => { onSelect(s); setOpen(false); setQuery(""); }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-primary/5 transition-colors text-left"
+                    >
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold shrink-0">
+                        {s.student.charAt(0)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{s.student}</p>
+                        <p className="text-xs text-muted-foreground">{s.class} • {s.dormitory}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className={cn("text-sm font-bold", scoreColor(s.avg))}>{s.avg}</span>
+                        <p className="text-[10px] text-muted-foreground">{s.subjectCount} mapel</p>
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+              <div className="border-t px-4 py-2 flex items-center gap-4 text-[10px] text-muted-foreground">
+                <span className="flex items-center gap-1"><kbd className="rounded border bg-muted px-1">↑↓</kbd> Navigasi</span>
+                <span className="flex items-center gap-1"><kbd className="rounded border bg-muted px-1">Enter</kbd> Pilih</span>
+                <span className="flex items-center gap-1"><kbd className="rounded border bg-muted px-1">Esc</kbd> Tutup</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>,
+        document.body
+      )}
+    </>
+  );
+}
+
+// ─── Student Detail Modal (semester-aware) ───
 function StudentDetailModal({
   summary,
+  activeSemester,
+  allGrades,
   onClose,
   onEdit,
   onDelete,
 }: {
   summary: StudentSummary;
+  activeSemester: string;
+  allGrades: GradeEntry[];
   onClose: () => void;
   onEdit: (g: GradeEntry) => void;
   onDelete: (g: GradeEntry) => void;
 }) {
   const { toast } = useToast();
 
+  // Get all grades for this student
+  const studentAllGrades = useMemo(() =>
+    allGrades.filter((g) => g.studentId === summary.studentId),
+    [allGrades, summary.studentId]
+  );
+
+  // Available semesters for this student
+  const studentSemesters = useMemo(() => {
+    const sems = [...new Set(studentAllGrades.map((g) => g.semester))];
+    return allSemesters.filter((s) => sems.includes(s));
+  }, [studentAllGrades]);
+
+  const [modalSemester, setModalSemester] = useState(activeSemester);
+
+  // Grades for selected semester
+  const semesterGrades = useMemo(() =>
+    studentAllGrades.filter((g) => g.semester === modalSemester),
+    [studentAllGrades, modalSemester]
+  );
+
   // Group grades by subject
   const subjectGroups = useMemo(() => {
     const map = new Map<string, GradeEntry[]>();
-    summary.grades.forEach((g) => {
+    semesterGrades.forEach((g) => {
       if (!map.has(g.subject)) map.set(g.subject, []);
       map.get(g.subject)!.push(g);
     });
@@ -253,17 +476,20 @@ function StudentDetailModal({
       const avg = Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10;
       return { subject, grades, avg };
     }).sort((a, b) => a.subject.localeCompare(b.subject));
-  }, [summary.grades]);
+  }, [semesterGrades]);
 
-  // Semesters in this student's data
-  const semesters = [...new Set(summary.grades.map((g) => g.semester))];
+  const semesterAvg = subjectGroups.length > 0
+    ? Math.round((subjectGroups.reduce((a, b) => a + b.avg, 0) / subjectGroups.length) * 10) / 10
+    : 0;
+  const semesterHighest = semesterGrades.length > 0 ? Math.max(...semesterGrades.map((g) => g.score)) : 0;
+  const semesterLowest = semesterGrades.length > 0 ? Math.min(...semesterGrades.map((g) => g.score)) : 0;
 
   const handleDownload = () => {
-    toast({ title: "Rapor sedang diunduh...", description: `Rapor ${summary.student} - ${semesters.join(", ")}` });
+    toast({ title: "Rapor sedang diunduh...", description: `Rapor ${summary.student} - ${modalSemester}` });
   };
 
   const handleShare = () => {
-    const text = `Rapor ${summary.student} (${summary.class}) - Rata-rata: ${summary.avg}`;
+    const text = `Rapor ${summary.student} (${summary.class}) - Semester ${modalSemester} - Rata-rata: ${semesterAvg}`;
     if (navigator.share) {
       navigator.share({ title: "Rapor Santri", text });
     } else {
@@ -272,7 +498,6 @@ function StudentDetailModal({
     }
   };
 
-  // Lock scroll
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
@@ -304,7 +529,6 @@ function StudentDetailModal({
                 <div className="flex items-center gap-2 mt-1">
                   <Badge variant="outline" className="text-xs">{summary.class}</Badge>
                   <Badge variant="secondary" className="text-xs">{summary.dormitory}</Badge>
-                  <span className="text-xs text-muted-foreground">{semesters.join(" • ")}</span>
                 </div>
               </div>
             </div>
@@ -321,96 +545,130 @@ function StudentDetailModal({
             </div>
           </div>
 
+          {/* Semester Slide inside modal */}
+          <div className="px-6 pt-4 pb-2">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1" style={{ scrollbarWidth: "none" }}>
+              {studentSemesters.map((sem) => {
+                const isActive = sem === modalSemester;
+                const count = studentAllGrades.filter((g) => g.semester === sem).length;
+                return (
+                  <button
+                    key={sem}
+                    onClick={() => setModalSemester(sem)}
+                    className={cn(
+                      "shrink-0 px-4 py-2 rounded-lg text-xs font-semibold transition-all border",
+                      isActive
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-muted/40 text-muted-foreground border-transparent hover:bg-muted"
+                    )}
+                  >
+                    {sem}
+                    <span className={cn("ml-1.5", isActive ? "text-primary-foreground/70" : "text-muted-foreground/60")}>
+                      ({count})
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Summary Stats */}
-          <div className="grid grid-cols-4 gap-3 p-6 border-b bg-muted/20">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">{summary.avg}</p>
+          <div className="grid grid-cols-4 gap-3 px-6 pb-4">
+            <div className="text-center bg-muted/20 rounded-xl py-3">
+              <p className="text-2xl font-bold text-primary">{semesterAvg}</p>
               <p className="text-[11px] text-muted-foreground mt-0.5">Rata-rata</p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">{summary.highest}</p>
+            <div className="text-center bg-muted/20 rounded-xl py-3">
+              <p className="text-2xl font-bold text-green-600">{semesterHighest}</p>
               <p className="text-[11px] text-muted-foreground mt-0.5">Tertinggi</p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-amber-600">{summary.lowest}</p>
+            <div className="text-center bg-muted/20 rounded-xl py-3">
+              <p className="text-2xl font-bold text-amber-600">{semesterLowest}</p>
               <p className="text-[11px] text-muted-foreground mt-0.5">Terendah</p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-foreground">{summary.subjectCount}</p>
+            <div className="text-center bg-muted/20 rounded-xl py-3">
+              <p className="text-2xl font-bold text-foreground">{subjectGroups.length}</p>
               <p className="text-[11px] text-muted-foreground mt-0.5">Mata Pelajaran</p>
             </div>
           </div>
 
           {/* Grades Table */}
-          <div className="p-6">
-            <div className="bg-card border rounded-xl overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent bg-muted/30">
-                    <TableHead className="text-xs font-semibold w-[180px]">Mata Pelajaran</TableHead>
-                    {examTypes.map((type) => (
-                      <TableHead key={type} className="text-xs font-semibold text-center">{type}</TableHead>
-                    ))}
-                    <TableHead className="text-xs font-semibold text-center">Rata-rata</TableHead>
-                    <TableHead className="text-xs font-semibold text-center w-[60px]">Nilai</TableHead>
-                    <TableHead className="text-xs w-10"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {subjectGroups.map(({ subject, grades, avg }) => {
-                    const gradesByType: Record<string, GradeEntry | undefined> = {};
-                    grades.forEach((g) => { gradesByType[g.type] = g; });
-                    const finalGrade = avg >= 90 ? "A" : avg >= 85 ? "A-" : avg >= 80 ? "B+" : avg >= 75 ? "B" : avg >= 70 ? "B-" : avg >= 65 ? "C+" : "C";
-                    return (
-                      <TableRow key={subject}>
-                        <TableCell className="text-sm font-medium">{subject}</TableCell>
-                        {examTypes.map((type) => {
-                          const entry = gradesByType[type];
-                          return (
-                            <TableCell key={type} className="text-center">
-                              {entry ? (
-                                <span className={cn("text-sm font-semibold", scoreColor(entry.score))}>
-                                  {entry.score}
-                                </span>
-                              ) : (
-                                <span className="text-xs text-muted-foreground/40">—</span>
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                        <TableCell className="text-center">
-                          <div className="flex items-center justify-center gap-1.5">
-                            <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
-                              <div className={cn("h-full rounded-full", scoreBarColor(avg))} style={{ width: `${avg}%` }} />
+          <div className="px-6 pb-6">
+            {semesterGrades.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <BookOpen className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                <p className="text-sm">Belum ada data nilai untuk semester ini</p>
+              </div>
+            ) : (
+              <div className="bg-card border rounded-xl overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="hover:bg-transparent bg-muted/30">
+                      <TableHead className="text-xs font-semibold w-[180px]">Mata Pelajaran</TableHead>
+                      {examTypes.map((type) => (
+                        <TableHead key={type} className="text-xs font-semibold text-center">{type}</TableHead>
+                      ))}
+                      <TableHead className="text-xs font-semibold text-center">Rata-rata</TableHead>
+                      <TableHead className="text-xs font-semibold text-center w-[60px]">Nilai</TableHead>
+                      <TableHead className="text-xs w-10"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {subjectGroups.map(({ subject, grades, avg }) => {
+                      const gradesByType: Record<string, GradeEntry | undefined> = {};
+                      grades.forEach((g) => { gradesByType[g.type] = g; });
+                      const finalGrade = avg >= 90 ? "A" : avg >= 85 ? "A-" : avg >= 80 ? "B+" : avg >= 75 ? "B" : avg >= 70 ? "B-" : avg >= 65 ? "C+" : "C";
+                      return (
+                        <TableRow key={subject}>
+                          <TableCell className="text-sm font-medium">{subject}</TableCell>
+                          {examTypes.map((type) => {
+                            const entry = gradesByType[type];
+                            return (
+                              <TableCell key={type} className="text-center">
+                                {entry ? (
+                                  <span className={cn("text-sm font-semibold", scoreColor(entry.score))}>
+                                    {entry.score}
+                                  </span>
+                                ) : (
+                                  <span className="text-xs text-muted-foreground/40">—</span>
+                                )}
+                              </TableCell>
+                            );
+                          })}
+                          <TableCell className="text-center">
+                            <div className="flex items-center justify-center gap-1.5">
+                              <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
+                                <div className={cn("h-full rounded-full", scoreBarColor(avg))} style={{ width: `${avg}%` }} />
+                              </div>
+                              <span className={cn("text-sm font-bold", scoreColor(avg))}>{avg}</span>
                             </div>
-                            <span className={cn("text-sm font-bold", scoreColor(avg))}>{avg}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant={gradeColorBadge(finalGrade)} className="text-[10px]">{finalGrade}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <button className="p-1 rounded hover:bg-muted">
-                                <MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
-                              </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              {grades.map((g) => (
-                                <DropdownMenuItem key={g.id} onClick={() => onEdit(g)}>
-                                  <Pencil className="h-3.5 w-3.5 mr-2" /> Edit {g.type} - {g.subject}
-                                </DropdownMenuItem>
-                              ))}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant={gradeColorBadge(finalGrade)} className="text-[10px]">{finalGrade}</Badge>
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button className="p-1 rounded hover:bg-muted">
+                                  <MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                {grades.map((g) => (
+                                  <DropdownMenuItem key={g.id} onClick={() => onEdit(g)}>
+                                    <Pencil className="h-3.5 w-3.5 mr-2" /> Edit {g.type} - {g.subject}
+                                  </DropdownMenuItem>
+                                ))}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
 
             {/* Legend */}
             <div className="flex items-center gap-4 mt-4 text-[11px] text-muted-foreground">
@@ -434,7 +692,7 @@ const Grades = () => {
   const [search, setSearch] = useState("");
   const [selectedClass, setSelectedClass] = useState("all");
   const [selectedDormitory, setSelectedDormitory] = useState("all");
-  const [selectedSemester, setSelectedSemester] = useState("all");
+  const [selectedSemester, setSelectedSemester] = useState("Ganjil 2024");
   const [page, setPage] = useState(1);
   const [currentPageSize, setCurrentPageSize] = useState(10);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -446,14 +704,22 @@ const Grades = () => {
 
   const classes = [...new Set(data.map((g) => g.class))].sort();
   const dormitories = [...new Set(data.map((g) => g.dormitory))].sort();
-  const semesters = [...new Set(data.map((g) => g.semester))];
   const subjects = [...new Set(data.map((g) => g.subject))].sort();
 
+  // Count students per semester
+  const dataCountBySemester = useMemo(() => {
+    const map: Record<string, number> = {};
+    allSemesters.forEach((sem) => {
+      const studentIds = new Set(data.filter((g) => g.semester === sem).map((g) => g.studentId));
+      map[sem] = studentIds.size;
+    });
+    return map;
+  }, [data]);
+
   const filtered = useMemo(() => {
-    let result = data;
+    let result = data.filter((g) => g.semester === selectedSemester);
     if (selectedClass !== "all") result = result.filter((g) => g.class === selectedClass);
     if (selectedDormitory !== "all") result = result.filter((g) => g.dormitory === selectedDormitory);
-    if (selectedSemester !== "all") result = result.filter((g) => g.semester === selectedSemester);
     if (search) {
       const q = search.toLowerCase();
       result = result.filter((g) => g.student.toLowerCase().includes(q) || g.subject.toLowerCase().includes(q));
@@ -484,12 +750,10 @@ const Grades = () => {
     }).sort((a, b) => b.avg - a.avg);
   }, [filtered]);
 
-  // Stats
   const totalStudents = studentSummaries.length;
   const overallAvg = totalStudents > 0 ? (studentSummaries.reduce((a, b) => a + b.avg, 0) / totalStudents).toFixed(1) : "0";
   const topStudent = studentSummaries[0];
 
-  // Pagination
   const totalPages = Math.max(1, Math.ceil(studentSummaries.length / currentPageSize));
   const paginatedStudents = studentSummaries.slice((page - 1) * currentPageSize, page * currentPageSize);
 
@@ -499,7 +763,7 @@ const Grades = () => {
     { key: "class", label: "Kelas", type: "select" as const, options: classes.map((c) => ({ value: c, label: c })) },
     { key: "dormitory", label: "Asrama", type: "select" as const, options: dormitories.map((d) => ({ value: d, label: d })) },
     { key: "subject", label: "Mata Pelajaran", type: "select" as const, options: subjects.map((s) => ({ value: s, label: s })) },
-    { key: "semester", label: "Semester", type: "select" as const, options: semesters.map((s) => ({ value: s, label: s })) },
+    { key: "semester", label: "Semester", type: "select" as const, options: allSemesters.map((s) => ({ value: s, label: s })) },
     { key: "type", label: "Jenis Ujian", type: "select" as const, options: examTypes.map((t) => ({ value: t, label: t })) },
     { key: "score", label: "Skor", type: "number" as const, placeholder: "85" },
     { key: "grade", label: "Nilai Huruf", type: "select" as const, options: ["A+","A","A-","B+","B","B-","C+","C"].map((g) => ({ value: g, label: g })) },
@@ -509,6 +773,7 @@ const Grades = () => {
     setEditItem(null);
     const defaults: Record<string, any> = {};
     formFields.forEach((f) => { defaults[f.key] = ""; });
+    defaults.semester = selectedSemester;
     setFormData(defaults);
     setDialogOpen(true);
   };
@@ -548,19 +813,42 @@ const Grades = () => {
   const resetFilters = () => {
     setSelectedClass("all");
     setSelectedDormitory("all");
-    setSelectedSemester("all");
     setSearch("");
     setPage(1);
   };
 
-  const hasActiveFilters = selectedClass !== "all" || selectedDormitory !== "all" || selectedSemester !== "all" || search;
+  const hasActiveFilters = selectedClass !== "all" || selectedDormitory !== "all" || search;
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-lg font-bold text-foreground">Nilai / Grades</h1>
-        <p className="text-sm text-muted-foreground">Kelola nilai santri — klik nama santri untuk melihat rapor lengkap</p>
+      {/* Header with Command Search */}
+      <div className="mb-5">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h1 className="text-lg font-bold text-foreground">Nilai / Grades</h1>
+            <p className="text-sm text-muted-foreground">Kelola nilai santri per semester — klik nama untuk rapor lengkap</p>
+          </div>
+          <Button size="sm" onClick={openAdd}>
+            <Plus className="h-4 w-4 mr-1" /> Tambah Nilai
+          </Button>
+        </div>
+
+        {/* Command Search Bar */}
+        <CommandSearch students={studentSummaries} onSelect={(s) => setSelectedStudent(s)} />
+      </div>
+
+      {/* Semester Slide Selector */}
+      <div className="mb-5 bg-card border rounded-xl p-3 shadow-card">
+        <div className="flex items-center gap-2 mb-2">
+          <BookOpen className="h-4 w-4 text-primary" />
+          <span className="text-xs font-semibold text-foreground">Pilih Semester</span>
+        </div>
+        <SemesterSlider
+          semesters={allSemesters}
+          selected={selectedSemester}
+          onChange={(s) => { setSelectedSemester(s); setPage(1); }}
+          dataCountBySemester={dataCountBySemester}
+        />
       </div>
 
       {/* Summary Cards */}
@@ -596,54 +884,28 @@ const Grades = () => {
         </div>
       </div>
 
-      {/* Toolbar */}
-      <div className="flex flex-col gap-3 mb-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="relative w-full sm:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              placeholder="Cari santri atau mata pelajaran..."
-              className="w-full rounded-lg border border-input bg-card pl-9 pr-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </div>
-          <Button size="sm" onClick={openAdd}>
-            <Plus className="h-4 w-4 mr-1" /> Tambah Nilai
+      {/* Filters */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <Filter className="h-4 w-4 text-muted-foreground" />
+        <Select value={selectedClass} onValueChange={(v) => { setSelectedClass(v); setPage(1); }}>
+          <SelectTrigger className="h-8 w-auto min-w-[100px] text-xs"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Semua Kelas</SelectItem>
+            {classes.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={selectedDormitory} onValueChange={(v) => { setSelectedDormitory(v); setPage(1); }}>
+          <SelectTrigger className="h-8 w-auto min-w-[110px] text-xs"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Semua Asrama</SelectItem>
+            {dormitories.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        {hasActiveFilters && (
+          <Button variant="ghost" size="sm" className="h-8 text-xs text-muted-foreground" onClick={resetFilters}>
+            Reset Filter
           </Button>
-        </div>
-
-        {/* Filters */}
-        <div className="flex flex-wrap items-center gap-2">
-          <Filter className="h-4 w-4 text-muted-foreground" />
-          <Select value={selectedClass} onValueChange={(v) => { setSelectedClass(v); setPage(1); }}>
-            <SelectTrigger className="h-8 w-auto min-w-[100px] text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Semua Kelas</SelectItem>
-              {classes.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Select value={selectedDormitory} onValueChange={(v) => { setSelectedDormitory(v); setPage(1); }}>
-            <SelectTrigger className="h-8 w-auto min-w-[110px] text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Semua Asrama</SelectItem>
-              {dormitories.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Select value={selectedSemester} onValueChange={(v) => { setSelectedSemester(v); setPage(1); }}>
-            <SelectTrigger className="h-8 w-auto min-w-[130px] text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Semua Semester</SelectItem>
-              {semesters.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          {hasActiveFilters && (
-            <Button variant="ghost" size="sm" className="h-8 text-xs text-muted-foreground" onClick={resetFilters}>
-              Reset Filter
-            </Button>
-          )}
-        </div>
+        )}
       </div>
 
       {/* Student List Table */}
@@ -667,7 +929,7 @@ const Grades = () => {
             {paginatedStudents.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={10} className="text-center text-sm text-muted-foreground py-8">
-                  Tidak ada data nilai ditemukan
+                  Tidak ada data nilai untuk semester ini
                 </TableCell>
               </TableRow>
             ) : (
@@ -760,6 +1022,8 @@ const Grades = () => {
       {selectedStudent && (
         <StudentDetailModal
           summary={selectedStudent}
+          activeSemester={selectedSemester}
+          allGrades={data}
           onClose={() => { setSelectedStudent(null); document.body.style.overflow = ""; }}
           onEdit={openEdit}
           onDelete={openDelete}
