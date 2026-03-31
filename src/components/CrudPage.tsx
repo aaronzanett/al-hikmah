@@ -235,6 +235,11 @@ export function CrudPage<T extends Record<string, any>>({
     setEditItem(null);
     const defaults: Record<string, any> = {};
     formFields.forEach((f) => { defaults[f.key] = ""; });
+    // Auto-fill next order number
+    if (orderKey) {
+      const maxOrder = data.reduce((max, item) => Math.max(max, Number(item[orderKey]) || 0), 0);
+      defaults[orderKey] = maxOrder + 1;
+    }
     setFormData(defaults);
     setDialogOpen(true);
   };
