@@ -37,11 +37,11 @@ const tabs = [
 ];
 
 const ManageRegistrationInfo = () => {
-  const [alur, setAlur] = useState<AlurItem[]>(registrationSteps);
+  const [alur, setAlur] = useState<AlurItem[]>(() => [...registrationSteps].sort((a, b) => a.step - b.step));
   const [jadwal, setJadwal] = useState<JadwalItem[]>(scheduleData);
-  const [persyaratan, setPersyaratan] = useState<PersyaratanItem[]>(requirementsData);
-  const [biaya, setBiaya] = useState<BiayaItem[]>(costData);
-  const [faq, setFaq] = useState<FAQItem[]>(faqData);
+  const [persyaratan, setPersyaratan] = useState<PersyaratanItem[]>(() => [...requirementsData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
+  const [biaya, setBiaya] = useState<BiayaItem[]>(() => [...costData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
+  const [faq, setFaq] = useState<FAQItem[]>(() => [...faqData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
 
   const [editDialog, setEditDialog] = useState<{ type: string; data: any; isNew: boolean } | null>(null);
   const [deleteDialog, setDeleteDialog] = useState<{ type: string; id: string } | null>(null);
@@ -65,22 +65,29 @@ const ManageRegistrationInfo = () => {
     if (!editDialog) return;
     const { type, data, isNew } = editDialog;
 
-    // Helper: enforce unique order/step and shift others
-    const enforceOrder = <T extends { id: string }>(items: T[], orderField: string, newOrder: number, currentId: string | null): T[] => {
+    // Helper: enforce unique order/step, shift others, then sort
+    const enforceAndSort = <T extends { id: string }>(items: T[], orderField: string, newOrder: number, currentId: string | null): T[] => {
       const conflict = items.find((i: any) => Number(i[orderField]) === newOrder && i.id !== currentId);
-      if (!conflict) return items;
-      toast.success(`Urutan ${newOrder} sudah digunakan, item lain digeser otomatis.`, { duration: 3000 });
-      return items.map((i: any) => {
-        if (i.id === currentId) return i;
-        if (Number(i[orderField]) >= newOrder) return { ...i, [orderField]: Number(i[orderField]) + 1 };
-        return i;
-      });
+      let result = items;
+      if (conflict) {
+        toast.success(`Urutan ${newOrder} sudah digunakan, item lain digeser otomatis.`, { duration: 3000 });
+        result = items.map((i: any) => {
+          if (i.id === currentId) return i;
+          if (Number(i[orderField]) >= newOrder) return { ...i, [orderField]: Number(i[orderField]) + 1 };
+          return i;
+        });
+      }
+      return result;
     };
+
+    const sortBy = <T extends Record<string, any>>(items: T[], field: string): T[] =>
+      [...items].sort((a, b) => Number(a[field]) - Number(b[field]));
 
     if (type === "alur") {
       setAlur((prev) => {
-        const shifted = enforceOrder(prev, "step", Number(data.step), isNew ? null : data.id);
-        return isNew ? [...shifted, { ...data, id: `A${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        const shifted = enforceAndSort(prev, "step", Number(data.step), isNew ? null : data.id);
+        const updated = isNew ? [...shifted, { ...data, id: `A${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        return sortBy(updated, "step");
       });
     }
     if (type === "jadwal") {
@@ -88,20 +95,23 @@ const ManageRegistrationInfo = () => {
     }
     if (type === "persyaratan") {
       setPersyaratan((prev) => {
-        const shifted = enforceOrder(prev, "order", Number(data.order), isNew ? null : data.id);
-        return isNew ? [...shifted, { ...data, id: `P${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        const shifted = enforceAndSort(prev, "order", Number(data.order), isNew ? null : data.id);
+        const updated = isNew ? [...shifted, { ...data, id: `P${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        return sortBy(updated, "order");
       });
     }
     if (type === "biaya") {
       setBiaya((prev) => {
-        const shifted = enforceOrder(prev, "order", Number(data.order), isNew ? null : data.id);
-        return isNew ? [...shifted, { ...data, id: `B${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        const shifted = enforceAndSort(prev, "order", Number(data.order), isNew ? null : data.id);
+        const updated = isNew ? [...shifted, { ...data, id: `B${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        return sortBy(updated, "order");
       });
     }
     if (type === "faq") {
       setFaq((prev) => {
-        const shifted = enforceOrder(prev, "order", Number(data.order), isNew ? null : data.id);
-        return isNew ? [...shifted, { ...data, id: `F${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        const shifted = enforceAndSort(prev, "order", Number(data.order), isNew ? null : data.id);
+        const updated = isNew ? [...shifted, { ...data, id: `F${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        return sortBy(updated, "order");
       });
     }
     setEditDialog(null);
@@ -118,17 +128,22 @@ const ManageRegistrationInfo = () => {
   };
 
   const moveItem = (type: string, id: string, direction: "up" | "down") => {
-    const reorder = <T extends { id: string }>(items: T[]): T[] => {
+    const reorder = <T extends { id: string }>(items: T[], orderField: string): T[] => {
       const idx = items.findIndex((i) => i.id === id);
       if ((direction === "up" && idx === 0) || (direction === "down" && idx === items.length - 1)) return items;
       const newItems = [...items];
       const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+      // Swap order values
+      const tempOrder = (newItems[idx] as any)[orderField];
+      (newItems[idx] as any)[orderField] = (newItems[swapIdx] as any)[orderField];
+      (newItems[swapIdx] as any)[orderField] = tempOrder;
       [newItems[idx], newItems[swapIdx]] = [newItems[swapIdx], newItems[idx]];
       return newItems;
     };
-    if (type === "persyaratan") setPersyaratan(reorder);
-    if (type === "biaya") setBiaya(reorder);
-    if (type === "faq") setFaq(reorder);
+    if (type === "persyaratan") setPersyaratan((prev) => reorder(prev, "order"));
+    if (type === "biaya") setBiaya((prev) => reorder(prev, "order"));
+    if (type === "faq") setFaq((prev) => reorder(prev, "order"));
+    showToast("Urutan berhasil diubah");
   };
 
   // ─── Tab counts ───
@@ -171,7 +186,7 @@ const ManageRegistrationInfo = () => {
             <p className="text-sm text-muted-foreground">Kelola langkah-langkah alur pendaftaran yang ditampilkan di halaman depan.</p>
             <Button size="sm" onClick={() => setEditDialog({
               type: "alur", isNew: true,
-              data: { step: alur.length + 1, title: "", desc: "", details: ["", "", "", ""], status: "Aktif", iconKey: "ClipboardList", color: "bg-primary/10 text-primary" },
+              data: { step: Math.max(0, ...alur.map(a => a.step)) + 1, title: "", desc: "", details: ["", "", "", ""], status: "Aktif", iconKey: "ClipboardList", color: "bg-primary/10 text-primary" },
             })}>
               <Plus className="h-4 w-4 mr-1" /> Tambah Langkah
             </Button>
@@ -285,7 +300,7 @@ const ManageRegistrationInfo = () => {
             <p className="text-sm text-muted-foreground">Kelola daftar persyaratan pendaftaran.</p>
             <Button size="sm" onClick={() => setEditDialog({
               type: "persyaratan", isNew: true,
-              data: { title: "", order: persyaratan.length + 1, status: "Aktif" },
+              data: { title: "", order: Math.max(0, ...persyaratan.map(p => p.order ?? 0)) + 1, status: "Aktif" },
             })}>
               <Plus className="h-4 w-4 mr-1" /> Tambah Syarat
             </Button>
@@ -329,7 +344,7 @@ const ManageRegistrationInfo = () => {
             <p className="text-sm text-muted-foreground">Kelola rincian biaya pendidikan.</p>
             <Button size="sm" onClick={() => setEditDialog({
               type: "biaya", isNew: true,
-              data: { item: "", amount: "", note: "", order: biaya.length + 1, status: "Aktif" },
+              data: { item: "", amount: "", note: "", order: Math.max(0, ...biaya.map(b => b.order ?? 0)) + 1, status: "Aktif" },
             })}>
               <Plus className="h-4 w-4 mr-1" /> Tambah Biaya
             </Button>
@@ -376,7 +391,7 @@ const ManageRegistrationInfo = () => {
             <p className="text-sm text-muted-foreground">Kelola pertanyaan yang sering diajukan.</p>
             <Button size="sm" onClick={() => setEditDialog({
               type: "faq", isNew: true,
-              data: { question: "", answer: "", order: faq.length + 1, status: "Aktif" },
+              data: { question: "", answer: "", order: Math.max(0, ...faq.map(f => f.order ?? 0)) + 1, status: "Aktif" },
             })}>
               <Plus className="h-4 w-4 mr-1" /> Tambah FAQ
             </Button>

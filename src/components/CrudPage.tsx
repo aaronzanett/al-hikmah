@@ -221,8 +221,12 @@ export function CrudPage<T extends Record<string, any>>({
         searchKeys.some((key) => String(item[key]).toLowerCase().includes(q))
       );
     }
+    // Auto-sort by orderKey when present
+    if (orderKey) {
+      result = [...result].sort((a, b) => Number(a[orderKey]) - Number(b[orderKey]));
+    }
     return result;
-  }, [data, search, searchKeys, activeFilters]);
+  }, [data, search, searchKeys, activeFilters, orderKey]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / currentPageSize));
   const paginated = filtered.slice((page - 1) * currentPageSize, page * currentPageSize);
@@ -231,6 +235,11 @@ export function CrudPage<T extends Record<string, any>>({
     setEditItem(null);
     const defaults: Record<string, any> = {};
     formFields.forEach((f) => { defaults[f.key] = ""; });
+    // Auto-fill next order number
+    if (orderKey) {
+      const maxOrder = data.reduce((max, item) => Math.max(max, Number(item[orderKey]) || 0), 0);
+      defaults[orderKey] = maxOrder + 1;
+    }
     setFormData(defaults);
     setDialogOpen(true);
   };
