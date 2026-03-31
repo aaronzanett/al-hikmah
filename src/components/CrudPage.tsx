@@ -246,17 +246,50 @@ export function CrudPage<T extends Record<string, any>>({
     setDeleteOpen(true);
   };
 
+  // Helper: enforce unique order by shifting other items
+  const enforceUniqueOrder = (items: T[], currentId: string | null, newOrder: number): T[] => {
+    if (!orderKey) return items;
+    const conflict = items.find(
+      (item) => Number(item[orderKey]) === newOrder && item[idKey] !== currentId
+    );
+    if (!conflict) return items;
+
+    // Shift conflicting items down by 1
+    const shifted = items.map((item) => {
+      if (item[idKey] === currentId) return item;
+      const itemOrder = Number(item[orderKey]);
+      if (itemOrder >= newOrder) {
+        return { ...item, [orderKey]: itemOrder + 1 } as T;
+      }
+      return item;
+    });
+
+    toast({
+      title: "Urutan disesuaikan / Order adjusted",
+      description: `Item lain digeser otomatis karena urutan ${newOrder} sudah digunakan.`,
+      duration: 3000,
+    });
+
+    return shifted;
+  };
+
   const handleSave = () => {
     if (editItem) {
-      setData((prev) =>
-        prev.map((item) =>
+      const newOrder = orderKey ? Number(formData[orderKey]) : 0;
+      setData((prev) => {
+        let updated = orderKey ? enforceUniqueOrder(prev, editItem[idKey], newOrder) : prev;
+        return updated.map((item) =>
           item[idKey] === editItem[idKey] ? { ...item, ...formData } as T : item
-        )
-      );
+        );
+      });
       toast({ title: "Data berhasil diperbarui / Data updated", duration: 2500 });
     } else {
       const newItem = { ...formData, [idKey]: `NEW-${Date.now()}` } as T;
-      setData((prev) => [newItem, ...prev]);
+      const newOrder = orderKey ? Number(formData[orderKey]) : 0;
+      setData((prev) => {
+        let updated = orderKey ? enforceUniqueOrder(prev, null, newOrder) : prev;
+        return [newItem, ...updated];
+      });
       toast({ title: "Data berhasil ditambahkan / Data added", duration: 2500 });
     }
     setDialogOpen(false);
