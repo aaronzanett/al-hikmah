@@ -128,17 +128,22 @@ const ManageRegistrationInfo = () => {
   };
 
   const moveItem = (type: string, id: string, direction: "up" | "down") => {
-    const reorder = <T extends { id: string }>(items: T[]): T[] => {
+    const reorder = <T extends { id: string }>(items: T[], orderField: string): T[] => {
       const idx = items.findIndex((i) => i.id === id);
       if ((direction === "up" && idx === 0) || (direction === "down" && idx === items.length - 1)) return items;
       const newItems = [...items];
       const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+      // Swap order values
+      const tempOrder = (newItems[idx] as any)[orderField];
+      (newItems[idx] as any)[orderField] = (newItems[swapIdx] as any)[orderField];
+      (newItems[swapIdx] as any)[orderField] = tempOrder;
       [newItems[idx], newItems[swapIdx]] = [newItems[swapIdx], newItems[idx]];
       return newItems;
     };
-    if (type === "persyaratan") setPersyaratan(reorder);
-    if (type === "biaya") setBiaya(reorder);
-    if (type === "faq") setFaq(reorder);
+    if (type === "persyaratan") setPersyaratan((prev) => reorder(prev, "order"));
+    if (type === "biaya") setBiaya((prev) => reorder(prev, "order"));
+    if (type === "faq") setFaq((prev) => reorder(prev, "order"));
+    showToast("Urutan berhasil diubah");
   };
 
   // ─── Tab counts ───
