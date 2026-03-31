@@ -65,22 +65,29 @@ const ManageRegistrationInfo = () => {
     if (!editDialog) return;
     const { type, data, isNew } = editDialog;
 
-    // Helper: enforce unique order/step and shift others
-    const enforceOrder = <T extends { id: string }>(items: T[], orderField: string, newOrder: number, currentId: string | null): T[] => {
+    // Helper: enforce unique order/step, shift others, then sort
+    const enforceAndSort = <T extends { id: string }>(items: T[], orderField: string, newOrder: number, currentId: string | null): T[] => {
       const conflict = items.find((i: any) => Number(i[orderField]) === newOrder && i.id !== currentId);
-      if (!conflict) return items;
-      toast.success(`Urutan ${newOrder} sudah digunakan, item lain digeser otomatis.`, { duration: 3000 });
-      return items.map((i: any) => {
-        if (i.id === currentId) return i;
-        if (Number(i[orderField]) >= newOrder) return { ...i, [orderField]: Number(i[orderField]) + 1 };
-        return i;
-      });
+      let result = items;
+      if (conflict) {
+        toast.success(`Urutan ${newOrder} sudah digunakan, item lain digeser otomatis.`, { duration: 3000 });
+        result = items.map((i: any) => {
+          if (i.id === currentId) return i;
+          if (Number(i[orderField]) >= newOrder) return { ...i, [orderField]: Number(i[orderField]) + 1 };
+          return i;
+        });
+      }
+      return result;
     };
+
+    const sortBy = <T extends Record<string, any>>(items: T[], field: string): T[] =>
+      [...items].sort((a, b) => Number(a[field]) - Number(b[field]));
 
     if (type === "alur") {
       setAlur((prev) => {
-        const shifted = enforceOrder(prev, "step", Number(data.step), isNew ? null : data.id);
-        return isNew ? [...shifted, { ...data, id: `A${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        const shifted = enforceAndSort(prev, "step", Number(data.step), isNew ? null : data.id);
+        const updated = isNew ? [...shifted, { ...data, id: `A${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        return sortBy(updated, "step");
       });
     }
     if (type === "jadwal") {
@@ -88,20 +95,23 @@ const ManageRegistrationInfo = () => {
     }
     if (type === "persyaratan") {
       setPersyaratan((prev) => {
-        const shifted = enforceOrder(prev, "order", Number(data.order), isNew ? null : data.id);
-        return isNew ? [...shifted, { ...data, id: `P${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        const shifted = enforceAndSort(prev, "order", Number(data.order), isNew ? null : data.id);
+        const updated = isNew ? [...shifted, { ...data, id: `P${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        return sortBy(updated, "order");
       });
     }
     if (type === "biaya") {
       setBiaya((prev) => {
-        const shifted = enforceOrder(prev, "order", Number(data.order), isNew ? null : data.id);
-        return isNew ? [...shifted, { ...data, id: `B${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        const shifted = enforceAndSort(prev, "order", Number(data.order), isNew ? null : data.id);
+        const updated = isNew ? [...shifted, { ...data, id: `B${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        return sortBy(updated, "order");
       });
     }
     if (type === "faq") {
       setFaq((prev) => {
-        const shifted = enforceOrder(prev, "order", Number(data.order), isNew ? null : data.id);
-        return isNew ? [...shifted, { ...data, id: `F${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        const shifted = enforceAndSort(prev, "order", Number(data.order), isNew ? null : data.id);
+        const updated = isNew ? [...shifted, { ...data, id: `F${Date.now()}` }] : shifted.map((i) => (i.id === data.id ? data : i));
+        return sortBy(updated, "order");
       });
     }
     setEditDialog(null);
