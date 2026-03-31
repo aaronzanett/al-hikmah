@@ -344,7 +344,7 @@ const ManageRegistrationInfo = () => {
             <p className="text-sm text-muted-foreground">Kelola rincian biaya pendidikan.</p>
             <Button size="sm" onClick={() => setEditDialog({
               type: "biaya", isNew: true,
-              data: { item: "", amount: "", note: "", order: biaya.length + 1, status: "Aktif" },
+              data: { item: "", amount: "", note: "", order: Math.max(0, ...biaya.map(b => b.order ?? 0)) + 1, status: "Aktif" },
             })}>
               <Plus className="h-4 w-4 mr-1" /> Tambah Biaya
             </Button>
