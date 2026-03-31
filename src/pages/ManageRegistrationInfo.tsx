@@ -300,7 +300,7 @@ const ManageRegistrationInfo = () => {
             <p className="text-sm text-muted-foreground">Kelola daftar persyaratan pendaftaran.</p>
             <Button size="sm" onClick={() => setEditDialog({
               type: "persyaratan", isNew: true,
-              data: { title: "", order: persyaratan.length + 1, status: "Aktif" },
+              data: { title: "", order: Math.max(0, ...persyaratan.map(p => p.order ?? 0)) + 1, status: "Aktif" },
             })}>
               <Plus className="h-4 w-4 mr-1" /> Tambah Syarat
             </Button>
