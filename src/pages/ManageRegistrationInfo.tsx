@@ -37,11 +37,11 @@ const tabs = [
 ];
 
 const ManageRegistrationInfo = () => {
-  const [alur, setAlur] = useState<AlurItem[]>(registrationSteps);
+  const [alur, setAlur] = useState<AlurItem[]>(() => [...registrationSteps].sort((a, b) => a.step - b.step));
   const [jadwal, setJadwal] = useState<JadwalItem[]>(scheduleData);
-  const [persyaratan, setPersyaratan] = useState<PersyaratanItem[]>(requirementsData);
-  const [biaya, setBiaya] = useState<BiayaItem[]>(costData);
-  const [faq, setFaq] = useState<FAQItem[]>(faqData);
+  const [persyaratan, setPersyaratan] = useState<PersyaratanItem[]>(() => [...requirementsData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
+  const [biaya, setBiaya] = useState<BiayaItem[]>(() => [...costData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
+  const [faq, setFaq] = useState<FAQItem[]>(() => [...faqData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
 
   const [editDialog, setEditDialog] = useState<{ type: string; data: any; isNew: boolean } | null>(null);
   const [deleteDialog, setDeleteDialog] = useState<{ type: string; id: string } | null>(null);
