@@ -176,6 +176,7 @@ interface CrudPageProps<T extends Record<string, any>> {
   pageSize?: number;
   filters?: CrudFilter[];
   excelConfig?: ExcelConfig<T>;
+  orderKey?: keyof T & string;
 }
 
 export function CrudPage<T extends Record<string, any>>({
