@@ -391,7 +391,7 @@ const ManageRegistrationInfo = () => {
             <p className="text-sm text-muted-foreground">Kelola pertanyaan yang sering diajukan.</p>
             <Button size="sm" onClick={() => setEditDialog({
               type: "faq", isNew: true,
-              data: { question: "", answer: "", order: faq.length + 1, status: "Aktif" },
+              data: { question: "", answer: "", order: Math.max(0, ...faq.map(f => f.order ?? 0)) + 1, status: "Aktif" },
             })}>
               <Plus className="h-4 w-4 mr-1" /> Tambah FAQ
             </Button>
