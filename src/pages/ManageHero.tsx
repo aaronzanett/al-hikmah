@@ -6,8 +6,6 @@ interface HeroSlide {
   title: string;
   description: string;
   imageUrl: string;
-  ctaLabel: string;
-  ctaLink: string;
   order: number;
   status: string;
   createdAt: string;
@@ -20,8 +18,6 @@ const initialData: HeroSlide[] = [
     title: "Mencetak Generasi Qur'ani, Berilmu & Berkarakter",
     description: "Pesantren Al-Hikmah memadukan pendidikan agama Islam dan ilmu pengetahuan modern dalam lingkungan asrama yang kondusif sejak 1985.",
     imageUrl: "/assets/hero-pesantren.jpg",
-    ctaLabel: "Daftar Sekarang",
-    ctaLink: "/registration/form",
     order: 1,
     status: "Aktif",
     createdAt: "2026-01-01",
@@ -32,8 +28,6 @@ const initialData: HeroSlide[] = [
     title: "Hafal Al-Qur'an 30 Juz dengan Metode Mutqin",
     description: "Program tahfidz intensif dengan bimbingan ustadz berpengalaman, menghasilkan ratusan hafidz dan hafidzah setiap tahunnya.",
     imageUrl: "/assets/gallery-mosque.jpg",
-    ctaLabel: "Daftar Sekarang",
-    ctaLink: "/registration/form",
     order: 2,
     status: "Aktif",
     createdAt: "2026-01-01",
@@ -44,8 +38,6 @@ const initialData: HeroSlide[] = [
     title: "Pendidikan Berkualitas untuk Masa Depan",
     description: "Kurikulum terintegrasi yang memadukan pendidikan nasional dengan pendidikan pesantren untuk menghasilkan lulusan kompetitif.",
     imageUrl: "/assets/gallery-classroom.jpg",
-    ctaLabel: "Kenali Kami",
-    ctaLink: "/#about",
     order: 3,
     status: "Aktif",
     createdAt: "2026-01-05",
@@ -56,8 +48,6 @@ const initialData: HeroSlide[] = [
     title: "Lingkungan Terbaik untuk Tumbuh Kembang Santri",
     description: "Asrama modern, lapangan olahraga, laboratorium, dan perpustakaan digital mendukung kehidupan santri yang seimbang.",
     imageUrl: "/assets/gallery-sports.jpg",
-    ctaLabel: "Lihat Galeri",
-    ctaLink: "/gallery",
     order: 4,
     status: "Aktif",
     createdAt: "2026-01-05",
@@ -93,11 +83,6 @@ const columns: CrudColumn<HeroSlide>[] = [
     className: "max-w-[200px]",
     render: (val) => <span className="font-medium line-clamp-2 text-sm">{val}</span>,
   },
-  {
-    key: "ctaLabel",
-    label: "CTA",
-    render: (val) => <span className="text-xs text-muted-foreground">{val}</span>,
-  },
   { key: "order", label: "Urutan", className: "w-16 text-center" },
   {
     key: "status",
@@ -120,8 +105,6 @@ const formFields: CrudFormField[] = [
   { key: "title", label: "Judul / Title", type: "text", placeholder: "Judul utama hero slide" },
   { key: "description", label: "Deskripsi / Description", type: "textarea", placeholder: "Deskripsi singkat di bawah judul..." },
   { key: "imageUrl", label: "Gambar Background / Image", type: "image" },
-  { key: "ctaLabel", label: "Label Tombol CTA", type: "text", placeholder: "Contoh: Daftar Sekarang" },
-  { key: "ctaLink", label: "Link Tombol CTA", type: "text", placeholder: "/registration/form" },
   { key: "order", label: "Urutan / Order", type: "number", placeholder: "1, 2, 3..." },
   {
     key: "status",
@@ -158,6 +141,7 @@ export default function ManageHero() {
       searchPlaceholder="Cari hero slide..."
       idKey="id"
       addLabel="Tambah Slide"
+      orderKey="order"
     />
   );
 }

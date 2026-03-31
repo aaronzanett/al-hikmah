@@ -135,6 +135,7 @@ const ManagePrograms = () => {
       searchPlaceholder="Cari program..."
       idKey="id"
       addLabel="Tambah Program"
+      orderKey="order"
     />
   );
 };
