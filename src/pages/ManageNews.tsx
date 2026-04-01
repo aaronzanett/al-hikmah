@@ -1,4 +1,4 @@
-import { CrudPage, CrudColumn, CrudFormField } from "@/components/CrudPage";
+import { CrudPage, CrudColumn, CrudFormField, DetailField } from "@/components/CrudPage";
 
 interface NewsItem {
   id: string;
