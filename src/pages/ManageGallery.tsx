@@ -1,4 +1,4 @@
-import { CrudPage, CrudColumn, CrudFormField } from "@/components/CrudPage";
+import { CrudPage, CrudColumn, CrudFormField, DetailField } from "@/components/CrudPage";
 
 interface GalleryItem {
   id: string;
@@ -72,6 +72,18 @@ const formFields: CrudFormField[] = [
   ]},
 ];
 
+const detailFields: DetailField<GalleryItem>[] = [
+  { key: "imageUrl", label: "Gambar / Image", type: "image", fullWidth: true },
+  { key: "id", label: "ID" },
+  { key: "title", label: "Judul / Title" },
+  { key: "category", label: "Kategori / Category", type: "badge" },
+  { key: "status", label: "Status", render: (val) => (
+    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${val === "Aktif" ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}>{val}</span>
+  )},
+  { key: "createdAt", label: "Tanggal / Date" },
+  { key: "description", label: "Deskripsi / Description", type: "long-text", fullWidth: true },
+];
+
 export default function ManageGallery() {
   return (
     <CrudPage<GalleryItem>
@@ -84,6 +96,7 @@ export default function ManageGallery() {
       searchKeys={["title", "category", "description"]}
       idKey="id"
       addLabel="Tambah Foto / Add Photo"
+      detailFields={detailFields}
       filters={[
         { key: "category", label: "Kategori", options: [{ value: "Akademik", label: "Akademik" }, { value: "Fasilitas", label: "Fasilitas" }, { value: "Kegiatan", label: "Kegiatan" }] },
         { key: "status", label: "Status", options: [{ value: "Aktif", label: "Aktif" }, { value: "Nonaktif", label: "Nonaktif" }] },

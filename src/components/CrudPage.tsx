@@ -163,6 +163,14 @@ function ImageUploadField({
   );
 }
 
+export interface DetailField<T> {
+  key: keyof T & string;
+  label: string;
+  render?: (value: any, item: T) => React.ReactNode;
+  type?: "text" | "image" | "badge" | "long-text";
+  fullWidth?: boolean;
+}
+
 interface CrudPageProps<T extends Record<string, any>> {
   title: string;
   subtitle: string;
@@ -177,14 +185,17 @@ interface CrudPageProps<T extends Record<string, any>> {
   filters?: CrudFilter[];
   excelConfig?: ExcelConfig<T>;
   orderKey?: keyof T & string;
+  detailFields?: DetailField<T>[];
 }
 
 export function CrudPage<T extends Record<string, any>>({
   title, subtitle, columns, initialData, formFields, searchPlaceholder,
-  searchKeys, idKey, addLabel, pageSize = 10, filters = [], excelConfig, orderKey,
+  searchKeys, idKey, addLabel, pageSize = 10, filters = [], excelConfig, orderKey, detailFields,
 }: CrudPageProps<T>) {
   const { toast } = useToast();
   const [data, setData] = useState<T[]>(initialData);
+  const [detailItem, setDetailItem] = useState<T | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [currentPageSize, setCurrentPageSize] = useState(pageSize);
@@ -667,6 +678,11 @@ export function CrudPage<T extends Record<string, any>>({
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        {detailFields && detailFields.length > 0 && (
+                          <DropdownMenuItem onClick={() => { setDetailItem(item); setDetailOpen(true); }}>
+                            <Eye className="h-4 w-4 mr-2" /> Detail
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem onClick={() => openEdit(item)}>
                           <Pencil className="h-4 w-4 mr-2" /> Edit
                         </DropdownMenuItem>
@@ -984,6 +1000,50 @@ export function CrudPage<T extends Record<string, any>>({
               <Button onClick={handleSend} disabled={sendFinalItems.length === 0}>
                 <Send className="h-4 w-4 mr-1" /> Kirim {sendFinalItems.length} Data
               </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Detail Modal */}
+      {detailFields && detailItem && (
+        <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-base">Detail Data</DialogTitle>
+              <DialogDescription className="text-xs">Informasi lengkap item yang dipilih.</DialogDescription>
+            </DialogHeader>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+              {detailFields.map((field) => {
+                const value = detailItem[field.key];
+                const isFullWidth = field.fullWidth || field.type === "image" || field.type === "long-text";
+                return (
+                  <div key={field.key} className={cn("space-y-1", isFullWidth && "sm:col-span-2")}>
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{field.label}</p>
+                    {field.render ? (
+                      <div>{field.render(value, detailItem)}</div>
+                    ) : field.type === "image" ? (
+                      value ? (
+                        <img src={String(value)} alt={field.label} className="w-full max-h-56 object-cover rounded-lg border" />
+                      ) : (
+                        <span className="text-sm text-muted-foreground">-</span>
+                      )
+                    ) : field.type === "badge" ? (
+                      <span className="inline-block text-xs font-medium bg-primary/10 text-primary px-2.5 py-1 rounded-full">{String(value || "-")}</span>
+                    ) : field.type === "long-text" ? (
+                      <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{String(value || "-")}</p>
+                    ) : (
+                      <p className="text-sm text-foreground font-medium">{String(value || "-")}</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <DialogFooter className="mt-4">
+              <Button variant="outline" size="sm" onClick={() => { setDetailOpen(false); openEdit(detailItem); }}>
+                <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => setDetailOpen(false)}>Tutup</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

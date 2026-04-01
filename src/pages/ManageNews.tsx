@@ -1,4 +1,4 @@
-import { CrudPage, CrudColumn, CrudFormField } from "@/components/CrudPage";
+import { CrudPage, CrudColumn, CrudFormField, DetailField } from "@/components/CrudPage";
 
 interface NewsItem {
   id: string;
@@ -80,6 +80,21 @@ const formFields: CrudFormField[] = [
   ]},
 ];
 
+const detailFields: DetailField<NewsItem>[] = [
+  { key: "imageUrl", label: "Gambar Utama / Featured Image", type: "image", fullWidth: true },
+  { key: "id", label: "ID" },
+  { key: "title", label: "Judul / Title" },
+  { key: "category", label: "Kategori / Category", type: "badge" },
+  { key: "status", label: "Status", render: (val) => (
+    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${val === "Terbit" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>{val}</span>
+  )},
+  { key: "author", label: "Penulis / Author" },
+  { key: "date", label: "Tanggal / Date" },
+  { key: "readTime", label: "Waktu Baca / Read Time" },
+  { key: "excerpt", label: "Ringkasan / Excerpt", type: "long-text", fullWidth: true },
+  { key: "content", label: "Konten / Content", type: "long-text", fullWidth: true },
+];
+
 export default function ManageNews() {
   return (
     <CrudPage<NewsItem>
@@ -92,6 +107,7 @@ export default function ManageNews() {
       searchKeys={["title", "category", "author"]}
       idKey="id"
       addLabel="Tambah Berita / Add News"
+      detailFields={detailFields}
       filters={[
         { key: "category", label: "Kategori", options: [{ value: "Prestasi", label: "Prestasi" }, { value: "Pengumuman", label: "Pengumuman" }, { value: "Kegiatan", label: "Kegiatan" }, { value: "Berita", label: "Berita" }] },
         { key: "status", label: "Status", options: [{ value: "Terbit", label: "Terbit" }, { value: "Draft", label: "Draft" }] },
