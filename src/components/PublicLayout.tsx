@@ -1,5 +1,7 @@
 import { Outlet, Link } from "react-router-dom";
 import PublicNavbar from "@/components/PublicNavbar";
+import MaintenancePage from "@/components/MaintenancePage";
+import { useMaintenance } from "@/contexts/MaintenanceContext";
 import { Phone, Mail, MapPin, ShieldCheck, Instagram, Youtube, Facebook, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
