@@ -190,7 +190,7 @@ interface CrudPageProps<T extends Record<string, any>> {
 
 export function CrudPage<T extends Record<string, any>>({
   title, subtitle, columns, initialData, formFields, searchPlaceholder,
-  searchKeys, idKey, addLabel, pageSize = 10, filters = [], excelConfig, orderKey,
+  searchKeys, idKey, addLabel, pageSize = 10, filters = [], excelConfig, orderKey, detailFields,
 }: CrudPageProps<T>) {
   const { toast } = useToast();
   const [data, setData] = useState<T[]>(initialData);
