@@ -796,22 +796,22 @@ const Settings = () => {
               <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${maintenanceMode ? "bg-destructive/10" : "bg-success/10"}`}>
-                      <Power className={`h-5 w-5 ${maintenanceMode ? "text-destructive" : "text-success"}`} />
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${isMaintenanceMode ? "bg-destructive/10" : "bg-success/10"}`}>
+                      <Power className={`h-5 w-5 ${isMaintenanceMode ? "text-destructive" : "text-success"}`} />
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold">Status Website / Website Status</h3>
                       <p className="text-xs text-muted-foreground">
-                        {maintenanceMode ? "Website sedang dalam mode pemeliharaan (maintenance)" : "Website aktif dan dapat diakses publik"}
+                        {isMaintenanceMode ? "Website sedang dalam mode pemeliharaan (maintenance)" : "Website aktif dan dapat diakses publik"}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className={`text-xs font-medium ${maintenanceMode ? "text-destructive" : "text-success"}`}>
-                      {maintenanceMode ? "Maintenance" : "Aktif"}
+                    <span className={`text-xs font-medium ${isMaintenanceMode ? "text-destructive" : "text-success"}`}>
+                      {isMaintenanceMode ? "Maintenance" : "Aktif"}
                     </span>
                     <Switch
-                      checked={maintenanceMode}
+                      checked={isMaintenanceMode}
                       onCheckedChange={(checked) => {
                         setMaintenanceMode(checked);
                         toast({
@@ -824,7 +824,7 @@ const Settings = () => {
                     />
                   </div>
                 </div>
-                {maintenanceMode && (
+                {isMaintenanceMode && (
                   <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 space-y-3">
                     <div className="flex items-center gap-2">
                       <AlertTriangle className="h-4 w-4 text-destructive" />
@@ -837,6 +837,14 @@ const Settings = () => {
                         onChange={(e) => setMaintenanceMessage(e.target.value)}
                         rows={2}
                         placeholder="Pesan yang ditampilkan kepada pengunjung..."
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Estimasi Selesai / Estimated End</Label>
+                      <Input
+                        value={estimatedEnd}
+                        onChange={(e) => setEstimatedEnd(e.target.value)}
+                        placeholder="Contoh: 1 April 2026, 18:00 WIB"
                       />
                     </div>
                   </div>
