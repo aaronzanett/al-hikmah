@@ -163,6 +163,14 @@ function ImageUploadField({
   );
 }
 
+export interface DetailField<T> {
+  key: keyof T & string;
+  label: string;
+  render?: (value: any, item: T) => React.ReactNode;
+  type?: "text" | "image" | "badge" | "long-text";
+  fullWidth?: boolean;
+}
+
 interface CrudPageProps<T extends Record<string, any>> {
   title: string;
   subtitle: string;
@@ -177,6 +185,7 @@ interface CrudPageProps<T extends Record<string, any>> {
   filters?: CrudFilter[];
   excelConfig?: ExcelConfig<T>;
   orderKey?: keyof T & string;
+  detailFields?: DetailField<T>[];
 }
 
 export function CrudPage<T extends Record<string, any>>({
