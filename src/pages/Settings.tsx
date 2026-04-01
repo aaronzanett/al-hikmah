@@ -171,9 +171,7 @@ const Settings = () => {
   const [devPasswordError, setDevPasswordError] = useState(false);
   const DEV_PASSWORD = "developerganteng";
 
-  // ─── Maintenance mode state ───
-  const [maintenanceMode, setMaintenanceMode] = useState(false);
-  const [maintenanceMessage, setMaintenanceMessage] = useState("Website sedang dalam pemeliharaan. Silakan kunjungi kembali nanti.");
+  // Maintenance mode now uses shared context
 
   const handleDevPasswordSubmit = () => {
     if (devPasswordInput === DEV_PASSWORD) {
