@@ -8,6 +8,7 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { GuardianLayout } from "@/components/GuardianLayout";
 import { ProtectedRoute, AdminRoute, GuardianRoute } from "@/components/ProtectedRoute";
 import { StudentLayout } from "@/components/StudentLayout";
+import { MaintenanceProvider } from "@/contexts/MaintenanceContext";
 import PublicLayout from "@/components/PublicLayout";
 
 // Public pages
