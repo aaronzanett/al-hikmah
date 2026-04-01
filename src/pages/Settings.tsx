@@ -128,6 +128,7 @@ function getCroppedImage(image: HTMLImageElement, crop: PixelCrop, format: strin
 
 const Settings = () => {
   const { toast } = useToast();
+  const { isMaintenanceMode, maintenanceMessage, estimatedEnd, setMaintenanceMode, setMaintenanceMessage, setEstimatedEnd } = useMaintenance();
   const logoInputRef = useRef<HTMLInputElement>(null);
   const cropImageRef = useRef<HTMLImageElement>(null);
 
