@@ -1004,6 +1004,50 @@ export function CrudPage<T extends Record<string, any>>({
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Detail Modal */}
+      {detailFields && detailItem && (
+        <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-base">Detail Data</DialogTitle>
+              <DialogDescription className="text-xs">Informasi lengkap item yang dipilih.</DialogDescription>
+            </DialogHeader>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+              {detailFields.map((field) => {
+                const value = detailItem[field.key];
+                const isFullWidth = field.fullWidth || field.type === "image" || field.type === "long-text";
+                return (
+                  <div key={field.key} className={cn("space-y-1", isFullWidth && "sm:col-span-2")}>
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{field.label}</p>
+                    {field.render ? (
+                      <div>{field.render(value, detailItem)}</div>
+                    ) : field.type === "image" ? (
+                      value ? (
+                        <img src={String(value)} alt={field.label} className="w-full max-h-56 object-cover rounded-lg border" />
+                      ) : (
+                        <span className="text-sm text-muted-foreground">-</span>
+                      )
+                    ) : field.type === "badge" ? (
+                      <span className="inline-block text-xs font-medium bg-primary/10 text-primary px-2.5 py-1 rounded-full">{String(value || "-")}</span>
+                    ) : field.type === "long-text" ? (
+                      <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{String(value || "-")}</p>
+                    ) : (
+                      <p className="text-sm text-foreground font-medium">{String(value || "-")}</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <DialogFooter className="mt-4">
+              <Button variant="outline" size="sm" onClick={() => { setDetailOpen(false); openEdit(detailItem); }}>
+                <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => setDetailOpen(false)}>Tutup</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </motion.div>
   );
 }
