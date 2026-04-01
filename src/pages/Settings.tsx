@@ -288,7 +288,7 @@ const Settings = () => {
       <Tabs defaultValue="general" className="max-w-5xl">
         <TabsList>
           <TabsTrigger value="general">Umum / General</TabsTrigger>
-          <TabsTrigger value="academic">Akademik / Academic</TabsTrigger>
+          
           <TabsTrigger value="finance">Keuangan / Finance</TabsTrigger>
           <TabsTrigger value="system">Sistem / System</TabsTrigger>
         </TabsList>

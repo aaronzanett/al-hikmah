@@ -153,6 +153,14 @@ const App = () => (
               }
             />
             <Route
+              path="/report-card"
+              element={
+                <ProtectedRoute requiredPermissions={["grades.view"]}>
+                  <ReportCardSettings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/attendance"
               element={
                 <ProtectedRoute requiredPermissions={["attendance.view"]}>
