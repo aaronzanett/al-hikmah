@@ -45,6 +45,7 @@ import ManageRegistrations from "./pages/ManageRegistrations";
 import ManageRegistrationInfo from "./pages/ManageRegistrationInfo";
 import Registration from "./pages/Registration";
 import RegistrationForm from "./pages/RegistrationForm";
+import ReportCardSettings from "./pages/ReportCardSettings";
 
 // Guardian portal pages
 import GuardianPortal from "./pages/portal/GuardianPortal";
@@ -148,6 +149,14 @@ const App = () => (
               element={
                 <ProtectedRoute requiredPermissions={["grades.view"]}>
                   <Grades />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/report-card"
+              element={
+                <ProtectedRoute requiredPermissions={["grades.view"]}>
+                  <ReportCardSettings />
                 </ProtectedRoute>
               }
             />

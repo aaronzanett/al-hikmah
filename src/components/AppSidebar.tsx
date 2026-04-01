@@ -70,6 +70,7 @@ const academicItems: MenuItem[] = [
   { title: "Kelas / Classes", url: "/classes", icon: GraduationCap, permission: "classes.view" },
   { title: "Mata Pelajaran / Subjects", url: "/subjects", icon: BookOpen, permission: "subjects.view" },
   { title: "Nilai / Grades", url: "/grades", icon: ClipboardList, permission: "grades.view" },
+  { title: "Format Rapor / Report Card", url: "/report-card", icon: FileCheck, permission: "grades.view" },
   { title: "Absensi / Attendance", url: "/attendance", icon: ClipboardList, permission: "attendance.view" },
 ];
 
