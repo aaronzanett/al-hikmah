@@ -678,6 +678,11 @@ export function CrudPage<T extends Record<string, any>>({
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        {detailFields && detailFields.length > 0 && (
+                          <DropdownMenuItem onClick={() => { setDetailItem(item); setDetailOpen(true); }}>
+                            <Eye className="h-4 w-4 mr-2" /> Detail
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem onClick={() => openEdit(item)}>
                           <Pencil className="h-4 w-4 mr-2" /> Edit
                         </DropdownMenuItem>
