@@ -10,6 +10,7 @@ import { ProtectedRoute, AdminRoute, GuardianRoute } from "@/components/Protecte
 import { StudentLayout } from "@/components/StudentLayout";
 import { MaintenanceProvider } from "@/contexts/MaintenanceContext";
 import { ThemeColorProvider } from "@/contexts/ThemeColorContext";
+import { LogoProvider } from "@/contexts/LogoContext";
 import PublicLayout from "@/components/PublicLayout";
 
 // Public pages
