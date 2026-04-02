@@ -821,13 +821,8 @@ const Settings = () => {
                     <Switch
                       checked={isMaintenanceMode}
                       onCheckedChange={(checked) => {
-                        setMaintenanceMode(checked);
-                        toast({
-                          title: checked ? "Website dalam mode Maintenance" : "Website kembali Aktif",
-                          description: checked
-                            ? "Pengunjung akan melihat halaman pemeliharaan."
-                            : "Website dapat diakses kembali oleh publik.",
-                        });
+                        setMaintenancePendingState(checked);
+                        setMaintenanceConfirmOpen(true);
                       }}
                     />
                   </div>
