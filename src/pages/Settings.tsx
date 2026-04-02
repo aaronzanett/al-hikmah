@@ -859,7 +859,7 @@ const Settings = () => {
                 )}
               </div>
 
-              {/* System Settings */}
+               {/* System Settings */}
               <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
                 <h3 className="text-sm font-semibold">Sistem / System</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -887,15 +887,114 @@ const Settings = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Theme Color */}
+              <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
+                <div className="flex items-center gap-2">
+                  <Palette className="h-4 w-4 text-primary" />
+                  <h3 className="text-sm font-semibold">Warna Tema / Theme Color</h3>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Pilih warna tema sesuai identitas pesantren. Perubahan berlaku setelah menekan Simpan.
+                </p>
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                  {themePresets.map((preset) => (
+                    <button
+                      key={preset.id}
+                      onClick={() => setPendingTheme(preset.id)}
+                      className={`relative flex flex-col items-center gap-1.5 rounded-xl border-2 p-3 transition-all hover:shadow-md ${
+                        pendingTheme === preset.id ? "border-primary shadow-md ring-2 ring-primary/20" : "border-border"
+                      }`}
+                    >
+                      <div
+                        className="h-8 w-8 rounded-full border-2 border-background shadow-sm"
+                        style={{ backgroundColor: preset.preview }}
+                      />
+                      {pendingTheme === preset.id && (
+                        <div className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+                          <Check className="h-3 w-3 text-primary-foreground" />
+                        </div>
+                      )}
+                      <span className="text-[10px] font-medium text-foreground text-center leading-tight">{preset.name}</span>
+                    </button>
+                  ))}
+                  {/* Custom option */}
+                  <button
+                    onClick={() => setPendingTheme("custom")}
+                    className={`relative flex flex-col items-center gap-1.5 rounded-xl border-2 p-3 transition-all hover:shadow-md ${
+                      pendingTheme === "custom" ? "border-primary shadow-md ring-2 ring-primary/20" : "border-border"
+                    }`}
+                  >
+                    <div
+                      className="h-8 w-8 rounded-full border-2 border-background shadow-sm overflow-hidden"
+                      style={{ background: `conic-gradient(red, yellow, lime, aqua, blue, magenta, red)` }}
+                    />
+                    {pendingTheme === "custom" && (
+                      <div className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+                        <Check className="h-3 w-3 text-primary-foreground" />
+                      </div>
+                    )}
+                    <span className="text-[10px] font-medium text-foreground text-center leading-tight">Custom</span>
+                  </button>
+                </div>
+                {pendingTheme === "custom" && (
+                  <div className="flex items-center gap-3 p-3 rounded-lg border bg-muted/30">
+                    <Label className="text-xs shrink-0">Pilih Warna:</Label>
+                    <input
+                      type="color"
+                      value={pendingCustomColor}
+                      onChange={(e) => setPendingCustomColor(e.target.value)}
+                      className="h-9 w-14 rounded-md border cursor-pointer"
+                    />
+                    <span className="text-xs text-muted-foreground font-mono">{pendingCustomColor}</span>
+                    <div className="h-6 w-6 rounded-full border" style={{ backgroundColor: pendingCustomColor }} />
+                  </div>
+                )}
+              </div>
+
               <div className="flex justify-end">
-                <Button onClick={handleSave}>Simpan / Save</Button>
+                <Button onClick={handleSystemSave}>Simpan / Save</Button>
               </div>
             </>
           )}
         </TabsContent>
       </Tabs>
 
-      {/* ═══════════ CROP DIALOG ═══════════ */}
+      {/* ═══════════ MAINTENANCE CONFIRMATION ═══════════ */}
+      <AlertDialog open={maintenanceConfirmOpen} onOpenChange={setMaintenanceConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {maintenancePendingState ? "Aktifkan Mode Pemeliharaan?" : "Nonaktifkan Mode Pemeliharaan?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {maintenancePendingState
+                ? "Website akan tidak dapat diakses oleh publik. Pengunjung akan melihat halaman pemeliharaan. Dashboard admin tetap berfungsi normal."
+                : "Website akan kembali aktif dan dapat diakses oleh publik. Pastikan semua pemeliharaan telah selesai."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal / Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className={maintenancePendingState ? "bg-destructive hover:bg-destructive/90" : ""}
+              onClick={() => {
+                setMaintenanceMode(maintenancePendingState);
+                toast.success(
+                  maintenancePendingState ? "Website dalam mode Maintenance" : "Website kembali Aktif",
+                  {
+                    description: maintenancePendingState
+                      ? "Pengunjung akan melihat halaman pemeliharaan."
+                      : "Website dapat diakses kembali oleh publik.",
+                    duration: 4000,
+                  }
+                );
+              }}
+            >
+              {maintenancePendingState ? "Ya, Aktifkan Maintenance" : "Ya, Aktifkan Kembali"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <Dialog open={cropDialogOpen} onOpenChange={setCropDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
