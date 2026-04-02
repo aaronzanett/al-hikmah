@@ -67,10 +67,7 @@ const Login = () => {
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 gradient-primary flex-col justify-between p-10">
         <Link to="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg gradient-gold">
-            <span className="text-sm font-bold text-accent-foreground">B</span>
-          </div>
-          <h1 className="text-xl font-bold text-primary-foreground">BoardingCore</h1>
+          <LogoBrand size="lg" className="[&_span]:text-primary-foreground [&_.text-foreground]:text-primary-foreground [&_.text-muted-foreground]:text-primary-foreground/70" />
         </Link>
         <div>
           <motion.h2
