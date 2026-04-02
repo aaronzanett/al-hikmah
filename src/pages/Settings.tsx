@@ -220,12 +220,12 @@ const Settings = () => {
       const croppedUrl = await getCroppedImage(cropImageRef.current, completedCrop, logoFormat);
       setLogoPreview(croppedUrl);
       setCropDialogOpen(false);
-      toast({ title: "Logo berhasil di-crop dan disimpan / Logo cropped & saved" });
+      toast.success("Logo berhasil di-crop dan disimpan / Logo cropped & saved", { duration: 4000 });
     }
   };
 
   const handleSave = () => {
-    toast({ title: "Pengaturan berhasil disimpan / Settings saved successfully" });
+    toast.success("Pengaturan berhasil disimpan / Settings saved successfully", { duration: 4000 });
   };
 
   // ─── Contact handlers ───
@@ -242,17 +242,17 @@ const Settings = () => {
   const handleSaveContact = () => {
     if (editingContact) {
       setContacts(prev => prev.map(c => c.id === editingContact.id ? { ...c, ...contactForm } : c));
-      toast({ title: "Kontak diperbarui / Contact updated" });
+      toast.success("Kontak diperbarui / Contact updated", { duration: 4000 });
     } else {
       const newId = `C${String(contacts.length + 1).padStart(3, "0")}`;
       setContacts(prev => [...prev, { id: newId, ...contactForm }]);
-      toast({ title: "Kontak ditambahkan / Contact added" });
+      toast.success("Kontak ditambahkan / Contact added", { duration: 4000 });
     }
     setContactDialogOpen(false);
   };
   const handleDeleteContact = (id: string) => {
     setContacts(prev => prev.filter(c => c.id !== id));
-    toast({ title: "Kontak dihapus / Contact deleted" });
+    toast.success("Kontak dihapus / Contact deleted", { duration: 4000 });
   };
 
   // ─── Social media handlers ───
@@ -269,17 +269,17 @@ const Settings = () => {
   const handleSaveSocial = () => {
     if (editingSocial) {
       setSocials(prev => prev.map(s => s.id === editingSocial.id ? { ...s, ...socialForm } : s));
-      toast({ title: "Media sosial diperbarui / Social media updated" });
+      toast.success("Media sosial diperbarui / Social media updated", { duration: 4000 });
     } else {
       const newId = `S${String(socials.length + 1).padStart(3, "0")}`;
       setSocials(prev => [...prev, { id: newId, ...socialForm }]);
-      toast({ title: "Media sosial ditambahkan / Social media added" });
+      toast.success("Media sosial ditambahkan / Social media added", { duration: 4000 });
     }
     setSocialDialogOpen(false);
   };
   const handleDeleteSocial = (id: string) => {
     setSocials(prev => prev.filter(s => s.id !== id));
-    toast({ title: "Media sosial dihapus / Social media deleted" });
+    toast.success("Media sosial dihapus / Social media deleted", { duration: 4000 });
   };
 
   // ─── Derived data for footer preview ───
