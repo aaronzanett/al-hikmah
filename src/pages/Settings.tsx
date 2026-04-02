@@ -5,14 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Phone, Mail, MapPin, Clock, Instagram, Youtube, Facebook, Twitter, Globe, Music2, ShieldCheck, Upload, ImageIcon, Info, Lock, AlertTriangle, Power, GraduationCap, FileText } from "lucide-react";
+import { Plus, Pencil, Trash2, Phone, Mail, MapPin, Clock, Instagram, Youtube, Facebook, Twitter, Globe, Music2, ShieldCheck, Upload, ImageIcon, Info, Lock, AlertTriangle, Power, GraduationCap, FileText, Palette, Check } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useMaintenance } from "@/contexts/MaintenanceContext";
+import { useThemeColor, themePresets } from "@/contexts/ThemeColorContext";
 import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
@@ -127,10 +129,18 @@ function getCroppedImage(image: HTMLImageElement, crop: PixelCrop, format: strin
 }
 
 const Settings = () => {
-  const { toast } = useToast();
   const { isMaintenanceMode, maintenanceMessage, estimatedEnd, setMaintenanceMode, setMaintenanceMessage, setEstimatedEnd } = useMaintenance();
+  const { activeTheme, customColor, applyTheme } = useThemeColor();
   const logoInputRef = useRef<HTMLInputElement>(null);
   const cropImageRef = useRef<HTMLImageElement>(null);
+
+  // Maintenance confirmation dialog
+  const [maintenanceConfirmOpen, setMaintenanceConfirmOpen] = useState(false);
+  const [maintenancePendingState, setMaintenancePendingState] = useState(false);
+
+  // Theme color local state (applied on save)
+  const [pendingTheme, setPendingTheme] = useState(activeTheme);
+  const [pendingCustomColor, setPendingCustomColor] = useState(customColor);
 
   // ─── Institution info state ───
   const [settings, setSettings] = useState({
@@ -171,13 +181,11 @@ const Settings = () => {
   const [devPasswordError, setDevPasswordError] = useState(false);
   const DEV_PASSWORD = "developerganteng";
 
-  // Maintenance mode now uses shared context
-
   const handleDevPasswordSubmit = () => {
     if (devPasswordInput === DEV_PASSWORD) {
       setDevUnlocked(true);
       setDevPasswordError(false);
-      toast({ title: "Akses diberikan / Access granted" });
+      toast.success("Akses diberikan / Access granted", { duration: 4000 });
     } else {
       setDevPasswordError(true);
     }
@@ -212,12 +220,17 @@ const Settings = () => {
       const croppedUrl = await getCroppedImage(cropImageRef.current, completedCrop, logoFormat);
       setLogoPreview(croppedUrl);
       setCropDialogOpen(false);
-      toast({ title: "Logo berhasil di-crop dan disimpan / Logo cropped & saved" });
+      toast.success("Logo berhasil di-crop dan disimpan / Logo cropped & saved", { duration: 4000 });
     }
   };
 
   const handleSave = () => {
-    toast({ title: "Pengaturan berhasil disimpan / Settings saved successfully" });
+    toast.success("Pengaturan berhasil disimpan / Settings saved successfully", { duration: 4000 });
+  };
+
+  const handleSystemSave = () => {
+    applyTheme(pendingTheme, pendingTheme === 'custom' ? pendingCustomColor : undefined);
+    toast.success("Pengaturan sistem berhasil disimpan / System settings saved", { duration: 4000 });
   };
 
   // ─── Contact handlers ───
@@ -234,17 +247,17 @@ const Settings = () => {
   const handleSaveContact = () => {
     if (editingContact) {
       setContacts(prev => prev.map(c => c.id === editingContact.id ? { ...c, ...contactForm } : c));
-      toast({ title: "Kontak diperbarui / Contact updated" });
+      toast.success("Kontak diperbarui / Contact updated", { duration: 4000 });
     } else {
       const newId = `C${String(contacts.length + 1).padStart(3, "0")}`;
       setContacts(prev => [...prev, { id: newId, ...contactForm }]);
-      toast({ title: "Kontak ditambahkan / Contact added" });
+      toast.success("Kontak ditambahkan / Contact added", { duration: 4000 });
     }
     setContactDialogOpen(false);
   };
   const handleDeleteContact = (id: string) => {
     setContacts(prev => prev.filter(c => c.id !== id));
-    toast({ title: "Kontak dihapus / Contact deleted" });
+    toast.success("Kontak dihapus / Contact deleted", { duration: 4000 });
   };
 
   // ─── Social media handlers ───
@@ -261,17 +274,17 @@ const Settings = () => {
   const handleSaveSocial = () => {
     if (editingSocial) {
       setSocials(prev => prev.map(s => s.id === editingSocial.id ? { ...s, ...socialForm } : s));
-      toast({ title: "Media sosial diperbarui / Social media updated" });
+      toast.success("Media sosial diperbarui / Social media updated", { duration: 4000 });
     } else {
       const newId = `S${String(socials.length + 1).padStart(3, "0")}`;
       setSocials(prev => [...prev, { id: newId, ...socialForm }]);
-      toast({ title: "Media sosial ditambahkan / Social media added" });
+      toast.success("Media sosial ditambahkan / Social media added", { duration: 4000 });
     }
     setSocialDialogOpen(false);
   };
   const handleDeleteSocial = (id: string) => {
     setSocials(prev => prev.filter(s => s.id !== id));
-    toast({ title: "Media sosial dihapus / Social media deleted" });
+    toast.success("Media sosial dihapus / Social media deleted", { duration: 4000 });
   };
 
   // ─── Derived data for footer preview ───
@@ -813,13 +826,8 @@ const Settings = () => {
                     <Switch
                       checked={isMaintenanceMode}
                       onCheckedChange={(checked) => {
-                        setMaintenanceMode(checked);
-                        toast({
-                          title: checked ? "Website dalam mode Maintenance" : "Website kembali Aktif",
-                          description: checked
-                            ? "Pengunjung akan melihat halaman pemeliharaan."
-                            : "Website dapat diakses kembali oleh publik.",
-                        });
+                        setMaintenancePendingState(checked);
+                        setMaintenanceConfirmOpen(true);
                       }}
                     />
                   </div>
@@ -851,7 +859,7 @@ const Settings = () => {
                 )}
               </div>
 
-              {/* System Settings */}
+               {/* System Settings */}
               <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
                 <h3 className="text-sm font-semibold">Sistem / System</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -879,15 +887,114 @@ const Settings = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Theme Color */}
+              <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
+                <div className="flex items-center gap-2">
+                  <Palette className="h-4 w-4 text-primary" />
+                  <h3 className="text-sm font-semibold">Warna Tema / Theme Color</h3>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Pilih warna tema sesuai identitas pesantren. Perubahan berlaku setelah menekan Simpan.
+                </p>
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                  {themePresets.map((preset) => (
+                    <button
+                      key={preset.id}
+                      onClick={() => setPendingTheme(preset.id)}
+                      className={`relative flex flex-col items-center gap-1.5 rounded-xl border-2 p-3 transition-all hover:shadow-md ${
+                        pendingTheme === preset.id ? "border-primary shadow-md ring-2 ring-primary/20" : "border-border"
+                      }`}
+                    >
+                      <div
+                        className="h-8 w-8 rounded-full border-2 border-background shadow-sm"
+                        style={{ backgroundColor: preset.preview }}
+                      />
+                      {pendingTheme === preset.id && (
+                        <div className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+                          <Check className="h-3 w-3 text-primary-foreground" />
+                        </div>
+                      )}
+                      <span className="text-[10px] font-medium text-foreground text-center leading-tight">{preset.name}</span>
+                    </button>
+                  ))}
+                  {/* Custom option */}
+                  <button
+                    onClick={() => setPendingTheme("custom")}
+                    className={`relative flex flex-col items-center gap-1.5 rounded-xl border-2 p-3 transition-all hover:shadow-md ${
+                      pendingTheme === "custom" ? "border-primary shadow-md ring-2 ring-primary/20" : "border-border"
+                    }`}
+                  >
+                    <div
+                      className="h-8 w-8 rounded-full border-2 border-background shadow-sm overflow-hidden"
+                      style={{ background: `conic-gradient(red, yellow, lime, aqua, blue, magenta, red)` }}
+                    />
+                    {pendingTheme === "custom" && (
+                      <div className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+                        <Check className="h-3 w-3 text-primary-foreground" />
+                      </div>
+                    )}
+                    <span className="text-[10px] font-medium text-foreground text-center leading-tight">Custom</span>
+                  </button>
+                </div>
+                {pendingTheme === "custom" && (
+                  <div className="flex items-center gap-3 p-3 rounded-lg border bg-muted/30">
+                    <Label className="text-xs shrink-0">Pilih Warna:</Label>
+                    <input
+                      type="color"
+                      value={pendingCustomColor}
+                      onChange={(e) => setPendingCustomColor(e.target.value)}
+                      className="h-9 w-14 rounded-md border cursor-pointer"
+                    />
+                    <span className="text-xs text-muted-foreground font-mono">{pendingCustomColor}</span>
+                    <div className="h-6 w-6 rounded-full border" style={{ backgroundColor: pendingCustomColor }} />
+                  </div>
+                )}
+              </div>
+
               <div className="flex justify-end">
-                <Button onClick={handleSave}>Simpan / Save</Button>
+                <Button onClick={handleSystemSave}>Simpan / Save</Button>
               </div>
             </>
           )}
         </TabsContent>
       </Tabs>
 
-      {/* ═══════════ CROP DIALOG ═══════════ */}
+      {/* ═══════════ MAINTENANCE CONFIRMATION ═══════════ */}
+      <AlertDialog open={maintenanceConfirmOpen} onOpenChange={setMaintenanceConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {maintenancePendingState ? "Aktifkan Mode Pemeliharaan?" : "Nonaktifkan Mode Pemeliharaan?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {maintenancePendingState
+                ? "Website akan tidak dapat diakses oleh publik. Pengunjung akan melihat halaman pemeliharaan. Dashboard admin tetap berfungsi normal."
+                : "Website akan kembali aktif dan dapat diakses oleh publik. Pastikan semua pemeliharaan telah selesai."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal / Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className={maintenancePendingState ? "bg-destructive hover:bg-destructive/90" : ""}
+              onClick={() => {
+                setMaintenanceMode(maintenancePendingState);
+                toast.success(
+                  maintenancePendingState ? "Website dalam mode Maintenance" : "Website kembali Aktif",
+                  {
+                    description: maintenancePendingState
+                      ? "Pengunjung akan melihat halaman pemeliharaan."
+                      : "Website dapat diakses kembali oleh publik.",
+                    duration: 4000,
+                  }
+                );
+              }}
+            >
+              {maintenancePendingState ? "Ya, Aktifkan Maintenance" : "Ya, Aktifkan Kembali"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <Dialog open={cropDialogOpen} onOpenChange={setCropDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
