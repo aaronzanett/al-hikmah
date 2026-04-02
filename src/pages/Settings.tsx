@@ -384,7 +384,7 @@ const Settings = () => {
                   </div>
                   <div className="space-y-2">
                     <Label>Tagline</Label>
-                    <Input value={tagline} onChange={(e) => update("tagline", e.target.value)} />
+                    <Input value={tagline} onChange={(e) => setTagline(e.target.value)} />
                     {logoMode === "complete" && (
                       <p className="text-[10px] text-muted-foreground">Tidak ditampilkan di navbar (sudah ada di logo)</p>
                     )}
