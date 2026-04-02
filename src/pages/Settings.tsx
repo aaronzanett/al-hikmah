@@ -122,11 +122,8 @@ function getCroppedImage(image: HTMLImageElement, crop: PixelCrop, format: strin
     canvas.width,
     canvas.height
   );
-  return new Promise((resolve) => {
-    canvas.toBlob((blob) => {
-      if (blob) resolve(URL.createObjectURL(blob));
-    }, format, 0.92);
-  });
+  // Return data URL instead of blob URL for localStorage persistence
+  return Promise.resolve(canvas.toDataURL(format, 0.85));
 }
 
 const Settings = () => {
