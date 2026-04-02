@@ -105,11 +105,8 @@ const Login = () => {
             Kembali ke Beranda
           </Link>
 
-          <div className="lg:hidden flex items-center gap-3 mb-6">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-gold">
-              <span className="text-sm font-bold text-accent-foreground">B</span>
-            </div>
-            <h1 className="text-lg font-bold text-foreground">BoardingCore</h1>
+          <div className="lg:hidden mb-6">
+            <LogoBrand size="md" />
           </div>
 
           {/* Role Switcher */}
