@@ -39,14 +39,8 @@ export function StudentLayout() {
       {/* Top Header */}
       <header className="sticky top-0 z-40 border-b bg-card/95 backdrop-blur-xl">
         <div className="mx-auto max-w-4xl px-4 h-14 flex items-center justify-between">
-          <Link to="/student" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-gold">
-              <span className="text-xs font-bold text-accent-foreground">B</span>
-            </div>
-            <div className="hidden sm:block">
-              <p className="text-sm font-bold text-foreground leading-none">BoardingCore</p>
-              <p className="text-[10px] text-muted-foreground">Portal Santri</p>
-            </div>
+          <Link to="/student" className="flex items-center">
+            <LogoBrand size="sm" subtitleOverride="Portal Santri" />
           </Link>
 
           <div className="flex items-center gap-2">

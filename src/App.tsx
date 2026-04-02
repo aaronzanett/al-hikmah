@@ -333,6 +333,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </LogoProvider>
     </ThemeColorProvider>
     </MaintenanceProvider>
   </QueryClientProvider>

@@ -40,14 +40,8 @@ export default function PublicNavbar() {
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-gold shadow-md">
-            <span className="text-sm font-bold text-accent-foreground">B</span>
-          </div>
-          <div className="hidden sm:block">
-            <span className="text-base font-bold text-foreground leading-none">Pesantren Al-Hikmah</span>
-            <span className="block text-[10px] text-muted-foreground leading-tight">Modern Islamic Boarding School</span>
-          </div>
+        <Link to="/" className="flex items-center">
+          <LogoBrand size="md" />
         </Link>
         <div className="hidden lg:flex items-center gap-8 text-sm font-medium text-muted-foreground">
           {navLinks.map((link) =>
