@@ -132,6 +132,7 @@ function getCroppedImage(image: HTMLImageElement, crop: PixelCrop, format: strin
 const Settings = () => {
   const { isMaintenanceMode, maintenanceMessage, estimatedEnd, setMaintenanceMode, setMaintenanceMessage, setEstimatedEnd } = useMaintenance();
   const { activeTheme, customColor, applyTheme } = useThemeColor();
+  const { logoMode, logoUrl, institutionName, tagline, setLogoMode, setLogoUrl, setInstitutionName, setTagline } = useLogo();
   const logoInputRef = useRef<HTMLInputElement>(null);
   const cropImageRef = useRef<HTMLImageElement>(null);
 
@@ -145,8 +146,6 @@ const Settings = () => {
 
   // ─── Institution info state ───
   const [settings, setSettings] = useState({
-    institutionName: "Pesantren Al-Hikmah",
-    tagline: "Modern Islamic Boarding School",
     description: "Mencetak generasi Qur'ani yang berilmu, beramal, dan berakhlak mulia sejak 1985.",
     address: "Jl. Pondok Pesantren No. 123, Kec. Cikarang, Kabupaten Bekasi, Jawa Barat 17530",
     microFee: "500",
@@ -155,9 +154,7 @@ const Settings = () => {
     timezone: "Asia/Jakarta",
   });
 
-  // ─── Logo state ───
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [logoMode, setLogoMode] = useState<"complete" | "manual">("manual");
+  // ─── Logo crop state ───
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [cropSrc, setCropSrc] = useState<string>("");
   const [crop, setCrop] = useState<Crop>();
