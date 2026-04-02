@@ -351,8 +351,8 @@ const Settings = () => {
                   className={`relative ${logoMode === "complete" ? "h-28 w-48" : "h-28 w-28"} rounded-xl border-2 border-dashed border-muted-foreground/30 bg-muted/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all`}
                   onClick={() => logoInputRef.current?.click()}
                 >
-                  {logoPreview ? (
-                    <img src={logoPreview} alt="Logo" className="h-full w-full object-contain p-1" />
+                  {logoUrl ? (
+                    <img src={logoUrl} alt="Logo" className="h-full w-full object-contain p-1" />
                   ) : (
                     <div className="flex flex-col items-center gap-1 text-muted-foreground">
                       <ImageIcon className="h-8 w-8" />
@@ -377,14 +377,14 @@ const Settings = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Nama Pesantren / Institution Name</Label>
-                    <Input value={settings.institutionName} onChange={(e) => update("institutionName", e.target.value)} />
+                    <Input value={institutionName} onChange={(e) => update("institutionName", e.target.value)} />
                     {logoMode === "complete" && (
                       <p className="text-[10px] text-muted-foreground">Tidak ditampilkan di navbar (sudah ada di logo)</p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label>Tagline</Label>
-                    <Input value={settings.tagline} onChange={(e) => update("tagline", e.target.value)} />
+                    <Input value={tagline} onChange={(e) => update("tagline", e.target.value)} />
                     {logoMode === "complete" && (
                       <p className="text-[10px] text-muted-foreground">Tidak ditampilkan di navbar (sudah ada di logo)</p>
                     )}
@@ -405,15 +405,15 @@ const Settings = () => {
             <div className="rounded-lg border bg-muted/20 p-4">
               <p className="text-xs font-medium text-muted-foreground mb-3">Preview Navbar Logo</p>
               <div className="flex items-center gap-3 bg-background rounded-lg border p-3 w-fit">
-                {logoPreview ? (
+                {logoUrl ? (
                   logoMode === "complete" ? (
-                    <img src={logoPreview} alt="Logo" className="h-9 object-contain" />
+                    <img src={logoUrl} alt="Logo" className="h-9 object-contain" />
                   ) : (
                     <>
-                      <img src={logoPreview} alt="Logo" className="h-9 w-9 rounded-lg object-contain" />
+                      <img src={logoUrl} alt="Logo" className="h-9 w-9 rounded-lg object-contain" />
                       <div>
-                        <span className="text-sm font-bold text-foreground leading-none block">{settings.institutionName}</span>
-                        <span className="text-[10px] text-muted-foreground leading-tight block">{settings.tagline}</span>
+                        <span className="text-sm font-bold text-foreground leading-none block">{institutionName}</span>
+                        <span className="text-[10px] text-muted-foreground leading-tight block">{tagline}</span>
                       </div>
                     </>
                   )
@@ -424,8 +424,8 @@ const Settings = () => {
                     </div>
                     {logoMode === "manual" && (
                       <div>
-                        <span className="text-sm font-bold text-foreground leading-none block">{settings.institutionName}</span>
-                        <span className="text-[10px] text-muted-foreground leading-tight block">{settings.tagline}</span>
+                        <span className="text-sm font-bold text-foreground leading-none block">{institutionName}</span>
+                        <span className="text-[10px] text-muted-foreground leading-tight block">{tagline}</span>
                       </div>
                     )}
                   </>
@@ -627,16 +627,16 @@ const Settings = () => {
                     {/* Column 1: Brand */}
                     <div>
                       <div className="flex items-center gap-2 mb-3">
-                        {logoPreview ? (
-                          <img src={logoPreview} alt="Logo" className="h-7 w-7 rounded-md object-contain" />
+                        {logoUrl ? (
+                          <img src={logoUrl} alt="Logo" className="h-7 w-7 rounded-md object-contain" />
                         ) : (
                           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
                             <span className="text-[9px] font-bold text-primary-foreground">B</span>
                           </div>
                         )}
                         <div>
-                          <span className="text-xs font-bold text-foreground block leading-none">{settings.institutionName}</span>
-                          <span className="text-[9px] text-muted-foreground">{settings.tagline}</span>
+                          <span className="text-xs font-bold text-foreground block leading-none">{institutionName}</span>
+                          <span className="text-[9px] text-muted-foreground">{tagline}</span>
                         </div>
                       </div>
                       <p className="text-[11px] text-muted-foreground leading-relaxed">{settings.description}</p>
@@ -691,7 +691,7 @@ const Settings = () => {
                   </div>
 
                   <div className="border-t mt-6 pt-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-                    <p className="text-[10px] text-muted-foreground">© {new Date().getFullYear()} {settings.institutionName}. All rights reserved.</p>
+                    <p className="text-[10px] text-muted-foreground">© {new Date().getFullYear()} {institutionName}. All rights reserved.</p>
                     <div className="flex items-center gap-2">
                       {activeSocials.map(s => {
                         const SIcon = getSocialIcon(s.platform);
