@@ -364,9 +364,16 @@ const Settings = () => {
                   className="hidden"
                   onChange={handleLogoSelect}
                 />
-                <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => logoInputRef.current?.click()}>
-                  <Upload className="h-3 w-3 mr-1" /> Unggah Logo
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => logoInputRef.current?.click()}>
+                    <Upload className="h-3 w-3 mr-1" /> Unggah Logo
+                  </Button>
+                  {logoUrl && (
+                    <Button variant="ghost" size="sm" className="text-xs h-7 text-destructive hover:text-destructive" onClick={() => { setLogoUrl(null); toast.success("Logo dihapus / Logo removed", { duration: 4000 }); }}>
+                      <Trash2 className="h-3 w-3 mr-1" /> Hapus
+                    </Button>
+                  )}
+                </div>
               </div>
 
               {/* Profile fields */}
