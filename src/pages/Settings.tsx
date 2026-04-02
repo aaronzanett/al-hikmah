@@ -377,7 +377,7 @@ const Settings = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Nama Pesantren / Institution Name</Label>
-                    <Input value={institutionName} onChange={(e) => update("institutionName", e.target.value)} />
+                    <Input value={institutionName} onChange={(e) => setInstitutionName(e.target.value)} />
                     {logoMode === "complete" && (
                       <p className="text-[10px] text-muted-foreground">Tidak ditampilkan di navbar (sudah ada di logo)</p>
                     )}
