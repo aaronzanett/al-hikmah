@@ -331,6 +331,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </ThemeColorProvider>
     </MaintenanceProvider>
   </QueryClientProvider>
 );
