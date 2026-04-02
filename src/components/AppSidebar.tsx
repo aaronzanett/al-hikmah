@@ -47,6 +47,7 @@ import {
 import { useAuth, usePermissions } from "@/contexts/AuthContext";
 import { Permission, roleDisplayNames } from "@/types/auth";
 import { useNavigate } from "react-router-dom";
+import { useLogo } from "@/contexts/LogoContext";
 
 interface MenuItem {
   title: string;
