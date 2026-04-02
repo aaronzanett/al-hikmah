@@ -183,6 +183,7 @@ export function AppSidebar() {
   const { user, logout } = useAuth();
   const { can } = usePermissions();
   const navigate = useNavigate();
+  const { logoMode, logoUrl, institutionName } = useLogo();
   
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     management: true,
