@@ -15,6 +15,7 @@ import { Plus, Pencil, Trash2, Phone, Mail, MapPin, Clock, Instagram, Youtube, F
 import { Switch } from "@/components/ui/switch";
 import { useMaintenance } from "@/contexts/MaintenanceContext";
 import { useThemeColor, themePresets } from "@/contexts/ThemeColorContext";
+import { useLogo } from "@/contexts/LogoContext";
 import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
@@ -121,16 +122,14 @@ function getCroppedImage(image: HTMLImageElement, crop: PixelCrop, format: strin
     canvas.width,
     canvas.height
   );
-  return new Promise((resolve) => {
-    canvas.toBlob((blob) => {
-      if (blob) resolve(URL.createObjectURL(blob));
-    }, format, 0.92);
-  });
+  // Return data URL instead of blob URL for localStorage persistence
+  return Promise.resolve(canvas.toDataURL(format, 0.85));
 }
 
 const Settings = () => {
   const { isMaintenanceMode, maintenanceMessage, estimatedEnd, setMaintenanceMode, setMaintenanceMessage, setEstimatedEnd } = useMaintenance();
   const { activeTheme, customColor, applyTheme } = useThemeColor();
+  const { logoMode, logoUrl, institutionName, tagline, setLogoMode, setLogoUrl, setInstitutionName, setTagline } = useLogo();
   const logoInputRef = useRef<HTMLInputElement>(null);
   const cropImageRef = useRef<HTMLImageElement>(null);
 
@@ -144,8 +143,6 @@ const Settings = () => {
 
   // ─── Institution info state ───
   const [settings, setSettings] = useState({
-    institutionName: "Pesantren Al-Hikmah",
-    tagline: "Modern Islamic Boarding School",
     description: "Mencetak generasi Qur'ani yang berilmu, beramal, dan berakhlak mulia sejak 1985.",
     address: "Jl. Pondok Pesantren No. 123, Kec. Cikarang, Kabupaten Bekasi, Jawa Barat 17530",
     microFee: "500",
@@ -154,9 +151,7 @@ const Settings = () => {
     timezone: "Asia/Jakarta",
   });
 
-  // ─── Logo state ───
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [logoMode, setLogoMode] = useState<"complete" | "manual">("manual");
+  // ─── Logo crop state ───
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [cropSrc, setCropSrc] = useState<string>("");
   const [crop, setCrop] = useState<Crop>();
@@ -217,8 +212,12 @@ const Settings = () => {
 
   const handleCropConfirm = async () => {
     if (cropImageRef.current && completedCrop) {
+      // Revoke old blob URL to prevent pile-up
+      if (logoUrl && logoUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(logoUrl);
+      }
       const croppedUrl = await getCroppedImage(cropImageRef.current, completedCrop, logoFormat);
-      setLogoPreview(croppedUrl);
+      setLogoUrl(croppedUrl);
       setCropDialogOpen(false);
       toast.success("Logo berhasil di-crop dan disimpan / Logo cropped & saved", { duration: 4000 });
     }
@@ -349,8 +348,8 @@ const Settings = () => {
                   className={`relative ${logoMode === "complete" ? "h-28 w-48" : "h-28 w-28"} rounded-xl border-2 border-dashed border-muted-foreground/30 bg-muted/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-all`}
                   onClick={() => logoInputRef.current?.click()}
                 >
-                  {logoPreview ? (
-                    <img src={logoPreview} alt="Logo" className="h-full w-full object-contain p-1" />
+                  {logoUrl ? (
+                    <img src={logoUrl} alt="Logo" className="h-full w-full object-contain p-1" />
                   ) : (
                     <div className="flex flex-col items-center gap-1 text-muted-foreground">
                       <ImageIcon className="h-8 w-8" />
@@ -365,9 +364,16 @@ const Settings = () => {
                   className="hidden"
                   onChange={handleLogoSelect}
                 />
-                <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => logoInputRef.current?.click()}>
-                  <Upload className="h-3 w-3 mr-1" /> Unggah Logo
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => logoInputRef.current?.click()}>
+                    <Upload className="h-3 w-3 mr-1" /> Unggah Logo
+                  </Button>
+                  {logoUrl && (
+                    <Button variant="ghost" size="sm" className="text-xs h-7 text-destructive hover:text-destructive" onClick={() => { setLogoUrl(null); toast.success("Logo dihapus / Logo removed", { duration: 4000 }); }}>
+                      <Trash2 className="h-3 w-3 mr-1" /> Hapus
+                    </Button>
+                  )}
+                </div>
               </div>
 
               {/* Profile fields */}
@@ -375,14 +381,14 @@ const Settings = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Nama Pesantren / Institution Name</Label>
-                    <Input value={settings.institutionName} onChange={(e) => update("institutionName", e.target.value)} />
+                    <Input value={institutionName} onChange={(e) => setInstitutionName(e.target.value)} />
                     {logoMode === "complete" && (
                       <p className="text-[10px] text-muted-foreground">Tidak ditampilkan di navbar (sudah ada di logo)</p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label>Tagline</Label>
-                    <Input value={settings.tagline} onChange={(e) => update("tagline", e.target.value)} />
+                    <Input value={tagline} onChange={(e) => setTagline(e.target.value)} />
                     {logoMode === "complete" && (
                       <p className="text-[10px] text-muted-foreground">Tidak ditampilkan di navbar (sudah ada di logo)</p>
                     )}
@@ -403,15 +409,15 @@ const Settings = () => {
             <div className="rounded-lg border bg-muted/20 p-4">
               <p className="text-xs font-medium text-muted-foreground mb-3">Preview Navbar Logo</p>
               <div className="flex items-center gap-3 bg-background rounded-lg border p-3 w-fit">
-                {logoPreview ? (
+                {logoUrl ? (
                   logoMode === "complete" ? (
-                    <img src={logoPreview} alt="Logo" className="h-9 object-contain" />
+                    <img src={logoUrl} alt="Logo" className="h-9 object-contain" />
                   ) : (
                     <>
-                      <img src={logoPreview} alt="Logo" className="h-9 w-9 rounded-lg object-contain" />
+                      <img src={logoUrl} alt="Logo" className="h-9 w-9 rounded-lg object-contain" />
                       <div>
-                        <span className="text-sm font-bold text-foreground leading-none block">{settings.institutionName}</span>
-                        <span className="text-[10px] text-muted-foreground leading-tight block">{settings.tagline}</span>
+                        <span className="text-sm font-bold text-foreground leading-none block">{institutionName}</span>
+                        <span className="text-[10px] text-muted-foreground leading-tight block">{tagline}</span>
                       </div>
                     </>
                   )
@@ -422,8 +428,8 @@ const Settings = () => {
                     </div>
                     {logoMode === "manual" && (
                       <div>
-                        <span className="text-sm font-bold text-foreground leading-none block">{settings.institutionName}</span>
-                        <span className="text-[10px] text-muted-foreground leading-tight block">{settings.tagline}</span>
+                        <span className="text-sm font-bold text-foreground leading-none block">{institutionName}</span>
+                        <span className="text-[10px] text-muted-foreground leading-tight block">{tagline}</span>
                       </div>
                     )}
                   </>
@@ -625,16 +631,16 @@ const Settings = () => {
                     {/* Column 1: Brand */}
                     <div>
                       <div className="flex items-center gap-2 mb-3">
-                        {logoPreview ? (
-                          <img src={logoPreview} alt="Logo" className="h-7 w-7 rounded-md object-contain" />
+                        {logoUrl ? (
+                          <img src={logoUrl} alt="Logo" className="h-7 w-7 rounded-md object-contain" />
                         ) : (
                           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
                             <span className="text-[9px] font-bold text-primary-foreground">B</span>
                           </div>
                         )}
                         <div>
-                          <span className="text-xs font-bold text-foreground block leading-none">{settings.institutionName}</span>
-                          <span className="text-[9px] text-muted-foreground">{settings.tagline}</span>
+                          <span className="text-xs font-bold text-foreground block leading-none">{institutionName}</span>
+                          <span className="text-[9px] text-muted-foreground">{tagline}</span>
                         </div>
                       </div>
                       <p className="text-[11px] text-muted-foreground leading-relaxed">{settings.description}</p>
@@ -689,7 +695,7 @@ const Settings = () => {
                   </div>
 
                   <div className="border-t mt-6 pt-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-                    <p className="text-[10px] text-muted-foreground">© {new Date().getFullYear()} {settings.institutionName}. All rights reserved.</p>
+                    <p className="text-[10px] text-muted-foreground">© {new Date().getFullYear()} {institutionName}. All rights reserved.</p>
                     <div className="flex items-center gap-2">
                       {activeSocials.map(s => {
                         const SIcon = getSocialIcon(s.platform);

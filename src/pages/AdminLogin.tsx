@@ -6,6 +6,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth, mockUsers } from "@/contexts/AuthContext";
 import { UserRole, roleDisplayNames } from "@/types/auth";
 import { useToast } from "@/hooks/use-toast";
+import { LogoBrand } from "@/components/LogoBrand";
 import {
   Select,
   SelectContent,
@@ -52,10 +53,7 @@ const AdminLogin = () => {
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 gradient-primary flex-col justify-between p-10">
         <Link to="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg gradient-gold">
-            <span className="text-sm font-bold text-accent-foreground">B</span>
-          </div>
-          <h1 className="text-xl font-bold text-primary-foreground">BoardingCore</h1>
+          <LogoBrand size="lg" className="[&_span]:text-primary-foreground [&_.text-foreground]:text-primary-foreground [&_.text-muted-foreground]:text-primary-foreground/70" />
         </Link>
         <div>
           <motion.div
@@ -115,11 +113,8 @@ const AdminLogin = () => {
             Kembali ke Beranda
           </Link>
 
-          <div className="lg:hidden flex items-center gap-3 mb-6">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-gold">
-              <span className="text-sm font-bold text-accent-foreground">B</span>
-            </div>
-            <h1 className="text-lg font-bold text-foreground">BoardingCore</h1>
+          <div className="lg:hidden mb-6">
+            <LogoBrand size="md" />
           </div>
 
           <div className="flex items-center gap-3 mb-6">
