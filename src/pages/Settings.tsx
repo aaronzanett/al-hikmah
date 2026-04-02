@@ -228,6 +228,11 @@ const Settings = () => {
     toast.success("Pengaturan berhasil disimpan / Settings saved successfully", { duration: 4000 });
   };
 
+  const handleSystemSave = () => {
+    applyTheme(pendingTheme, pendingTheme === 'custom' ? pendingCustomColor : undefined);
+    toast.success("Pengaturan sistem berhasil disimpan / System settings saved", { duration: 4000 });
+  };
+
   // ─── Contact handlers ───
   const handleAddContact = () => {
     setEditingContact(null);
