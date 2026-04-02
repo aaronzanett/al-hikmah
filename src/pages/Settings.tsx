@@ -130,7 +130,7 @@ function getCroppedImage(image: HTMLImageElement, crop: PixelCrop, format: strin
 
 const Settings = () => {
   const { isMaintenanceMode, maintenanceMessage, estimatedEnd, setMaintenanceMode, setMaintenanceMessage, setEstimatedEnd } = useMaintenance();
-  const { activeTheme, customColor, setTheme, setCustomColor, applyTheme } = useThemeColor();
+  const { activeTheme, customColor, applyTheme } = useThemeColor();
   const logoInputRef = useRef<HTMLInputElement>(null);
   const cropImageRef = useRef<HTMLImageElement>(null);
 
@@ -141,6 +141,16 @@ const Settings = () => {
   // Theme color local state (applied on save)
   const [pendingTheme, setPendingTheme] = useState(activeTheme);
   const [pendingCustomColor, setPendingCustomColor] = useState(customColor);
+
+  // ─── Institution info state ───
+  const [settings, setSettings] = useState({
+    institutionName: "Pesantren Al-Hikmah",
+    tagline: "Modern Islamic Boarding School",
+    description: "Mencetak generasi Qur'ani yang berilmu, beramal, dan berakhlak mulia sejak 1985.",
+    address: "Jl. Pondok Pesantren No. 123, Kec. Cikarang, Kabupaten Bekasi, Jawa Barat 17530",
+    microFee: "500",
+    paymentGateway: "midtrans",
+    language: "bilingual",
     timezone: "Asia/Jakarta",
   });
 
@@ -171,13 +181,11 @@ const Settings = () => {
   const [devPasswordError, setDevPasswordError] = useState(false);
   const DEV_PASSWORD = "developerganteng";
 
-  // Maintenance mode now uses shared context
-
   const handleDevPasswordSubmit = () => {
     if (devPasswordInput === DEV_PASSWORD) {
       setDevUnlocked(true);
       setDevPasswordError(false);
-      toast({ title: "Akses diberikan / Access granted" });
+      toast.success("Akses diberikan / Access granted", { duration: 4000 });
     } else {
       setDevPasswordError(true);
     }
