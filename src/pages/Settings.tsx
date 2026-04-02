@@ -215,8 +215,12 @@ const Settings = () => {
 
   const handleCropConfirm = async () => {
     if (cropImageRef.current && completedCrop) {
+      // Revoke old blob URL to prevent pile-up
+      if (logoUrl && logoUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(logoUrl);
+      }
       const croppedUrl = await getCroppedImage(cropImageRef.current, completedCrop, logoFormat);
-      setLogoPreview(croppedUrl);
+      setLogoUrl(croppedUrl);
       setCropDialogOpen(false);
       toast.success("Logo berhasil di-crop dan disimpan / Logo cropped & saved", { duration: 4000 });
     }
