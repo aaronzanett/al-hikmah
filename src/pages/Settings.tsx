@@ -15,6 +15,7 @@ import { Plus, Pencil, Trash2, Phone, Mail, MapPin, Clock, Instagram, Youtube, F
 import { Switch } from "@/components/ui/switch";
 import { useMaintenance } from "@/contexts/MaintenanceContext";
 import { useThemeColor, themePresets } from "@/contexts/ThemeColorContext";
+import { useLogo } from "@/contexts/LogoContext";
 import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
