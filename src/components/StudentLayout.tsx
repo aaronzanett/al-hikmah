@@ -12,6 +12,7 @@ import {
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import { LogoBrand } from "@/components/LogoBrand";
 
 const navItems = [
   { title: "Beranda", url: "/student", icon: Home, exact: true },
