@@ -218,12 +218,18 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r-0">
       <SidebarHeader className={collapsed ? "p-2 flex items-center justify-center" : "p-4"}>
         <div className={cn("flex items-center overflow-hidden", collapsed ? "justify-center" : "gap-3")}>
-          <div className={cn("flex shrink-0 items-center justify-center rounded-lg gradient-gold", collapsed ? "h-7 w-7" : "h-9 w-9")}>
-            <span className={cn("font-bold text-sidebar-primary-foreground", collapsed ? "text-xs" : "text-sm")}>B</span>
-          </div>
-          {!collapsed && (
+          {logoUrl ? (
+            <img src={logoUrl} alt="Logo" className={cn("shrink-0 rounded-lg object-contain", collapsed ? "h-7 w-7" : (logoMode === "complete" ? "h-9" : "h-9 w-9"))} />
+          ) : (
+            <div className={cn("flex shrink-0 items-center justify-center rounded-lg gradient-gold", collapsed ? "h-7 w-7" : "h-9 w-9")}>
+              <span className={cn("font-bold text-sidebar-primary-foreground", collapsed ? "text-xs" : "text-sm")}>
+                {institutionName.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
+          {!collapsed && !(logoMode === "complete" && logoUrl) && (
             <div className="animate-slide-in min-w-0">
-              <h1 className="text-base font-bold text-sidebar-foreground truncate">BoardingCore</h1>
+              <h1 className="text-base font-bold text-sidebar-foreground truncate">{institutionName}</h1>
               <p className="text-[11px] text-sidebar-foreground/50 truncate">
                 {user ? roleDisplayNames[user.role].id : 'Pesantren Management'}
               </p>
