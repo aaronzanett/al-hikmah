@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Menu, XIcon } from "lucide-react";
+import { LogoBrand } from "@/components/LogoBrand";
 
 const navLinks = [
   { label: "Tentang", href: "#about", type: "anchor" },
