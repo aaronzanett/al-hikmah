@@ -141,18 +141,6 @@ const Settings = () => {
   // Theme color local state (applied on save)
   const [pendingTheme, setPendingTheme] = useState(activeTheme);
   const [pendingCustomColor, setPendingCustomColor] = useState(customColor);
-  const logoInputRef = useRef<HTMLInputElement>(null);
-  const cropImageRef = useRef<HTMLImageElement>(null);
-
-  // ─── Institution info state ───
-  const [settings, setSettings] = useState({
-    institutionName: "Pesantren Al-Hikmah",
-    tagline: "Modern Islamic Boarding School",
-    description: "Mencetak generasi Qur'ani yang berilmu, beramal, dan berakhlak mulia sejak 1985.",
-    address: "Jl. Pondok Pesantren No. 123, Kec. Cikarang, Kabupaten Bekasi, Jawa Barat 17530",
-    microFee: "500",
-    paymentGateway: "midtrans",
-    language: "bilingual",
     timezone: "Asia/Jakarta",
   });
 
