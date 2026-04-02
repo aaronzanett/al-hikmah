@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth, mockUsers } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { LogoBrand } from "@/components/LogoBrand";
 
 type Role = "guardian" | "student";
 
