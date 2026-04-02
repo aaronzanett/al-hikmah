@@ -6,6 +6,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth, mockUsers } from "@/contexts/AuthContext";
 import { UserRole, roleDisplayNames } from "@/types/auth";
 import { useToast } from "@/hooks/use-toast";
+import { LogoBrand } from "@/components/LogoBrand";
 import {
   Select,
   SelectContent,
