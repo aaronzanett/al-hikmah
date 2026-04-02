@@ -129,8 +129,18 @@ function getCroppedImage(image: HTMLImageElement, crop: PixelCrop, format: strin
 }
 
 const Settings = () => {
-  const { toast } = useToast();
   const { isMaintenanceMode, maintenanceMessage, estimatedEnd, setMaintenanceMode, setMaintenanceMessage, setEstimatedEnd } = useMaintenance();
+  const { activeTheme, customColor, setTheme, setCustomColor, applyTheme } = useThemeColor();
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const cropImageRef = useRef<HTMLImageElement>(null);
+
+  // Maintenance confirmation dialog
+  const [maintenanceConfirmOpen, setMaintenanceConfirmOpen] = useState(false);
+  const [maintenancePendingState, setMaintenancePendingState] = useState(false);
+
+  // Theme color local state (applied on save)
+  const [pendingTheme, setPendingTheme] = useState(activeTheme);
+  const [pendingCustomColor, setPendingCustomColor] = useState(customColor);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const cropImageRef = useRef<HTMLImageElement>(null);
 
