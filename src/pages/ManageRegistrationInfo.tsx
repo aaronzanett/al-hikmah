@@ -23,12 +23,41 @@ import {
   requirementsData,
   costData,
   faqData,
+  formatDateDisplay,
+  formatPeriodDisplay,
   type AlurItem,
   type JadwalItem,
   type PersyaratanItem,
   type BiayaItem,
   type FAQItem,
 } from "@/data/registrationData";
+
+// ─── DatePicker helper ───
+function DatePickerField({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
+  const date = value ? new Date(value + "T00:00:00") : undefined;
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-medium">{label}</label>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}>
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {date ? format(date, "dd MMM yyyy") : "Pilih tanggal"}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <CalendarWidget
+            mode="single"
+            selected={date}
+            onSelect={(d) => { if (d) onChange(format(d, "yyyy-MM-dd")); }}
+            initialFocus
+            className="p-3 pointer-events-auto"
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
 
 // ─── Tab Sections ───
 const tabs = [
