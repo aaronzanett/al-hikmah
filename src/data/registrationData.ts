@@ -11,7 +11,7 @@ export interface AlurItem {
   icon?: typeof ClipboardList;
 }
 export interface JadwalItem {
-  id: string; wave: string; period: string; testDate: string; resultDate: string; status: string;
+  id: string; program: string; wave: string; period: string; testDate: string; resultDate: string; status: string;
 }
 export interface PersyaratanItem {
   id: string; title: string; order: number; status: string;
@@ -48,9 +48,13 @@ export const registrationSteps: AlurItem[] = [
 ];
 
 export const scheduleData: JadwalItem[] = [
-  { id: "J1", wave: "Gelombang 1", period: "1 Januari – 28 Februari 2026", testDate: "8 Maret 2026", resultDate: "15 Maret 2026", status: "Dibuka" },
-  { id: "J2", wave: "Gelombang 2", period: "1 Maret – 30 April 2026", testDate: "10 Mei 2026", resultDate: "17 Mei 2026", status: "Segera" },
-  { id: "J3", wave: "Gelombang 3", period: "1 Mei – 30 Juni 2026", testDate: "12 Juli 2026", resultDate: "19 Juli 2026", status: "Tertutup" },
+  { id: "J1", program: "Tahfidz Al-Qur'an", wave: "Gelombang 1", period: "1 Januari – 28 Februari 2026", testDate: "8 Maret 2026", resultDate: "15 Maret 2026", status: "Dibuka" },
+  { id: "J2", program: "Tahfidz Al-Qur'an", wave: "Gelombang 2", period: "1 Maret – 30 April 2026", testDate: "10 Mei 2026", resultDate: "17 Mei 2026", status: "Segera" },
+  { id: "J3", program: "Tahfidz Al-Qur'an", wave: "Gelombang 3", period: "1 Mei – 30 Juni 2026", testDate: "12 Juli 2026", resultDate: "19 Juli 2026", status: "Tertutup" },
+  { id: "J4", program: "Kurikulum Nasional + Diniyah", wave: "Gelombang 1", period: "1 Januari – 28 Februari 2026", testDate: "10 Maret 2026", resultDate: "17 Maret 2026", status: "Dibuka" },
+  { id: "J5", program: "Kurikulum Nasional + Diniyah", wave: "Gelombang 2", period: "1 Maret – 30 April 2026", testDate: "12 Mei 2026", resultDate: "19 Mei 2026", status: "Segera" },
+  { id: "J6", program: "Bahasa Arab & Inggris", wave: "Gelombang 1", period: "1 Februari – 31 Maret 2026", testDate: "12 April 2026", resultDate: "19 April 2026", status: "Dibuka" },
+  { id: "J7", program: "Bahasa Arab & Inggris", wave: "Gelombang 2", period: "1 April – 31 Mei 2026", testDate: "14 Juni 2026", resultDate: "21 Juni 2026", status: "Segera" },
 ];
 
 export const requirementsData: PersyaratanItem[] = [

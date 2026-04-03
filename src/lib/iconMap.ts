@@ -27,11 +27,11 @@ export function getIconComponent(key: string): LucideIcon {
 // ─── Color Presets ───
 // Harmonious bg/text color pairs using design tokens
 export const colorPresets = [
-  { label: "Biru", value: "bg-primary/10 text-primary" },
+  { label: "Hijau Tua", value: "bg-primary/10 text-primary" },
   { label: "Hijau", value: "bg-success/10 text-success" },
   { label: "Oranye", value: "bg-warning/10 text-warning" },
   { label: "Merah", value: "bg-destructive/10 text-destructive" },
-  { label: "Info", value: "bg-info/10 text-info" },
+  { label: "Biru", value: "bg-info/10 text-info" },
   { label: "Ungu", value: "bg-purple-100 text-purple-600" },
   { label: "Pink", value: "bg-pink-100 text-pink-600" },
   { label: "Teal", value: "bg-teal-100 text-teal-600" },

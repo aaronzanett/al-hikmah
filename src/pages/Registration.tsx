@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   ArrowRight,
   CheckCircle2,
@@ -198,50 +199,76 @@ const Registration = () => {
         </div>
       </section>
 
-      {/* Schedule */}
+      {/* Schedule by Program */}
       <section className="py-20 lg:py-28 bg-muted/30 islamic-pattern-star">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="text-center mb-14">
             <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">Jadwal Pendaftaran</span>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Gelombang Pendaftaran
+              Gelombang Pendaftaran Per Program
             </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Setiap program memiliki jadwal gelombang pendaftaran tersendiri. Pilih program yang diminati untuk melihat jadwalnya.
+            </p>
           </div>
-          <div className="max-w-4xl mx-auto">
-            <div className="rounded-2xl border bg-card shadow-card overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b bg-muted/50">
-                      <th className="text-left p-4 font-semibold text-foreground">Gelombang</th>
-                      <th className="text-left p-4 font-semibold text-foreground">Periode Daftar</th>
-                      <th className="text-left p-4 font-semibold text-foreground">Tes Seleksi</th>
-                      <th className="text-left p-4 font-semibold text-foreground">Pengumuman</th>
-                      <th className="text-left p-4 font-semibold text-foreground">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {activeSchedule.map((s) => (
-                      <tr key={s.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                        <td className="p-4 font-semibold text-foreground">{s.wave}</td>
-                        <td className="p-4 text-muted-foreground">{s.period}</td>
-                        <td className="p-4 text-muted-foreground">{s.testDate}</td>
-                        <td className="p-4 text-muted-foreground">{s.resultDate}</td>
-                        <td className="p-4">
-                          <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                            s.status === "Dibuka" ? "bg-success/10 text-success" :
-                            s.status === "Segera" ? "bg-warning/10 text-warning" :
-                            "bg-muted text-muted-foreground"
-                          }`}>
-                            {s.status}
-                          </span>
-                        </td>
-                      </tr>
+          <div className="max-w-5xl mx-auto">
+            {(() => {
+              const programs = Array.from(new Set(activeSchedule.map(s => s.program))).filter(Boolean);
+              if (programs.length === 0) return null;
+              return (
+                <Tabs defaultValue={programs[0]} className="space-y-6">
+                  <TabsList className="w-full flex flex-wrap h-auto gap-1.5 bg-card border p-2 rounded-xl shadow-card">
+                    {programs.map(prog => (
+                      <TabsTrigger
+                        key={prog}
+                        value={prog}
+                        className="px-4 py-2.5 rounded-lg text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+                      >
+                        {prog}
+                      </TabsTrigger>
                     ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+                  </TabsList>
+                  {programs.map(prog => (
+                    <TabsContent key={prog} value={prog}>
+                      <div className="rounded-2xl border bg-card shadow-card overflow-hidden">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="border-b bg-muted/50">
+                                <th className="text-left p-4 font-semibold text-foreground">Gelombang</th>
+                                <th className="text-left p-4 font-semibold text-foreground">Periode Daftar</th>
+                                <th className="text-left p-4 font-semibold text-foreground">Tes Seleksi</th>
+                                <th className="text-left p-4 font-semibold text-foreground">Pengumuman</th>
+                                <th className="text-left p-4 font-semibold text-foreground">Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {activeSchedule.filter(s => s.program === prog).map((s) => (
+                                <tr key={s.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                                  <td className="p-4 font-semibold text-foreground">{s.wave}</td>
+                                  <td className="p-4 text-muted-foreground">{s.period}</td>
+                                  <td className="p-4 text-muted-foreground">{s.testDate}</td>
+                                  <td className="p-4 text-muted-foreground">{s.resultDate}</td>
+                                  <td className="p-4">
+                                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                                      s.status === "Dibuka" ? "bg-success/10 text-success" :
+                                      s.status === "Segera" ? "bg-warning/10 text-warning" :
+                                      "bg-muted text-muted-foreground"
+                                    }`}>
+                                      {s.status}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </TabsContent>
+                  ))}
+                </Tabs>
+              );
+            })()}
           </div>
         </div>
       </section>
