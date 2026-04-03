@@ -23,6 +23,8 @@ import {
   requirementsData,
   costData,
   faqData,
+  formatDateDisplay,
+  formatPeriodDisplay,
 } from "@/data/registrationData";
 
 const fadeUp = {
@@ -246,9 +248,9 @@ const Registration = () => {
                               {activeSchedule.filter(s => s.program === prog).map((s) => (
                                 <tr key={s.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                                   <td className="p-4 font-semibold text-foreground">{s.wave}</td>
-                                  <td className="p-4 text-muted-foreground">{s.period}</td>
-                                  <td className="p-4 text-muted-foreground">{s.testDate}</td>
-                                  <td className="p-4 text-muted-foreground">{s.resultDate}</td>
+                                  <td className="p-4 text-muted-foreground">{formatPeriodDisplay(s.periodStart, s.periodEnd)}</td>
+                                  <td className="p-4 text-muted-foreground">{formatDateDisplay(s.testDate)}</td>
+                                  <td className="p-4 text-muted-foreground">{formatDateDisplay(s.resultDate)}</td>
                                   <td className="p-4">
                                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                                       s.status === "Dibuka" ? "bg-success/10 text-success" :

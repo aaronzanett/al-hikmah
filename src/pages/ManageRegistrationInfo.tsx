@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { format } from "date-fns";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,10 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarWidget } from "@/components/ui/calendar";
 import { toast } from "sonner";
 import {
   ListOrdered, Calendar, HelpCircle, DollarSign, Plus, Pencil, Trash2,
-  CheckCircle2, ChevronUp, ChevronDown, Eye, EyeOff,
+  CheckCircle2, ChevronUp, ChevronDown, Eye, EyeOff, CalendarIcon, GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { iconRegistry, iconKeys, getIconComponent, colorPresets } from "@/lib/iconMap";
@@ -20,12 +23,41 @@ import {
   requirementsData,
   costData,
   faqData,
+  formatDateDisplay,
+  formatPeriodDisplay,
   type AlurItem,
   type JadwalItem,
   type PersyaratanItem,
   type BiayaItem,
   type FAQItem,
 } from "@/data/registrationData";
+
+// ─── DatePicker helper ───
+function DatePickerField({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
+  const date = value ? new Date(value + "T00:00:00") : undefined;
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-medium">{label}</label>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}>
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {date ? format(date, "dd MMM yyyy") : "Pilih tanggal"}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <CalendarWidget
+            mode="single"
+            selected={date}
+            onSelect={(d) => { if (d) onChange(format(d, "yyyy-MM-dd")); }}
+            initialFocus
+            className="p-3 pointer-events-auto"
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
 
 // ─── Tab Sections ───
 const tabs = [
@@ -238,125 +270,106 @@ const ManageRegistrationInfo = () => {
         <TabsContent value="jadwal" className="space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">Kelola jadwal pendaftaran per program dan gelombang.</p>
-            <Button size="sm" onClick={() => setEditDialog({
-              type: "jadwal", isNew: true,
-              data: { program: "", wave: "", period: "", testDate: "", resultDate: "", status: "Dibuka" },
-            })}>
-              <Plus className="h-4 w-4 mr-1" /> Tambah Gelombang
+            <Button size="sm" onClick={() => {
+              const name = prompt("Nama program baru:");
+              if (name && name.trim()) {
+                setJadwal(prev => [...prev, {
+                  id: `J${Date.now()}`, program: name.trim(), wave: "Gelombang 1",
+                  periodStart: "", periodEnd: "", testDate: "", resultDate: "", status: "Dibuka",
+                }]);
+                showToast(`Program "${name.trim()}" berhasil ditambahkan`);
+              }
+            }}>
+              <Plus className="h-4 w-4 mr-1" /> Tambah Program
             </Button>
           </div>
-          {/* Group by program */}
           {(() => {
             const programs = Array.from(new Set(jadwal.map(j => j.program))).filter(Boolean);
-            const ungrouped = jadwal.filter(j => !j.program);
             return (
               <div className="space-y-6">
-                {programs.map(prog => (
-                  <Card key={prog}>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm flex items-center gap-2">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary text-xs font-bold">
-                          {prog.charAt(0)}
-                        </span>
-                        {prog}
-                        <span className="text-xs font-normal text-muted-foreground ml-auto">
-                          {jadwal.filter(j => j.program === prog).length} gelombang
-                        </span>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="border-b bg-muted/50">
-                              <th className="text-left p-3 font-semibold text-foreground">Gelombang</th>
-                              <th className="text-left p-3 font-semibold text-foreground">Periode Daftar</th>
-                              <th className="text-left p-3 font-semibold text-foreground">Tes Seleksi</th>
-                              <th className="text-left p-3 font-semibold text-foreground">Pengumuman</th>
-                              <th className="text-left p-3 font-semibold text-foreground">Status</th>
-                              <th className="text-right p-3 font-semibold text-foreground">Aksi</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {jadwal.filter(j => j.program === prog).map(item => (
-                              <tr key={item.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                                <td className="p-3 font-semibold text-foreground">{item.wave}</td>
-                                <td className="p-3 text-muted-foreground">{item.period}</td>
-                                <td className="p-3 text-muted-foreground">{item.testDate}</td>
-                                <td className="p-3 text-muted-foreground">{item.resultDate}</td>
-                                <td className="p-3">
-                                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                                    item.status === "Dibuka" ? "bg-success/10 text-success" :
-                                    item.status === "Segera" ? "bg-warning/10 text-warning" :
-                                    "bg-muted text-muted-foreground"
-                                  }`}>{item.status}</span>
-                                </td>
-                                <td className="p-3 text-right">
-                                  <div className="flex items-center justify-end gap-1">
-                                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditDialog({ type: "jadwal", data: { ...item }, isNew: false })}>
-                                      <Pencil className="h-3.5 w-3.5" />
-                                    </Button>
-                                    <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => setDeleteDialog({ type: "jadwal", id: item.id })}>
-                                      <Trash2 className="h-3.5 w-3.5" />
-                                    </Button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-                {ungrouped.length > 0 && (
-                  <Card>
-                    <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Tanpa Program</CardTitle></CardHeader>
-                    <CardContent className="p-0">
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="border-b bg-muted/50">
-                              <th className="text-left p-3 font-semibold text-foreground">Gelombang</th>
-                              <th className="text-left p-3 font-semibold text-foreground">Periode</th>
-                              <th className="text-left p-3 font-semibold text-foreground">Tes</th>
-                              <th className="text-left p-3 font-semibold text-foreground">Hasil</th>
-                              <th className="text-left p-3 font-semibold text-foreground">Status</th>
-                              <th className="text-right p-3 font-semibold text-foreground">Aksi</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {ungrouped.map(item => (
-                              <tr key={item.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                                <td className="p-3 font-semibold">{item.wave}</td>
-                                <td className="p-3 text-muted-foreground">{item.period}</td>
-                                <td className="p-3 text-muted-foreground">{item.testDate}</td>
-                                <td className="p-3 text-muted-foreground">{item.resultDate}</td>
-                                <td className="p-3">
-                                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                                    item.status === "Dibuka" ? "bg-success/10 text-success" :
-                                    item.status === "Segera" ? "bg-warning/10 text-warning" :
-                                    "bg-muted text-muted-foreground"
-                                  }`}>{item.status}</span>
-                                </td>
-                                <td className="p-3 text-right">
-                                  <div className="flex items-center justify-end gap-1">
-                                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditDialog({ type: "jadwal", data: { ...item }, isNew: false })}>
-                                      <Pencil className="h-3.5 w-3.5" />
-                                    </Button>
-                                    <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => setDeleteDialog({ type: "jadwal", id: item.id })}>
-                                      <Trash2 className="h-3.5 w-3.5" />
-                                    </Button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </CardContent>
+                {programs.length === 0 && (
+                  <Card className="p-8 text-center">
+                    <GraduationCap className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground">Belum ada program. Klik "Tambah Program" untuk memulai.</p>
                   </Card>
                 )}
+                {programs.map(prog => {
+                  const waves = jadwal.filter(j => j.program === prog);
+                  return (
+                    <Card key={prog}>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm flex items-center gap-2">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary text-xs font-bold">
+                            {prog.charAt(0)}
+                          </span>
+                          {prog}
+                          <span className="text-xs font-normal text-muted-foreground">
+                            {waves.length} gelombang
+                          </span>
+                          <div className="ml-auto flex items-center gap-1">
+                            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setEditDialog({
+                              type: "jadwal", isNew: true,
+                              data: { program: prog, wave: `Gelombang ${waves.length + 1}`, periodStart: "", periodEnd: "", testDate: "", resultDate: "", status: "Dibuka" },
+                            })}>
+                              <Plus className="h-3.5 w-3.5 mr-1" /> Tambah Gelombang
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => {
+                              if (confirm(`Hapus program "${prog}" beserta semua gelombangnya?`)) {
+                                setJadwal(prev => prev.filter(j => j.program !== prog));
+                                showToast(`Program "${prog}" berhasil dihapus`);
+                              }
+                            }}>
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-0">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="border-b bg-muted/50">
+                                <th className="text-left p-3 font-semibold text-foreground">Gelombang</th>
+                                <th className="text-left p-3 font-semibold text-foreground">Periode Daftar</th>
+                                <th className="text-left p-3 font-semibold text-foreground">Tes Seleksi</th>
+                                <th className="text-left p-3 font-semibold text-foreground">Pengumuman</th>
+                                <th className="text-left p-3 font-semibold text-foreground">Status</th>
+                                <th className="text-right p-3 font-semibold text-foreground">Aksi</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {waves.map(item => (
+                                <tr key={item.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                                  <td className="p-3 font-semibold text-foreground">{item.wave}</td>
+                                  <td className="p-3 text-muted-foreground">{formatPeriodDisplay(item.periodStart, item.periodEnd)}</td>
+                                  <td className="p-3 text-muted-foreground">{formatDateDisplay(item.testDate)}</td>
+                                  <td className="p-3 text-muted-foreground">{formatDateDisplay(item.resultDate)}</td>
+                                  <td className="p-3">
+                                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                                      item.status === "Dibuka" ? "bg-success/10 text-success" :
+                                      item.status === "Segera" ? "bg-warning/10 text-warning" :
+                                      "bg-muted text-muted-foreground"
+                                    }`}>{item.status}</span>
+                                  </td>
+                                  <td className="p-3 text-right">
+                                    <div className="flex items-center justify-end gap-1">
+                                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditDialog({ type: "jadwal", data: { ...item }, isNew: false })}>
+                                        <Pencil className="h-3.5 w-3.5" />
+                                      </Button>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => setDeleteDialog({ type: "jadwal", id: item.id })}>
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                      </Button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             );
           })()}
@@ -606,10 +619,13 @@ const ManageRegistrationInfo = () => {
             <div className="space-y-4">
               <div className="space-y-2"><label className="text-sm font-medium">Program</label><Input placeholder="Contoh: Tahfidz Al-Qur'an" value={editDialog.data.program} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, program: e.target.value } })} /></div>
               <div className="space-y-2"><label className="text-sm font-medium">Gelombang</label><Input value={editDialog.data.wave} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, wave: e.target.value } })} /></div>
-              <div className="space-y-2"><label className="text-sm font-medium">Periode</label><Input value={editDialog.data.period} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, period: e.target.value } })} /></div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2"><label className="text-sm font-medium">Tanggal Tes</label><Input value={editDialog.data.testDate} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, testDate: e.target.value } })} /></div>
-                <div className="space-y-2"><label className="text-sm font-medium">Tanggal Hasil</label><Input value={editDialog.data.resultDate} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, resultDate: e.target.value } })} /></div>
+                <DatePickerField label="Periode Mulai" value={editDialog.data.periodStart || ""} onChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, periodStart: v } })} />
+                <DatePickerField label="Periode Selesai" value={editDialog.data.periodEnd || ""} onChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, periodEnd: v } })} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <DatePickerField label="Tanggal Tes" value={editDialog.data.testDate || ""} onChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, testDate: v } })} />
+                <DatePickerField label="Tanggal Hasil" value={editDialog.data.resultDate || ""} onChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, resultDate: v } })} />
               </div>
               <div className="space-y-2"><label className="text-sm font-medium">Status</label>
                 <Select value={editDialog.data.status} onValueChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, status: v } })}>
