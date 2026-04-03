@@ -604,6 +604,7 @@ const ManageRegistrationInfo = () => {
           )}
           {editDialog?.type === "jadwal" && (
             <div className="space-y-4">
+              <div className="space-y-2"><label className="text-sm font-medium">Program</label><Input placeholder="Contoh: Tahfidz Al-Qur'an" value={editDialog.data.program} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, program: e.target.value } })} /></div>
               <div className="space-y-2"><label className="text-sm font-medium">Gelombang</label><Input value={editDialog.data.wave} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, wave: e.target.value } })} /></div>
               <div className="space-y-2"><label className="text-sm font-medium">Periode</label><Input value={editDialog.data.period} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, period: e.target.value } })} /></div>
               <div className="grid grid-cols-2 gap-4">
