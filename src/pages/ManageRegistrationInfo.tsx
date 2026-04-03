@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { format } from "date-fns";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,10 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarWidget } from "@/components/ui/calendar";
 import { toast } from "sonner";
 import {
   ListOrdered, Calendar, HelpCircle, DollarSign, Plus, Pencil, Trash2,
-  CheckCircle2, ChevronUp, ChevronDown, Eye, EyeOff,
+  CheckCircle2, ChevronUp, ChevronDown, Eye, EyeOff, CalendarIcon, GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { iconRegistry, iconKeys, getIconComponent, colorPresets } from "@/lib/iconMap";
