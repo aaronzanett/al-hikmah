@@ -7,11 +7,10 @@ import {
 export interface AlurItem {
   id: string; step: number; title: string; desc: string; details: string[]; status: string;
   iconKey: string; color: string;
-  // legacy compat
   icon?: typeof ClipboardList;
 }
 export interface JadwalItem {
-  id: string; program: string; wave: string; period: string; testDate: string; resultDate: string; status: string;
+  id: string; program: string; wave: string; periodStart: string; periodEnd: string; testDate: string; resultDate: string; status: string;
 }
 export interface PersyaratanItem {
   id: string; title: string; order: number; status: string;
@@ -23,7 +22,7 @@ export interface FAQItem {
   id: string; question: string; answer: string; order: number; status: string;
 }
 
-// ─── Step Icons & Colors (legacy arrays kept for backward compat) ───
+// ─── Step Icons & Colors ───
 export const stepIcons = [ClipboardList, FileText, Users, Trophy, CreditCard, GraduationCap];
 export const stepColors = [
   "bg-primary/10 text-primary",
@@ -34,7 +33,6 @@ export const stepColors = [
   "bg-primary/10 text-primary",
 ];
 
-// ─── Default icon keys for steps ───
 export const defaultStepIconKeys = ["ClipboardList", "FileText", "Users", "Trophy", "CreditCard", "GraduationCap"];
 
 // ─── Shared Data ───
@@ -48,13 +46,13 @@ export const registrationSteps: AlurItem[] = [
 ];
 
 export const scheduleData: JadwalItem[] = [
-  { id: "J1", program: "Tahfidz Al-Qur'an", wave: "Gelombang 1", period: "1 Januari – 28 Februari 2026", testDate: "8 Maret 2026", resultDate: "15 Maret 2026", status: "Dibuka" },
-  { id: "J2", program: "Tahfidz Al-Qur'an", wave: "Gelombang 2", period: "1 Maret – 30 April 2026", testDate: "10 Mei 2026", resultDate: "17 Mei 2026", status: "Segera" },
-  { id: "J3", program: "Tahfidz Al-Qur'an", wave: "Gelombang 3", period: "1 Mei – 30 Juni 2026", testDate: "12 Juli 2026", resultDate: "19 Juli 2026", status: "Tertutup" },
-  { id: "J4", program: "Kurikulum Nasional + Diniyah", wave: "Gelombang 1", period: "1 Januari – 28 Februari 2026", testDate: "10 Maret 2026", resultDate: "17 Maret 2026", status: "Dibuka" },
-  { id: "J5", program: "Kurikulum Nasional + Diniyah", wave: "Gelombang 2", period: "1 Maret – 30 April 2026", testDate: "12 Mei 2026", resultDate: "19 Mei 2026", status: "Segera" },
-  { id: "J6", program: "Bahasa Arab & Inggris", wave: "Gelombang 1", period: "1 Februari – 31 Maret 2026", testDate: "12 April 2026", resultDate: "19 April 2026", status: "Dibuka" },
-  { id: "J7", program: "Bahasa Arab & Inggris", wave: "Gelombang 2", period: "1 April – 31 Mei 2026", testDate: "14 Juni 2026", resultDate: "21 Juni 2026", status: "Segera" },
+  { id: "J1", program: "Tahfidz Al-Qur'an", wave: "Gelombang 1", periodStart: "2026-01-01", periodEnd: "2026-02-28", testDate: "2026-03-08", resultDate: "2026-03-15", status: "Dibuka" },
+  { id: "J2", program: "Tahfidz Al-Qur'an", wave: "Gelombang 2", periodStart: "2026-03-01", periodEnd: "2026-04-30", testDate: "2026-05-10", resultDate: "2026-05-17", status: "Segera" },
+  { id: "J3", program: "Tahfidz Al-Qur'an", wave: "Gelombang 3", periodStart: "2026-05-01", periodEnd: "2026-06-30", testDate: "2026-07-12", resultDate: "2026-07-19", status: "Tertutup" },
+  { id: "J4", program: "Kurikulum Nasional + Diniyah", wave: "Gelombang 1", periodStart: "2026-01-01", periodEnd: "2026-02-28", testDate: "2026-03-10", resultDate: "2026-03-17", status: "Dibuka" },
+  { id: "J5", program: "Kurikulum Nasional + Diniyah", wave: "Gelombang 2", periodStart: "2026-03-01", periodEnd: "2026-04-30", testDate: "2026-05-12", resultDate: "2026-05-19", status: "Segera" },
+  { id: "J6", program: "Bahasa Arab & Inggris", wave: "Gelombang 1", periodStart: "2026-02-01", periodEnd: "2026-03-31", testDate: "2026-04-12", resultDate: "2026-04-19", status: "Dibuka" },
+  { id: "J7", program: "Bahasa Arab & Inggris", wave: "Gelombang 2", periodStart: "2026-04-01", periodEnd: "2026-05-31", testDate: "2026-06-14", resultDate: "2026-06-21", status: "Segera" },
 ];
 
 export const requirementsData: PersyaratanItem[] = [
@@ -84,3 +82,19 @@ export const faqData: FAQItem[] = [
   { id: "F5", question: "Apa kurikulum yang digunakan?", answer: "Kami menggunakan kurikulum nasional (Kemendikbud) yang dipadukan dengan kurikulum pesantren (Diniyah), sehingga santri mendapat ijazah formal dan kemampuan keagamaan.", order: 5, status: "Aktif" },
   { id: "F6", question: "Apakah ada program tahfidz?", answer: "Ya, program tahfidz adalah salah satu program unggulan kami dengan target hafalan 30 juz selama masa pendidikan.", order: 6, status: "Aktif" },
 ];
+
+// ─── Helper: format ISO date to display ───
+export const formatDateDisplay = (isoDate: string): string => {
+  if (!isoDate) return "-";
+  try {
+    const d = new Date(isoDate + "T00:00:00");
+    return d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+  } catch {
+    return isoDate;
+  }
+};
+
+export const formatPeriodDisplay = (start: string, end: string): string => {
+  if (!start || !end) return "-";
+  return `${formatDateDisplay(start)} – ${formatDateDisplay(end)}`;
+};
