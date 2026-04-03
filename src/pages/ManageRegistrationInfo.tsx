@@ -619,10 +619,13 @@ const ManageRegistrationInfo = () => {
             <div className="space-y-4">
               <div className="space-y-2"><label className="text-sm font-medium">Program</label><Input placeholder="Contoh: Tahfidz Al-Qur'an" value={editDialog.data.program} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, program: e.target.value } })} /></div>
               <div className="space-y-2"><label className="text-sm font-medium">Gelombang</label><Input value={editDialog.data.wave} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, wave: e.target.value } })} /></div>
-              <div className="space-y-2"><label className="text-sm font-medium">Periode</label><Input value={editDialog.data.period} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, period: e.target.value } })} /></div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2"><label className="text-sm font-medium">Tanggal Tes</label><Input value={editDialog.data.testDate} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, testDate: e.target.value } })} /></div>
-                <div className="space-y-2"><label className="text-sm font-medium">Tanggal Hasil</label><Input value={editDialog.data.resultDate} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, resultDate: e.target.value } })} /></div>
+                <DatePickerField label="Periode Mulai" value={editDialog.data.periodStart || ""} onChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, periodStart: v } })} />
+                <DatePickerField label="Periode Selesai" value={editDialog.data.periodEnd || ""} onChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, periodEnd: v } })} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <DatePickerField label="Tanggal Tes" value={editDialog.data.testDate || ""} onChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, testDate: v } })} />
+                <DatePickerField label="Tanggal Hasil" value={editDialog.data.resultDate || ""} onChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, resultDate: v } })} />
               </div>
               <div className="space-y-2"><label className="text-sm font-medium">Status</label>
                 <Select value={editDialog.data.status} onValueChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, status: v } })}>
