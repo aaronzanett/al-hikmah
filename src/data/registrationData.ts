@@ -11,7 +11,7 @@ export interface AlurItem {
   icon?: typeof ClipboardList;
 }
 export interface JadwalItem {
-  id: string; wave: string; period: string; testDate: string; resultDate: string; status: string;
+  id: string; program: string; wave: string; period: string; testDate: string; resultDate: string; status: string;
 }
 export interface PersyaratanItem {
   id: string; title: string; order: number; status: string;
