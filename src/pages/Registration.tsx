@@ -23,6 +23,8 @@ import {
   requirementsData,
   costData,
   faqData,
+  formatDateDisplay,
+  formatPeriodDisplay,
 } from "@/data/registrationData";
 
 const fadeUp = {
