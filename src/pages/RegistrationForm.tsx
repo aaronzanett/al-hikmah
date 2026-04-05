@@ -183,21 +183,14 @@ const RegistrationForm = () => {
 
           {/* Step Indicator - Fixed gap */}
           <div className="mb-10">
-            <div className="flex items-center justify-between relative">
-              {/* Background line - connecting circle centers */}
+            <div className="flex items-center justify-between relative px-[20px]">
+              {/* Background line connecting circle centers */}
               <div className="absolute top-5 left-[20px] right-[20px] h-0.5 bg-border" />
-              {/* Progress line */}
+              {/* Active progress line */}
               <div
                 className="absolute top-5 left-[20px] h-0.5 bg-primary transition-all duration-500"
-                style={{ width: `calc(${((currentStep - 1) / (steps.length - 1)) * 100}% * (1 - 40px / (100%)) + 0px)` }}
-              />
-              {/* Use a calculated approach: the line should go from center of first circle to center of current circle */}
-              <div
-                className="absolute top-5 h-0.5 bg-primary transition-all duration-500"
                 style={{
-                  left: "20px",
-                  width: currentStep === 1 ? "0px" : `calc(${((currentStep - 1) / (steps.length - 1)) * 100}%)`,
-                  maxWidth: "calc(100% - 40px)",
+                  width: currentStep === 1 ? "0px" : `calc(${((currentStep - 1) / (steps.length - 1)) * 100}% - ${((currentStep - 1) / (steps.length - 1)) * 40}px)`,
                 }}
               />
               {steps.map((step) => (
