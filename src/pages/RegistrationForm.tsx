@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import {
   ArrowLeft,
   ArrowRight,
@@ -23,7 +22,9 @@ import {
   Upload,
   User,
   Users,
-  CreditCard,
+  X,
+  File,
+  Image,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -42,14 +43,25 @@ const programOptions = [
   { value: "stem", label: "STEM & Digital", desc: "Sains, teknologi, dan digital" },
 ];
 
+const ACCEPTED_FORMATS = ".pdf,.jpg,.jpeg,.png,.webp";
+const ACCEPTED_MIME = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
+const documentList = [
+  "Akta Kelahiran",
+  "Kartu Keluarga",
+  "Rapor Semester Terakhir",
+  "Surat Keterangan Sehat",
+  "Pas Foto 3x4 (Background Biru)",
+  "KTP Orang Tua/Wali",
+];
+
 const RegistrationForm = () => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    // Step 1
     program: "",
     wave: "",
-    // Step 2
     studentName: "",
     birthPlace: "",
     birthDate: "",
@@ -57,27 +69,85 @@ const RegistrationForm = () => {
     prevSchool: "",
     nisn: "",
     address: "",
-    // Step 3
     guardianName: "",
     guardianRelation: "",
     guardianPhone: "",
     guardianEmail: "",
     guardianJob: "",
     guardianAddress: "",
-    // Step 4
     agreeTerms: false,
   });
+  const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const updateField = (key: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
+  const validateStep = (step: number): boolean => {
+    switch (step) {
+      case 1:
+        if (!formData.program || !formData.wave) {
+          toast({ title: "Data Belum Lengkap", description: "Pilih program dan gelombang pendaftaran.", variant: "destructive" });
+          return false;
+        }
+        return true;
+      case 2:
+        if (!formData.studentName || !formData.birthPlace || !formData.birthDate || !formData.gender || !formData.nisn || !formData.prevSchool || !formData.address) {
+          toast({ title: "Data Belum Lengkap", description: "Lengkapi semua data calon santri.", variant: "destructive" });
+          return false;
+        }
+        return true;
+      case 3:
+        if (!formData.guardianName || !formData.guardianRelation || !formData.guardianPhone || !formData.guardianEmail || !formData.guardianJob || !formData.guardianAddress) {
+          toast({ title: "Data Belum Lengkap", description: "Lengkapi semua data wali/orang tua.", variant: "destructive" });
+          return false;
+        }
+        return true;
+      case 4:
+        if (Object.keys(uploadedFiles).length < documentList.length) {
+          toast({ title: "Dokumen Belum Lengkap", description: "Upload semua dokumen persyaratan.", variant: "destructive" });
+          return false;
+        }
+        return true;
+      default:
+        return true;
+    }
+  };
+
   const nextStep = () => {
-    if (currentStep < 5) setCurrentStep(currentStep + 1);
+    if (validateStep(currentStep) && currentStep < 5) {
+      setCurrentStep(currentStep + 1);
+    }
   };
 
   const prevStep = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
+  };
+
+  const handleFileUpload = (docName: string, file: File | undefined) => {
+    if (!file) return;
+    if (!ACCEPTED_MIME.includes(file.type)) {
+      toast({ title: "Format Tidak Didukung", description: "Hanya file PDF dan gambar (JPG, PNG, WEBP) yang diperbolehkan.", variant: "destructive" });
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      toast({ title: "Ukuran Terlalu Besar", description: "Ukuran file maksimal 2MB.", variant: "destructive" });
+      return;
+    }
+    setUploadedFiles((prev) => ({ ...prev, [docName]: file }));
+    toast({ title: "File Berhasil Diupload", description: `${file.name} telah diupload untuk ${docName}.` });
+  };
+
+  const removeFile = (docName: string) => {
+    setUploadedFiles((prev) => {
+      const next = { ...prev };
+      delete next[docName];
+      return next;
+    });
+    if (fileInputRefs.current[docName]) {
+      fileInputRefs.current[docName]!.value = "";
+    }
   };
 
   const handleSubmit = () => {
@@ -87,9 +157,19 @@ const RegistrationForm = () => {
     });
   };
 
+  const getFileIcon = (file: File) => {
+    if (file.type === "application/pdf") return <File className="h-4 w-4 text-destructive" />;
+    return <Image className="h-4 w-4 text-primary" />;
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  };
+
   return (
     <div className="bg-background">
-
       <div className="flex-1 py-8 lg:py-12">
         <div className="mx-auto max-w-4xl px-4 lg:px-8">
           {/* Header */}
@@ -101,18 +181,22 @@ const RegistrationForm = () => {
             <p className="text-muted-foreground mt-1">Isi formulir berikut untuk mendaftarkan calon santri baru.</p>
           </div>
 
-          {/* Step Indicator */}
+          {/* Step Indicator - Fixed gap */}
           <div className="mb-10">
-            <div className="flex items-center justify-between relative">
-              <div className="absolute top-5 left-0 right-0 h-0.5 bg-border" />
+            <div className="flex items-center justify-between relative px-[20px]">
+              {/* Background line connecting circle centers */}
+              <div className="absolute top-5 left-[20px] right-[20px] h-0.5 bg-border" />
+              {/* Active progress line */}
               <div
-                className="absolute top-5 left-0 h-0.5 bg-primary transition-all duration-500"
-                style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
+                className="absolute top-5 left-[20px] h-0.5 bg-primary transition-all duration-500"
+                style={{
+                  width: currentStep === 1 ? "0px" : `calc(${((currentStep - 1) / (steps.length - 1)) * 100}% - ${((currentStep - 1) / (steps.length - 1)) * 40}px)`,
+                }}
               />
               {steps.map((step) => (
-                <div key={step.id} className="relative flex flex-col items-center">
+                <div key={step.id} className="relative z-10 flex flex-col items-center" style={{ width: "40px" }}>
                   <div
-                    className={`z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all ${
+                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all ${
                       currentStep > step.id
                         ? "bg-primary border-primary text-primary-foreground"
                         : currentStep === step.id
@@ -169,7 +253,7 @@ const RegistrationForm = () => {
                   ))}
                 </div>
                 <div className="space-y-2">
-                  <Label>Gelombang Pendaftaran</Label>
+                  <Label>Gelombang Pendaftaran <span className="text-destructive">*</span></Label>
                   <Select value={formData.wave} onValueChange={(v) => updateField("wave", v)}>
                     <SelectTrigger><SelectValue placeholder="Pilih gelombang" /></SelectTrigger>
                     <SelectContent>
@@ -191,19 +275,19 @@ const RegistrationForm = () => {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="sm:col-span-2 space-y-2">
-                    <Label>Nama Lengkap</Label>
+                    <Label>Nama Lengkap <span className="text-destructive">*</span></Label>
                     <Input placeholder="Nama lengkap sesuai akta" value={formData.studentName} onChange={(e) => updateField("studentName", e.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <Label>Tempat Lahir</Label>
+                    <Label>Tempat Lahir <span className="text-destructive">*</span></Label>
                     <Input placeholder="Kota kelahiran" value={formData.birthPlace} onChange={(e) => updateField("birthPlace", e.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <Label>Tanggal Lahir</Label>
+                    <Label>Tanggal Lahir <span className="text-destructive">*</span></Label>
                     <Input type="date" value={formData.birthDate} onChange={(e) => updateField("birthDate", e.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <Label>Jenis Kelamin</Label>
+                    <Label>Jenis Kelamin <span className="text-destructive">*</span></Label>
                     <Select value={formData.gender} onValueChange={(v) => updateField("gender", v)}>
                       <SelectTrigger><SelectValue placeholder="Pilih" /></SelectTrigger>
                       <SelectContent>
@@ -213,15 +297,15 @@ const RegistrationForm = () => {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>NISN</Label>
+                    <Label>NISN <span className="text-destructive">*</span></Label>
                     <Input placeholder="Nomor Induk Siswa Nasional" value={formData.nisn} onChange={(e) => updateField("nisn", e.target.value)} />
                   </div>
                   <div className="sm:col-span-2 space-y-2">
-                    <Label>Asal Sekolah</Label>
+                    <Label>Asal Sekolah <span className="text-destructive">*</span></Label>
                     <Input placeholder="Nama sekolah asal" value={formData.prevSchool} onChange={(e) => updateField("prevSchool", e.target.value)} />
                   </div>
                   <div className="sm:col-span-2 space-y-2">
-                    <Label>Alamat Lengkap</Label>
+                    <Label>Alamat Lengkap <span className="text-destructive">*</span></Label>
                     <Textarea placeholder="Alamat lengkap calon santri" value={formData.address} onChange={(e) => updateField("address", e.target.value)} />
                   </div>
                 </div>
@@ -237,11 +321,11 @@ const RegistrationForm = () => {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="sm:col-span-2 space-y-2">
-                    <Label>Nama Lengkap Wali</Label>
+                    <Label>Nama Lengkap Wali <span className="text-destructive">*</span></Label>
                     <Input placeholder="Nama lengkap" value={formData.guardianName} onChange={(e) => updateField("guardianName", e.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <Label>Hubungan</Label>
+                    <Label>Hubungan <span className="text-destructive">*</span></Label>
                     <Select value={formData.guardianRelation} onValueChange={(v) => updateField("guardianRelation", v)}>
                       <SelectTrigger><SelectValue placeholder="Pilih" /></SelectTrigger>
                       <SelectContent>
@@ -252,19 +336,19 @@ const RegistrationForm = () => {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Pekerjaan</Label>
+                    <Label>Pekerjaan <span className="text-destructive">*</span></Label>
                     <Input placeholder="Pekerjaan" value={formData.guardianJob} onChange={(e) => updateField("guardianJob", e.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <Label>No. HP / WhatsApp</Label>
+                    <Label>No. HP / WhatsApp <span className="text-destructive">*</span></Label>
                     <Input placeholder="08xx-xxxx-xxxx" value={formData.guardianPhone} onChange={(e) => updateField("guardianPhone", e.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <Label>Email</Label>
+                    <Label>Email <span className="text-destructive">*</span></Label>
                     <Input type="email" placeholder="email@example.com" value={formData.guardianEmail} onChange={(e) => updateField("guardianEmail", e.target.value)} />
                   </div>
                   <div className="sm:col-span-2 space-y-2">
-                    <Label>Alamat Wali</Label>
+                    <Label>Alamat Wali <span className="text-destructive">*</span></Label>
                     <Textarea placeholder="Alamat lengkap wali" value={formData.guardianAddress} onChange={(e) => updateField("guardianAddress", e.target.value)} />
                   </div>
                 </div>
@@ -276,28 +360,64 @@ const RegistrationForm = () => {
               <div className="space-y-6">
                 <div>
                   <h2 className="text-lg font-bold text-foreground mb-1">Upload Dokumen</h2>
-                  <p className="text-sm text-muted-foreground">Upload berkas-berkas persyaratan dalam format PDF atau gambar (max 2MB per file).</p>
+                  <p className="text-sm text-muted-foreground">Upload berkas persyaratan dalam format PDF atau gambar (JPG, PNG, WEBP). Maks 2MB per file.</p>
                 </div>
-                <div className="space-y-4">
-                  {[
-                    "Akta Kelahiran",
-                    "Kartu Keluarga",
-                    "Rapor Semester Terakhir",
-                    "Surat Keterangan Sehat",
-                    "Pas Foto 3x4 (Background Biru)",
-                    "KTP Orang Tua/Wali",
-                  ].map((doc) => (
-                    <div key={doc} className="flex items-center justify-between rounded-xl border bg-background p-4">
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5 text-muted-foreground" />
-                        <span className="text-sm font-medium text-foreground">{doc}</span>
+                <div className="space-y-3">
+                  {documentList.map((doc) => {
+                    const uploaded = uploadedFiles[doc];
+                    return (
+                      <div key={doc} className={`rounded-xl border p-4 transition-all ${uploaded ? "border-primary/50 bg-primary/5" : "bg-background"}`}>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <FileText className={`h-5 w-5 shrink-0 ${uploaded ? "text-primary" : "text-muted-foreground"}`} />
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-foreground">{doc} <span className="text-destructive">*</span></p>
+                              {uploaded && (
+                                <div className="flex items-center gap-2 mt-1">
+                                  {getFileIcon(uploaded)}
+                                  <span className="text-xs text-muted-foreground truncate max-w-[200px]">{uploaded.name}</span>
+                                  <span className="text-xs text-muted-foreground">({formatFileSize(uploaded.size)})</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            {uploaded && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeFile(doc)}
+                                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            )}
+                            <Button
+                              variant={uploaded ? "outline" : "default"}
+                              size="sm"
+                              className="gap-1.5"
+                              onClick={() => fileInputRefs.current[doc]?.click()}
+                            >
+                              <Upload className="h-3.5 w-3.5" />
+                              {uploaded ? "Ganti" : "Upload"}
+                            </Button>
+                            <input
+                              ref={(el) => { fileInputRefs.current[doc] = el; }}
+                              type="file"
+                              accept={ACCEPTED_FORMATS}
+                              className="hidden"
+                              onChange={(e) => {
+                                handleFileUpload(doc, e.target.files?.[0]);
+                                e.target.value = "";
+                              }}
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <Button variant="outline" size="sm" className="gap-1.5">
-                        <Upload className="h-3.5 w-3.5" /> Upload
-                      </Button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
+                <p className="text-xs text-muted-foreground">Format yang diperbolehkan: PDF, JPG, PNG, WEBP. Maksimal 2MB per file.</p>
               </div>
             )}
 
@@ -325,6 +445,17 @@ const RegistrationForm = () => {
                       <div><span className="text-muted-foreground">Hubungan:</span> <span className="font-medium text-foreground">{formData.guardianRelation || "-"}</span></div>
                       <div><span className="text-muted-foreground">No. HP:</span> <span className="font-medium text-foreground">{formData.guardianPhone || "-"}</span></div>
                       <div><span className="text-muted-foreground">Email:</span> <span className="font-medium text-foreground">{formData.guardianEmail || "-"}</span></div>
+                    </div>
+                  </div>
+                  <div className="rounded-xl border bg-background p-5 space-y-3">
+                    <h3 className="text-sm font-bold text-foreground">Dokumen</h3>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      {documentList.map((doc) => (
+                        <div key={doc} className="flex items-center gap-2">
+                          <CheckCircle2 className={`h-3.5 w-3.5 ${uploadedFiles[doc] ? "text-primary" : "text-muted-foreground"}`} />
+                          <span className="text-muted-foreground">{doc}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                   <label className="flex items-start gap-3 rounded-xl border bg-background p-4 cursor-pointer hover:bg-muted/50">
