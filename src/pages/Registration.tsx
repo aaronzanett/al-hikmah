@@ -213,23 +213,25 @@ const Registration = () => {
               Setiap program memiliki jadwal gelombang pendaftaran tersendiri. Pilih program yang diminati untuk melihat jadwalnya.
             </p>
           </div>
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             {(() => {
               const programs = Array.from(new Set(activeSchedule.map(s => s.program))).filter(Boolean);
               if (programs.length === 0) return null;
               return (
                 <Tabs defaultValue={programs[0]} className="space-y-6">
-                  <TabsList className="inline-flex h-auto gap-1 bg-card border p-1.5 rounded-xl shadow-card">
-                    {programs.map(prog => (
-                      <TabsTrigger
-                        key={prog}
-                        value={prog}
-                        className="px-3 py-2 rounded-lg text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
-                      >
-                        {prog}
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
+                  <div className="flex justify-center">
+                    <TabsList className="inline-flex h-auto gap-1.5 bg-card border p-1.5 rounded-xl shadow-card">
+                      {programs.map(prog => (
+                        <TabsTrigger
+                          key={prog}
+                          value={prog}
+                          className="px-4 py-2 rounded-lg text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+                        >
+                          {prog}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                  </div>
                   {programs.map(prog => (
                     <TabsContent key={prog} value={prog}>
                       <div className="rounded-2xl border bg-card shadow-card overflow-hidden">
