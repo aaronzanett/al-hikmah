@@ -29,11 +29,11 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 const steps = [
-  { id: 1, label: "Pilih Program", icon: BookOpen },
-  { id: 2, label: "Data Santri", icon: User },
-  { id: 3, label: "Data Wali", icon: Users },
-  { id: 4, label: "Dokumen", icon: FileText },
-  { id: 5, label: "Konfirmasi", icon: CheckCircle2 },
+  { id: 1, label: "Pilih\nProgram", icon: BookOpen },
+  { id: 2, label: "Data\nSantri", icon: User },
+  { id: 3, label: "Data\nWali", icon: Users },
+  { id: 4, label: "Upload\nDokumen", icon: FileText },
+  { id: 5, label: "Konfirmasi\nData", icon: CheckCircle2 },
 ];
 
 const programOptions = [
@@ -210,7 +210,7 @@ const RegistrationForm = () => {
                       <step.icon className="h-4 w-4" />
                     )}
                   </div>
-                  <span className={`mt-2 text-[10px] font-medium text-center hidden sm:block ${
+                  <span className={`mt-2 text-[10px] font-medium text-center block h-[28px] leading-tight whitespace-pre-line ${
                     currentStep >= step.id ? "text-foreground" : "text-muted-foreground"
                   }`}>
                     {step.label}

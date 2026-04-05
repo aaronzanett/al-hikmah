@@ -213,7 +213,7 @@ const Registration = () => {
               Setiap program memiliki jadwal gelombang pendaftaran tersendiri. Pilih program yang diminati untuk melihat jadwalnya.
             </p>
           </div>
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             {(() => {
               const programs = Array.from(new Set(activeSchedule.map(s => s.program))).filter(Boolean);
               if (programs.length === 0) return null;
@@ -234,24 +234,24 @@ const Registration = () => {
                     <TabsContent key={prog} value={prog}>
                       <div className="rounded-2xl border bg-card shadow-card overflow-hidden">
                         <div className="overflow-x-auto">
-                          <table className="w-full text-sm">
+                          <table className="w-full text-sm text-left">
                             <thead>
                               <tr className="border-b bg-muted/50">
-                                <th className="text-left p-4 font-semibold text-foreground">Gelombang</th>
-                                <th className="text-left p-4 font-semibold text-foreground">Periode Daftar</th>
-                                <th className="text-left p-4 font-semibold text-foreground">Tes Seleksi</th>
-                                <th className="text-left p-4 font-semibold text-foreground">Pengumuman</th>
-                                <th className="text-left p-4 font-semibold text-foreground">Status</th>
+                                <th className="p-3 pl-4 font-semibold text-foreground text-sm">Gelombang</th>
+                                <th className="p-3 font-semibold text-foreground text-sm">Periode Daftar</th>
+                                <th className="p-3 font-semibold text-foreground text-sm">Tes Seleksi</th>
+                                <th className="p-3 font-semibold text-foreground text-sm">Pengumuman</th>
+                                <th className="p-3 pr-4 font-semibold text-foreground text-sm">Status</th>
                               </tr>
                             </thead>
                             <tbody>
                               {activeSchedule.filter(s => s.program === prog).map((s) => (
                                 <tr key={s.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                                  <td className="p-4 font-semibold text-foreground">{s.wave}</td>
-                                  <td className="p-4 text-muted-foreground">{formatPeriodDisplay(s.periodStart, s.periodEnd)}</td>
-                                  <td className="p-4 text-muted-foreground">{formatDateDisplay(s.testDate)}</td>
-                                  <td className="p-4 text-muted-foreground">{formatDateDisplay(s.resultDate)}</td>
-                                  <td className="p-4">
+                                  <td className="p-3 pl-4 font-semibold text-foreground">{s.wave}</td>
+                                  <td className="p-3 text-muted-foreground">{formatPeriodDisplay(s.periodStart, s.periodEnd)}</td>
+                                  <td className="p-3 text-muted-foreground">{formatDateDisplay(s.testDate)}</td>
+                                  <td className="p-3 text-muted-foreground">{formatDateDisplay(s.resultDate)}</td>
+                                  <td className="p-3 pr-4">
                                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                                       s.status === "Dibuka" ? "bg-success/10 text-success" :
                                       s.status === "Segera" ? "bg-warning/10 text-warning" :
