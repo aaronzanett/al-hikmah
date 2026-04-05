@@ -219,12 +219,12 @@ const Registration = () => {
               if (programs.length === 0) return null;
               return (
                 <Tabs defaultValue={programs[0]} className="space-y-6">
-                  <TabsList className="w-full flex flex-wrap h-auto gap-1.5 bg-card border p-2 rounded-xl shadow-card">
+                  <TabsList className="inline-flex h-auto gap-1 bg-card border p-1.5 rounded-xl shadow-card">
                     {programs.map(prog => (
                       <TabsTrigger
                         key={prog}
                         value={prog}
-                        className="px-4 py-2.5 rounded-lg text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+                        className="px-3 py-2 rounded-lg text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
                       >
                         {prog}
                       </TabsTrigger>
