@@ -158,8 +158,8 @@ const RegistrationForm = () => {
   };
 
   const getFileIcon = (file: File) => {
-    if (file.type === "application/pdf") return <File className="h-4 w-4 text-red-500" />;
-    return <Image className="h-4 w-4 text-blue-500" />;
+    if (file.type === "application/pdf") return <File className="h-4 w-4 text-destructive" />;
+    return <Image className="h-4 w-4 text-primary" />;
   };
 
   const formatFileSize = (bytes: number) => {
