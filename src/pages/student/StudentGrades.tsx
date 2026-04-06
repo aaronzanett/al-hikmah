@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, Award, BookOpen, Download, FileText, X, ChevronDown } from "lucide-react";
+import { TrendingUp, Award, BookOpen, Download, FileText, ChevronDown, GraduationCap } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { generateReportPdf } from "@/lib/generateReportPdf";
 
 interface SubjectScore { name: string; score: number; grade: string; teacher: string; tugas: number; uts: number; uas: number; praktik: number; }
 interface SemesterInfo { subjects: SubjectScore[]; rank: number; parallel: number; totalClass: number; totalParallel: number; hafalan: number; hafalanTarget: number; }
@@ -78,6 +80,20 @@ const StudentGrades = () => {
   const lowest = Math.min(...subjects.map(s => s.score));
   const hafalanPct = Math.round((data.hafalan / 30) * 100);
 
+  const handleDownloadPdf = () => {
+    generateReportPdf({
+      studentName: "Muhammad Azzam Ridwan",
+      nis: "2024.001",
+      kelas: "10 IPA-A",
+      semester: selectedSemester,
+      subjects,
+      avg,
+      rank: data.rank,
+      totalClass: data.totalClass,
+      hafalan: data.hafalan,
+    });
+  };
+
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
       <div className="flex items-center justify-between">
@@ -89,16 +105,21 @@ const StudentGrades = () => {
       </div>
 
       {/* Semester Selector */}
-      <div className="relative">
-        <select
-          value={selectedSemester}
-          onChange={(e) => setSelectedSemester(e.target.value)}
-          className="w-full appearance-none bg-card border rounded-xl px-4 py-3 text-sm font-medium text-foreground pr-10 focus:outline-none focus:ring-2 focus:ring-primary/20"
-        >
-          {semesters.map(s => <option key={s} value={s}>Semester {s}</option>)}
-        </select>
-        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-      </div>
+      <Select value={selectedSemester} onValueChange={setSelectedSemester}>
+        <SelectTrigger className="w-full rounded-xl bg-card border h-12 text-sm font-medium">
+          <div className="flex items-center gap-2">
+            <GraduationCap className="h-4 w-4 text-primary" />
+            <SelectValue />
+          </div>
+        </SelectTrigger>
+        <SelectContent>
+          {semesters.map(s => (
+            <SelectItem key={s} value={s} className="text-sm">
+              Semester {s}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
       {/* Summary */}
       <div className="grid grid-cols-3 gap-3">
@@ -189,13 +210,11 @@ const StudentGrades = () => {
             <DialogTitle className="text-lg">Rapor Semester {selectedSemester}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            {/* Student Info */}
             <div className="bg-muted/30 rounded-xl p-4 space-y-1">
               <p className="text-sm font-semibold text-foreground">Muhammad Azzam Ridwan</p>
               <p className="text-xs text-muted-foreground">NIS: 2024.001 · Kelas 10 IPA-A · Semester {selectedSemester}</p>
             </div>
 
-            {/* Grades Table */}
             <div className="border rounded-xl overflow-hidden">
               <table className="w-full text-xs">
                 <thead>
@@ -234,7 +253,6 @@ const StudentGrades = () => {
               </table>
             </div>
 
-            {/* Hafalan & Ranking in report */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-muted/30 rounded-xl p-4 text-center">
                 <p className="text-xs text-muted-foreground mb-1">Peringkat Kelas</p>
@@ -246,13 +264,7 @@ const StudentGrades = () => {
               </div>
             </div>
 
-            <Button className="w-full gap-2" onClick={() => {
-              // Mock PDF download
-              const el = document.createElement("a");
-              el.href = "#";
-              el.download = `Rapor_${selectedSemester.replace(/\//g, "-")}.pdf`;
-              alert("Fitur download PDF akan tersedia setelah integrasi backend.");
-            }}>
+            <Button className="w-full gap-2" onClick={handleDownloadPdf}>
               <Download className="h-4 w-4" />
               Download Rapor PDF
             </Button>

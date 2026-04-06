@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, Award, FileText, Download, ChevronDown } from "lucide-react";
+import { TrendingUp, Award, FileText, Download, GraduationCap } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { generateReportPdf } from "@/lib/generateReportPdf";
 
 interface SubjectScore { name: string; score: number; grade: string; teacher: string; tugas: number; uts: number; uas: number; praktik: number; }
 interface SemesterInfo { subjects: SubjectScore[]; rank: number; totalClass: number; hafalan: number; }
@@ -75,6 +77,20 @@ const PortalGrades = () => {
   const subjects = data.subjects;
   const avg = (subjects.reduce((a, b) => a + b.score, 0) / subjects.length).toFixed(1);
 
+  const handleDownloadPdf = () => {
+    generateReportPdf({
+      studentName: "Muhammad Azzam Ridwan",
+      nis: "2024.001",
+      kelas: "10 IPA-A",
+      semester: selectedSemester,
+      subjects,
+      avg,
+      rank: data.rank,
+      totalClass: data.totalClass,
+      hafalan: data.hafalan,
+    });
+  };
+
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
       <div className="flex items-center justify-between">
@@ -86,16 +102,21 @@ const PortalGrades = () => {
       </div>
 
       {/* Semester Selector */}
-      <div className="relative">
-        <select
-          value={selectedSemester}
-          onChange={(e) => setSelectedSemester(e.target.value)}
-          className="w-full appearance-none bg-card border rounded-xl px-4 py-3 text-sm font-medium text-foreground pr-10 focus:outline-none focus:ring-2 focus:ring-primary/20"
-        >
-          {semesters.map(s => <option key={s} value={s}>Semester {s}</option>)}
-        </select>
-        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-      </div>
+      <Select value={selectedSemester} onValueChange={setSelectedSemester}>
+        <SelectTrigger className="w-full rounded-xl bg-card border h-12 text-sm font-medium">
+          <div className="flex items-center gap-2">
+            <GraduationCap className="h-4 w-4 text-primary" />
+            <SelectValue />
+          </div>
+        </SelectTrigger>
+        <SelectContent>
+          {semesters.map(s => (
+            <SelectItem key={s} value={s} className="text-sm">
+              Semester {s}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
       {/* Summary */}
       <div className="grid grid-cols-3 gap-3">
@@ -220,9 +241,7 @@ const PortalGrades = () => {
               </div>
             </div>
 
-            <Button className="w-full gap-2" onClick={() => {
-              alert("Fitur download PDF akan tersedia setelah integrasi backend.");
-            }}>
+            <Button className="w-full gap-2" onClick={handleDownloadPdf}>
               <Download className="h-4 w-4" />
               Download Rapor PDF
             </Button>
