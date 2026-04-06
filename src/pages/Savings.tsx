@@ -40,49 +40,49 @@ const mockStudents: Student[] = [
       { id: "T3", date: "2026-03-01", description: "Setoran dari wali", type: "deposit", amount: 300000 },
       { id: "T4", date: "2026-02-20", description: "Setoran dari wali", type: "deposit", amount: 100000 },
       { id: "T5", date: "2026-02-10", description: "Penarikan jajan mingguan", type: "withdraw", amount: 50000 },
-    ],
+    ]),
   },
   {
     id: "S002", name: "Siti Aisyah", nis: "2024.002", class: "10 IPA-A",
     balance: 0,
-    transactions: [
+    transactions: txData([
       { id: "T6", date: "2026-03-08", description: "Setoran dari wali", type: "deposit", amount: 500000 },
       { id: "T7", date: "2026-03-02", description: "Setoran dari wali", type: "deposit", amount: 250000 },
-    ],
+    ]),
   },
   {
     id: "S003", name: "Muhammad Rizki", nis: "2024.003", class: "10 IPA-B",
     balance: 0,
-    transactions: [
+    transactions: txData([
       { id: "T8", date: "2026-03-07", description: "Setoran dari wali", type: "deposit", amount: 150000 },
       { id: "T9", date: "2026-03-04", description: "Penarikan jajan mingguan", type: "withdraw", amount: 30000 },
       { id: "T10", date: "2026-03-01", description: "Setoran dari wali", type: "deposit", amount: 200000 },
-    ],
+    ]),
   },
   {
     id: "S004", name: "Fatimah Zahra", nis: "2024.004", class: "10 IPS-A",
     balance: 0,
-    transactions: [
+    transactions: txData([
       { id: "T11", date: "2026-03-06", description: "Setoran dari wali", type: "deposit", amount: 1000000 },
       { id: "T12", date: "2026-03-03", description: "Penarikan jajan mingguan", type: "withdraw", amount: 200000 },
       { id: "T13", date: "2026-02-28", description: "Setoran dari wali", type: "deposit", amount: 400000 },
-    ],
+    ]),
   },
   {
     id: "S005", name: "Khadijah Nur", nis: "2024.005", class: "10 IPS-A",
     balance: 0,
-    transactions: [
+    transactions: txData([
       { id: "T14", date: "2026-03-04", description: "Setoran dari wali", type: "deposit", amount: 180000 },
-    ],
+    ]),
   },
   {
     id: "S006", name: "Yusuf Rahman", nis: "2024.006", class: "11 IPA-A",
     balance: 0,
-    transactions: [
+    transactions: txData([
       { id: "T15", date: "2026-03-08", description: "Setoran dari wali", type: "deposit", amount: 400000 },
       { id: "T16", date: "2026-03-05", description: "Penarikan jajan mingguan", type: "withdraw", amount: 80000 },
       { id: "T17", date: "2026-03-02", description: "Setoran dari wali", type: "deposit", amount: 300000 },
-    ],
+    ]),
   },
 ].map(s => ({ ...s, balance: computeBalance(s.transactions) }));
 
