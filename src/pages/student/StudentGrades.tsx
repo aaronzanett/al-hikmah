@@ -4,7 +4,9 @@ import { TrendingUp, Award, BookOpen, Download, FileText, X, ChevronDown } from 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-const semesterData: Record<string, { subjects: typeof subjectsSample; rank: number; parallel: number; totalClass: number; totalParallel: number; hafalan: number; hafalanTarget: number }> = {
+interface SubjectScore { name: string; score: number; grade: string; teacher: string; tugas: number; uts: number; uas: number; praktik: number; }
+interface SemesterInfo { subjects: SubjectScore[]; rank: number; parallel: number; totalClass: number; totalParallel: number; hafalan: number; hafalanTarget: number; }
+const semesterData: Record<string, SemesterInfo> = {
   "Ganjil 2024/2025": {
     subjects: [
       { name: "Matematika", score: 82, grade: "A-", teacher: "Ust. Budi", tugas: 80, uts: 78, uas: 85, praktik: 84 },
@@ -51,8 +53,6 @@ const semesterData: Record<string, { subjects: typeof subjectsSample; rank: numb
     rank: 3, parallel: 12, totalClass: 32, totalParallel: 128, hafalan: 15, hafalanTarget: 20,
   },
 };
-
-const subjectsSample = semesterData["Ganjil 2025/2026"].subjects;
 
 const semesters = Object.keys(semesterData);
 

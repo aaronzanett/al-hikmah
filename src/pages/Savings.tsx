@@ -28,11 +28,13 @@ const computeBalance = (txs: Transaction[]) => {
   return txs.reduce((sum, t) => t.type === "deposit" ? sum + t.amount : sum - t.amount, 0);
 };
 
+const txData = (txs: { id: string; date: string; description: string; type: "deposit" | "withdraw"; amount: number }[]) => txs;
+
 const mockStudents: Student[] = [
   {
     id: "S001", name: "Ahmad Fauzi", nis: "2024.001", class: "10 IPA-A",
     balance: 0,
-    transactions: [
+    transactions: txData([
       { id: "T1", date: "2026-03-10", description: "Setoran dari wali", type: "deposit", amount: 200000 },
       { id: "T2", date: "2026-03-05", description: "Penarikan jajan mingguan", type: "withdraw", amount: 50000 },
       { id: "T3", date: "2026-03-01", description: "Setoran dari wali", type: "deposit", amount: 300000 },

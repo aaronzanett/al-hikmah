@@ -4,7 +4,9 @@ import { TrendingUp, Award, FileText, Download, ChevronDown } from "lucide-react
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-const semesterData: Record<string, { subjects: typeof subjectsSample; rank: number; totalClass: number; hafalan: number }> = {
+interface SubjectScore { name: string; score: number; grade: string; teacher: string; tugas: number; uts: number; uas: number; praktik: number; }
+interface SemesterInfo { subjects: SubjectScore[]; rank: number; totalClass: number; hafalan: number; }
+const semesterData: Record<string, SemesterInfo> = {
   "Ganjil 2024/2025": {
     subjects: [
       { name: "Matematika", score: 82, grade: "A-", teacher: "Ust. Budi", tugas: 80, uts: 78, uas: 85, praktik: 84 },
@@ -52,7 +54,6 @@ const semesterData: Record<string, { subjects: typeof subjectsSample; rank: numb
   },
 };
 
-const subjectsSample = semesterData["Ganjil 2025/2026"].subjects;
 const semesters = Object.keys(semesterData);
 
 const getGradeColor = (grade: string) => {
