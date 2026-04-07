@@ -316,6 +316,35 @@ const RegistrationForm = () => {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* Registration Fee Display */}
+                {(() => {
+                  const fee = getRegistrationFee();
+                  if (fee === null) {
+                    return (
+                      <div className="rounded-xl border bg-success/5 border-success/30 p-4 flex items-center gap-3">
+                        <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">Pendaftaran Gratis</p>
+                          <p className="text-xs text-muted-foreground">Tidak ada biaya pendaftaran yang dikenakan.</p>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="rounded-xl border bg-primary/5 border-primary/30 p-4 flex items-center gap-3">
+                      <DollarSign className="h-5 w-5 text-primary shrink-0" />
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">Biaya Pendaftaran</p>
+                        <p className="text-xs text-muted-foreground">
+                          {feeConfig.mode === "per-program" && !formData.program
+                            ? "Pilih program untuk melihat biaya pendaftaran"
+                            : <span>Biaya pendaftaran: <span className="font-bold text-primary">{fee}</span></span>}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             )}
 
