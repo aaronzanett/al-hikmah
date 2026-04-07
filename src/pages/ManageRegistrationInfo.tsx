@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,7 +23,8 @@ import {
   requirementsData,
   costData,
   faqData,
-  defaultFeeConfig,
+  loadFeeConfig,
+  saveFeeConfig,
   formatDateDisplay,
   formatPeriodDisplay,
   type AlurItem,
@@ -78,7 +79,10 @@ const ManageRegistrationInfo = () => {
   const [persyaratan, setPersyaratan] = useState<PersyaratanItem[]>(() => [...requirementsData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
   const [biaya, setBiaya] = useState<BiayaItem[]>(() => [...costData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
   const [faq, setFaq] = useState<FAQItem[]>(() => [...faqData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
-  const [feeConfig, setFeeConfig] = useState<RegistrationFeeConfig>(() => ({ ...defaultFeeConfig }));
+  const [feeConfig, setFeeConfig] = useState<RegistrationFeeConfig>(() => loadFeeConfig());
+
+  // Persist fee config to localStorage
+  useEffect(() => { saveFeeConfig(feeConfig); }, [feeConfig]);
 
   const [editDialog, setEditDialog] = useState<{ type: string; data: any; isNew: boolean } | null>(null);
   const [deleteDialog, setDeleteDialog] = useState<{ type: string; id: string } | null>(null);
