@@ -1,6 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useBlocker } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,8 +25,20 @@ import {
   X,
   File,
   Image,
+  DollarSign,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { defaultFeeConfig } from "@/data/registrationData";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const steps = [
   { id: 1, label: "Pilih\nProgram", icon: BookOpen },
@@ -79,6 +91,48 @@ const RegistrationForm = () => {
   });
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const [feeConfig] = useState(() => ({ ...defaultFeeConfig }));
+
+  // Track if form has been touched
+  const isFormDirty = useCallback(() => {
+    return !!(formData.program || formData.studentName || formData.guardianName || Object.keys(uploadedFiles).length > 0);
+  }, [formData, uploadedFiles]);
+
+  // Block navigation via react-router
+  const blocker = useBlocker(({ currentLocation, nextLocation }) => {
+    return isFormDirty() && currentLocation.pathname !== nextLocation.pathname;
+  });
+
+  // Block browser close/reload
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (isFormDirty()) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isFormDirty]);
+
+  // Get fee for selected program
+  const getRegistrationFee = () => {
+    if (feeConfig.mode === "free") return null;
+    if (feeConfig.mode === "global") return feeConfig.globalAmount;
+    if (feeConfig.mode === "per-program") {
+      const prog = programOptions.find(p => p.value === formData.program);
+      if (!prog) return null;
+      // Map program value to schedule program name
+      const nameMap: Record<string, string> = {
+        tahfidz: "Tahfidz Al-Qur'an",
+        regular: "Kurikulum Nasional + Diniyah",
+        bilingual: "Bahasa Arab & Inggris",
+        stem: "STEM & Digital",
+      };
+      return feeConfig.programFees[nameMap[formData.program] || ""] || "Rp 0";
+    }
+    return null;
+  };
 
   const updateField = (key: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -263,6 +317,35 @@ const RegistrationForm = () => {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* Registration Fee Display */}
+                {(() => {
+                  const fee = getRegistrationFee();
+                  if (fee === null) {
+                    return (
+                      <div className="rounded-xl border bg-success/5 border-success/30 p-4 flex items-center gap-3">
+                        <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">Pendaftaran Gratis</p>
+                          <p className="text-xs text-muted-foreground">Tidak ada biaya pendaftaran yang dikenakan.</p>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="rounded-xl border bg-primary/5 border-primary/30 p-4 flex items-center gap-3">
+                      <DollarSign className="h-5 w-5 text-primary shrink-0" />
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">Biaya Pendaftaran</p>
+                        <p className="text-xs text-muted-foreground">
+                          {feeConfig.mode === "per-program" && !formData.program
+                            ? "Pilih program untuk melihat biaya pendaftaran"
+                            : <span>Biaya pendaftaran: <span className="font-bold text-primary">{fee}</span></span>}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             )}
 
@@ -458,6 +541,24 @@ const RegistrationForm = () => {
                       ))}
                     </div>
                   </div>
+
+                  {/* Fee Summary */}
+                  {(() => {
+                    const fee = getRegistrationFee();
+                    return (
+                      <div className={`rounded-xl border p-5 space-y-2 ${fee === null ? "bg-success/5 border-success/30" : "bg-primary/5 border-primary/30"}`}>
+                        <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                          <DollarSign className="h-4 w-4" />
+                          Biaya Pendaftaran
+                        </h3>
+                        <p className="text-lg font-bold text-primary">{fee === null ? "GRATIS" : fee}</p>
+                        {fee !== null && (
+                          <p className="text-xs text-muted-foreground">Pembayaran akan dilakukan setelah pendaftaran dikonfirmasi.</p>
+                        )}
+                      </div>
+                    );
+                  })()}
+
                   <label className="flex items-start gap-3 rounded-xl border bg-background p-4 cursor-pointer hover:bg-muted/50">
                     <input
                       type="checkbox"
@@ -496,6 +597,24 @@ const RegistrationForm = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Unsaved Data Warning Dialog */}
+      <AlertDialog open={blocker.state === "blocked"}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Keluar dari Formulir?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Data yang sudah Anda isi belum disimpan dan akan hilang jika Anda meninggalkan halaman ini. Yakin ingin keluar?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => blocker.reset?.()}>Tetap di Halaman</AlertDialogCancel>
+            <AlertDialogAction onClick={() => blocker.proceed?.()} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Keluar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
