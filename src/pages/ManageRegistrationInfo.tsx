@@ -81,6 +81,9 @@ const ManageRegistrationInfo = () => {
   const [faq, setFaq] = useState<FAQItem[]>(() => [...faqData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
   const [feeConfig, setFeeConfig] = useState<RegistrationFeeConfig>(() => loadFeeConfig());
 
+  // Persist fee config to localStorage
+  useEffect(() => { saveFeeConfig(feeConfig); }, [feeConfig]);
+
   const [editDialog, setEditDialog] = useState<{ type: string; data: any; isNew: boolean } | null>(null);
   const [deleteDialog, setDeleteDialog] = useState<{ type: string; id: string } | null>(null);
 
