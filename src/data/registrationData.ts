@@ -9,6 +9,14 @@ export interface AlurItem {
   iconKey: string; color: string;
   icon?: typeof ClipboardList;
 }
+export type FeeMode = "free" | "global" | "per-program";
+
+export interface RegistrationFeeConfig {
+  mode: FeeMode;
+  globalAmount: string;
+  programFees: Record<string, string>; // program name -> amount
+}
+
 export interface JadwalItem {
   id: string; program: string; wave: string; periodStart: string; periodEnd: string; testDate: string; resultDate: string; status: string;
 }
@@ -82,6 +90,17 @@ export const faqData: FAQItem[] = [
   { id: "F5", question: "Apa kurikulum yang digunakan?", answer: "Kami menggunakan kurikulum nasional (Kemendikbud) yang dipadukan dengan kurikulum pesantren (Diniyah), sehingga santri mendapat ijazah formal dan kemampuan keagamaan.", order: 5, status: "Aktif" },
   { id: "F6", question: "Apakah ada program tahfidz?", answer: "Ya, program tahfidz adalah salah satu program unggulan kami dengan target hafalan 30 juz selama masa pendidikan.", order: 6, status: "Aktif" },
 ];
+
+// ─── Default Fee Config ───
+export const defaultFeeConfig: RegistrationFeeConfig = {
+  mode: "global",
+  globalAmount: "Rp 350.000",
+  programFees: {
+    "Tahfidz Al-Qur'an": "Rp 400.000",
+    "Kurikulum Nasional + Diniyah": "Rp 350.000",
+    "Bahasa Arab & Inggris": "Rp 300.000",
+  },
+};
 
 // ─── Helper: format ISO date to display ───
 export const formatDateDisplay = (isoDate: string): string => {
