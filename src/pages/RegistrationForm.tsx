@@ -541,6 +541,24 @@ const RegistrationForm = () => {
                       ))}
                     </div>
                   </div>
+
+                  {/* Fee Summary */}
+                  {(() => {
+                    const fee = getRegistrationFee();
+                    return (
+                      <div className={`rounded-xl border p-5 space-y-2 ${fee === null ? "bg-success/5 border-success/30" : "bg-primary/5 border-primary/30"}`}>
+                        <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                          <DollarSign className="h-4 w-4" />
+                          Biaya Pendaftaran
+                        </h3>
+                        <p className="text-lg font-bold text-primary">{fee === null ? "GRATIS" : fee}</p>
+                        {fee !== null && (
+                          <p className="text-xs text-muted-foreground">Pembayaran akan dilakukan setelah pendaftaran dikonfirmasi.</p>
+                        )}
+                      </div>
+                    );
+                  })()}
+
                   <label className="flex items-start gap-3 rounded-xl border bg-background p-4 cursor-pointer hover:bg-muted/50">
                     <input
                       type="checkbox"
