@@ -79,7 +79,7 @@ const ManageRegistrationInfo = () => {
   const [persyaratan, setPersyaratan] = useState<PersyaratanItem[]>(() => [...requirementsData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
   const [biaya, setBiaya] = useState<BiayaItem[]>(() => [...costData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
   const [faq, setFaq] = useState<FAQItem[]>(() => [...faqData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
-  const [feeConfig, setFeeConfig] = useState<RegistrationFeeConfig>(() => ({ ...defaultFeeConfig }));
+  const [feeConfig, setFeeConfig] = useState<RegistrationFeeConfig>(() => loadFeeConfig());
 
   const [editDialog, setEditDialog] = useState<{ type: string; data: any; isNew: boolean } | null>(null);
   const [deleteDialog, setDeleteDialog] = useState<{ type: string; id: string } | null>(null);
