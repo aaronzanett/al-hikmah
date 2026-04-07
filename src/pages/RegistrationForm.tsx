@@ -241,9 +241,9 @@ const RegistrationForm = () => {
         <div className="mx-auto max-w-4xl px-4 lg:px-8">
           {/* Header */}
           <div className="mb-8">
-            <Link to="/registration" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4">
+            <button onClick={() => handleNavigation("/registration")} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4">
               <ArrowLeft className="h-4 w-4" /> Kembali ke Info Pendaftaran
-            </Link>
+            </button>
             <h1 className="text-2xl md:text-3xl font-bold text-foreground">Formulir Pendaftaran Online</h1>
             <p className="text-muted-foreground mt-1">Isi formulir berikut untuk mendaftarkan calon santri baru.</p>
           </div>
@@ -612,7 +612,7 @@ const RegistrationForm = () => {
       </div>
 
       {/* Unsaved Data Warning Dialog */}
-      <AlertDialog open={blocker.state === "blocked"}>
+      <AlertDialog open={showExitWarning} onOpenChange={setShowExitWarning}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Keluar dari Formulir?</AlertDialogTitle>
@@ -621,8 +621,8 @@ const RegistrationForm = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => blocker.reset?.()}>Tetap di Halaman</AlertDialogCancel>
-            <AlertDialogAction onClick={() => blocker.proceed?.()} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogCancel onClick={() => setShowExitWarning(false)}>Tetap di Halaman</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmExit} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Keluar
             </AlertDialogAction>
           </AlertDialogFooter>
