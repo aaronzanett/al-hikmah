@@ -282,12 +282,92 @@ const ManageRegistrationInfo = () => {
                   id: `J${Date.now()}`, program: name.trim(), wave: "Gelombang 1",
                   periodStart: "", periodEnd: "", testDate: "", resultDate: "", status: "Dibuka",
                 }]);
+                setFeeConfig(prev => ({
+                  ...prev,
+                  programFees: { ...prev.programFees, [name.trim()]: "Rp 0" },
+                }));
                 showToast(`Program "${name.trim()}" berhasil ditambahkan`);
               }
             }}>
               <Plus className="h-4 w-4 mr-1" /> Tambah Program
             </Button>
           </div>
+
+          {/* ═══ BIAYA PENDAFTARAN CONFIG ═══ */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-primary" />
+                Biaya Pendaftaran
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">Atur mode biaya pendaftaran yang berlaku untuk semua program.</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <RadioGroup
+                value={feeConfig.mode}
+                onValueChange={(v) => setFeeConfig(prev => ({ ...prev, mode: v as FeeMode }))}
+                className="grid gap-3 sm:grid-cols-3"
+              >
+                {[
+                  { value: "free", label: "Gratis", desc: "Tidak ada biaya pendaftaran" },
+                  { value: "global", label: "Seragam", desc: "Biaya sama untuk semua program" },
+                  { value: "per-program", label: "Per Program", desc: "Biaya berbeda tiap program" },
+                ].map((opt) => (
+                  <label
+                    key={opt.value}
+                    className={cn(
+                      "flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all hover:bg-muted/50",
+                      feeConfig.mode === opt.value ? "border-primary bg-primary/5 ring-1 ring-primary" : ""
+                    )}
+                  >
+                    <RadioGroupItem value={opt.value} className="mt-0.5" />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{opt.label}</p>
+                      <p className="text-xs text-muted-foreground">{opt.desc}</p>
+                    </div>
+                  </label>
+                ))}
+              </RadioGroup>
+
+              {feeConfig.mode === "global" && (
+                <div className="space-y-2 max-w-xs">
+                  <label className="text-sm font-medium">Biaya Pendaftaran</label>
+                  <Input
+                    value={feeConfig.globalAmount}
+                    onChange={(e) => setFeeConfig(prev => ({ ...prev, globalAmount: e.target.value }))}
+                    placeholder="Rp 350.000"
+                  />
+                </div>
+              )}
+
+              {feeConfig.mode === "per-program" && (
+                <div className="space-y-3">
+                  <label className="text-sm font-medium">Biaya per Program</label>
+                  {Array.from(new Set(jadwal.map(j => j.program))).filter(Boolean).map(prog => (
+                    <div key={prog} className="flex items-center gap-3">
+                      <span className="text-sm text-foreground min-w-[180px]">{prog}</span>
+                      <Input
+                        className="max-w-[200px]"
+                        value={feeConfig.programFees[prog] || ""}
+                        onChange={(e) => setFeeConfig(prev => ({
+                          ...prev,
+                          programFees: { ...prev.programFees, [prog]: e.target.value },
+                        }))}
+                        placeholder="Rp 0"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {feeConfig.mode === "free" && (
+                <div className="rounded-lg bg-success/10 p-3 text-sm text-success font-medium flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Pendaftaran gratis — tidak ada biaya yang dikenakan.
+                </div>
+              )}
+            </CardContent>
+          </Card>
           {(() => {
             const programs = Array.from(new Set(jadwal.map(j => j.program))).filter(Boolean);
             return (
