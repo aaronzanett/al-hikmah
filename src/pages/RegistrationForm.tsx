@@ -25,6 +25,7 @@ import {
   X,
   File,
   Image,
+  DollarSign,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { defaultFeeConfig } from "@/data/registrationData";
