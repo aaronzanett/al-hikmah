@@ -9,6 +9,7 @@ export interface AlurItem {
   iconKey: string; color: string;
   icon?: typeof ClipboardList;
 }
+
 export type FeeMode = "free" | "global" | "per-program";
 
 export interface RegistrationFeeConfig {
@@ -100,6 +101,23 @@ export const defaultFeeConfig: RegistrationFeeConfig = {
     "Kurikulum Nasional + Diniyah": "Rp 350.000",
     "Bahasa Arab & Inggris": "Rp 300.000",
   },
+};
+
+// ─── LocalStorage helpers ───
+const FEE_CONFIG_KEY = "psb_fee_config";
+
+export const loadFeeConfig = (): RegistrationFeeConfig => {
+  try {
+    const stored = localStorage.getItem(FEE_CONFIG_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  return { ...defaultFeeConfig };
+};
+
+export const saveFeeConfig = (config: RegistrationFeeConfig) => {
+  try {
+    localStorage.setItem(FEE_CONFIG_KEY, JSON.stringify(config));
+  } catch {}
 };
 
 // ─── Helper: format ISO date to display ───
