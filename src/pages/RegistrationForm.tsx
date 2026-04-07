@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Link, useNavigate, useBlocker } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -92,16 +92,29 @@ const RegistrationForm = () => {
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const [feeConfig] = useState(() => ({ ...defaultFeeConfig }));
+  const navigate = useNavigate();
+  const [showExitWarning, setShowExitWarning] = useState(false);
+  const [pendingExit, setPendingExit] = useState<string | null>(null);
 
   // Track if form has been touched
   const isFormDirty = useCallback(() => {
     return !!(formData.program || formData.studentName || formData.guardianName || Object.keys(uploadedFiles).length > 0);
   }, [formData, uploadedFiles]);
 
-  // Block navigation via react-router
-  const blocker = useBlocker(({ currentLocation, nextLocation }) => {
-    return isFormDirty() && currentLocation.pathname !== nextLocation.pathname;
-  });
+  // Intercept navigation attempt
+  const handleNavigation = (to: string) => {
+    if (isFormDirty()) {
+      setPendingExit(to);
+      setShowExitWarning(true);
+    } else {
+      navigate(to);
+    }
+  };
+
+  const confirmExit = () => {
+    setShowExitWarning(false);
+    if (pendingExit) navigate(pendingExit);
+  };
 
   // Block browser close/reload
   useEffect(() => {
