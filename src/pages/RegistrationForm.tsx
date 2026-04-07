@@ -597,6 +597,24 @@ const RegistrationForm = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Unsaved Data Warning Dialog */}
+      <AlertDialog open={blocker.state === "blocked"}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Keluar dari Formulir?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Data yang sudah Anda isi belum disimpan dan akan hilang jika Anda meninggalkan halaman ini. Yakin ingin keluar?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => blocker.reset?.()}>Tetap di Halaman</AlertDialogCancel>
+            <AlertDialogAction onClick={() => blocker.proceed?.()} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Keluar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
