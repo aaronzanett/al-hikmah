@@ -23,6 +23,7 @@ import {
   requirementsData,
   costData,
   faqData,
+  defaultFeeConfig,
   formatDateDisplay,
   formatPeriodDisplay,
   type AlurItem,
@@ -30,7 +31,10 @@ import {
   type PersyaratanItem,
   type BiayaItem,
   type FAQItem,
+  type FeeMode,
+  type RegistrationFeeConfig,
 } from "@/data/registrationData";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 // ─── DatePicker helper ───
 function DatePickerField({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
