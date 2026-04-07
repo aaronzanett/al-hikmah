@@ -90,6 +90,48 @@ const RegistrationForm = () => {
   });
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const [feeConfig] = useState(() => ({ ...defaultFeeConfig }));
+
+  // Track if form has been touched
+  const isFormDirty = useCallback(() => {
+    return !!(formData.program || formData.studentName || formData.guardianName || Object.keys(uploadedFiles).length > 0);
+  }, [formData, uploadedFiles]);
+
+  // Block navigation via react-router
+  const blocker = useBlocker(({ currentLocation, nextLocation }) => {
+    return isFormDirty() && currentLocation.pathname !== nextLocation.pathname;
+  });
+
+  // Block browser close/reload
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (isFormDirty()) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isFormDirty]);
+
+  // Get fee for selected program
+  const getRegistrationFee = () => {
+    if (feeConfig.mode === "free") return null;
+    if (feeConfig.mode === "global") return feeConfig.globalAmount;
+    if (feeConfig.mode === "per-program") {
+      const prog = programOptions.find(p => p.value === formData.program);
+      if (!prog) return null;
+      // Map program value to schedule program name
+      const nameMap: Record<string, string> = {
+        tahfidz: "Tahfidz Al-Qur'an",
+        regular: "Kurikulum Nasional + Diniyah",
+        bilingual: "Bahasa Arab & Inggris",
+        stem: "STEM & Digital",
+      };
+      return feeConfig.programFees[nameMap[formData.program] || ""] || "Rp 0";
+    }
+    return null;
+  };
 
   const updateField = (key: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
