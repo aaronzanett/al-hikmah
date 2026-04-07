@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Link, useNavigate, useBlocker } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -92,16 +92,29 @@ const RegistrationForm = () => {
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const [feeConfig] = useState(() => ({ ...defaultFeeConfig }));
+  const navigate = useNavigate();
+  const [showExitWarning, setShowExitWarning] = useState(false);
+  const [pendingExit, setPendingExit] = useState<string | null>(null);
 
   // Track if form has been touched
   const isFormDirty = useCallback(() => {
     return !!(formData.program || formData.studentName || formData.guardianName || Object.keys(uploadedFiles).length > 0);
   }, [formData, uploadedFiles]);
 
-  // Block navigation via react-router
-  const blocker = useBlocker(({ currentLocation, nextLocation }) => {
-    return isFormDirty() && currentLocation.pathname !== nextLocation.pathname;
-  });
+  // Intercept navigation attempt
+  const handleNavigation = (to: string) => {
+    if (isFormDirty()) {
+      setPendingExit(to);
+      setShowExitWarning(true);
+    } else {
+      navigate(to);
+    }
+  };
+
+  const confirmExit = () => {
+    setShowExitWarning(false);
+    if (pendingExit) navigate(pendingExit);
+  };
 
   // Block browser close/reload
   useEffect(() => {
@@ -228,9 +241,9 @@ const RegistrationForm = () => {
         <div className="mx-auto max-w-4xl px-4 lg:px-8">
           {/* Header */}
           <div className="mb-8">
-            <Link to="/registration" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4">
+            <button onClick={() => handleNavigation("/registration")} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4">
               <ArrowLeft className="h-4 w-4" /> Kembali ke Info Pendaftaran
-            </Link>
+            </button>
             <h1 className="text-2xl md:text-3xl font-bold text-foreground">Formulir Pendaftaran Online</h1>
             <p className="text-muted-foreground mt-1">Isi formulir berikut untuk mendaftarkan calon santri baru.</p>
           </div>
@@ -599,7 +612,7 @@ const RegistrationForm = () => {
       </div>
 
       {/* Unsaved Data Warning Dialog */}
-      <AlertDialog open={blocker.state === "blocked"}>
+      <AlertDialog open={showExitWarning} onOpenChange={setShowExitWarning}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Keluar dari Formulir?</AlertDialogTitle>
@@ -608,8 +621,8 @@ const RegistrationForm = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => blocker.reset?.()}>Tetap di Halaman</AlertDialogCancel>
-            <AlertDialogAction onClick={() => blocker.proceed?.()} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogCancel onClick={() => setShowExitWarning(false)}>Tetap di Halaman</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmExit} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Keluar
             </AlertDialogAction>
           </AlertDialogFooter>
