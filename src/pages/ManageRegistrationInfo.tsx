@@ -1,18 +1,19 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarWidget } from "@/components/ui/calendar";
 import { toast } from "sonner";
 import {
   ListOrdered, Calendar, HelpCircle, DollarSign, Plus, Pencil, Trash2,
   CheckCircle2, ChevronUp, ChevronDown, Eye, EyeOff, CalendarIcon, GraduationCap,
+  AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { iconRegistry, iconKeys, getIconComponent, colorPresets } from "@/lib/iconMap";
@@ -87,6 +88,10 @@ const ManageRegistrationInfo = () => {
   const [editDialog, setEditDialog] = useState<{ type: string; data: any; isNew: boolean } | null>(null);
   const [deleteDialog, setDeleteDialog] = useState<{ type: string; id: string } | null>(null);
 
+  // Program dialog state
+  const [programDialog, setProgramDialog] = useState(false);
+  const [newProgramName, setNewProgramName] = useState("");
+
   const showToast = (msg: string) => toast.success(msg, { duration: 2500 });
 
   // ─── Generic handlers ───
@@ -106,7 +111,6 @@ const ManageRegistrationInfo = () => {
     if (!editDialog) return;
     const { type, data, isNew } = editDialog;
 
-    // Helper: enforce unique order/step, shift others, then sort
     const enforceAndSort = <T extends { id: string }>(items: T[], orderField: string, newOrder: number, currentId: string | null): T[] => {
       const conflict = items.find((i: any) => Number(i[orderField]) === newOrder && i.id !== currentId);
       let result = items;
@@ -174,7 +178,6 @@ const ManageRegistrationInfo = () => {
       if ((direction === "up" && idx === 0) || (direction === "down" && idx === items.length - 1)) return items;
       const newItems = [...items];
       const swapIdx = direction === "up" ? idx - 1 : idx + 1;
-      // Swap order values
       const tempOrder = (newItems[idx] as any)[orderField];
       (newItems[idx] as any)[orderField] = (newItems[swapIdx] as any)[orderField];
       (newItems[swapIdx] as any)[orderField] = tempOrder;
@@ -185,6 +188,28 @@ const ManageRegistrationInfo = () => {
     if (type === "biaya") setBiaya((prev) => reorder(prev, "order"));
     if (type === "faq") setFaq((prev) => reorder(prev, "order"));
     showToast("Urutan berhasil diubah");
+  };
+
+  const handleAddProgram = () => {
+    const name = newProgramName.trim();
+    if (!name) return;
+    // Check duplicate
+    const existing = Array.from(new Set(jadwal.map(j => j.program)));
+    if (existing.includes(name)) {
+      toast.error(`Program "${name}" sudah ada.`);
+      return;
+    }
+    setJadwal(prev => [...prev, {
+      id: `J${Date.now()}`, program: name, wave: "Gelombang 1",
+      periodStart: "", periodEnd: "", testDate: "", resultDate: "", status: "Dibuka",
+    }]);
+    setFeeConfig(prev => ({
+      ...prev,
+      programFees: { ...prev.programFees, [name]: "Rp 0" },
+    }));
+    setProgramDialog(false);
+    setNewProgramName("");
+    showToast(`Program "${name}" berhasil ditambahkan`);
   };
 
   // ─── Tab counts ───
@@ -279,20 +304,7 @@ const ManageRegistrationInfo = () => {
         <TabsContent value="jadwal" className="space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">Kelola jadwal pendaftaran per program dan gelombang.</p>
-            <Button size="sm" onClick={() => {
-              const name = prompt("Nama program baru:");
-              if (name && name.trim()) {
-                setJadwal(prev => [...prev, {
-                  id: `J${Date.now()}`, program: name.trim(), wave: "Gelombang 1",
-                  periodStart: "", periodEnd: "", testDate: "", resultDate: "", status: "Dibuka",
-                }]);
-                setFeeConfig(prev => ({
-                  ...prev,
-                  programFees: { ...prev.programFees, [name.trim()]: "Rp 0" },
-                }));
-                showToast(`Program "${name.trim()}" berhasil ditambahkan`);
-              }
-            }}>
+            <Button size="sm" onClick={() => { setNewProgramName(""); setProgramDialog(true); }}>
               <Plus className="h-4 w-4 mr-1" /> Tambah Program
             </Button>
           </div>
@@ -304,7 +316,7 @@ const ManageRegistrationInfo = () => {
                 <DollarSign className="h-4 w-4 text-primary" />
                 Biaya Pendaftaran
               </CardTitle>
-              <p className="text-xs text-muted-foreground">Atur mode biaya pendaftaran yang berlaku untuk semua program.</p>
+              <CardDescription className="text-xs">Atur mode biaya pendaftaran yang berlaku untuk semua program.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <RadioGroup
@@ -372,6 +384,7 @@ const ManageRegistrationInfo = () => {
               )}
             </CardContent>
           </Card>
+
           {(() => {
             const programs = Array.from(new Set(jadwal.map(j => j.program))).filter(Boolean);
             return (
@@ -388,26 +401,23 @@ const ManageRegistrationInfo = () => {
                     <Card key={prog}>
                       <CardHeader className="pb-2">
                         <CardTitle className="text-sm flex items-center gap-2">
-                          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary text-xs font-bold">
+                          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">
                             {prog.charAt(0)}
                           </span>
-                          {prog}
-                          <span className="text-xs font-normal text-muted-foreground">
-                            {waves.length} gelombang
-                          </span>
-                          <div className="ml-auto flex items-center gap-1">
+                          <div className="flex-1">
+                            <span className="text-foreground">{prog}</span>
+                            <span className="text-xs font-normal text-muted-foreground ml-2">
+                              {waves.length} gelombang
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
                             <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setEditDialog({
                               type: "jadwal", isNew: true,
                               data: { program: prog, wave: `Gelombang ${waves.length + 1}`, periodStart: "", periodEnd: "", testDate: "", resultDate: "", status: "Dibuka" },
                             })}>
-                              <Plus className="h-3.5 w-3.5 mr-1" /> Tambah Gelombang
+                              <Plus className="h-3.5 w-3.5 mr-1" /> Gelombang
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => {
-                              if (confirm(`Hapus program "${prog}" beserta semua gelombangnya?`)) {
-                                setJadwal(prev => prev.filter(j => j.program !== prog));
-                                showToast(`Program "${prog}" berhasil dihapus`);
-                              }
-                            }}>
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => setDeleteDialog({ type: "program", id: prog })}>
                               <Trash2 className="h-3.5 w-3.5" />
                             </Button>
                           </div>
@@ -478,21 +488,21 @@ const ManageRegistrationInfo = () => {
           <Card>
             <CardContent className="p-0">
               <div className="divide-y">
-                {persyaratan.map((item) => (
-                  <div key={item.id} className={`flex items-center gap-3 p-4 ${item.status === "Nonaktif" ? "opacity-50" : ""}`}>
+                {persyaratan.map((item, idx) => (
+                  <div key={item.id} className={cn("flex items-center gap-3 p-4 transition-colors hover:bg-muted/30", item.status === "Nonaktif" && "opacity-50")}>
                     <div className="flex flex-col gap-0.5">
-                      <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveItem("persyaratan", item.id, "up")}>
+                      <Button variant="ghost" size="icon" className="h-5 w-5" disabled={idx === 0} onClick={() => moveItem("persyaratan", item.id, "up")}>
                         <ChevronUp className="h-3 w-3" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveItem("persyaratan", item.id, "down")}>
+                      <Button variant="ghost" size="icon" className="h-5 w-5" disabled={idx === persyaratan.length - 1} onClick={() => moveItem("persyaratan", item.id, "down")}>
                         <ChevronDown className="h-3 w-3" />
                       </Button>
                     </div>
-                    <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                    <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary text-xs font-bold shrink-0">{idx + 1}</span>
                     <span className="flex-1 text-sm text-foreground">{item.title}</span>
                     <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => toggleStatus("persyaratan", item.id)}>
-                        {item.status === "Aktif" ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => toggleStatus("persyaratan", item.id)} title={item.status === "Aktif" ? "Sembunyikan" : "Tampilkan"}>
+                        {item.status === "Aktif" ? <Eye className="h-3.5 w-3.5 text-primary" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
                       </Button>
                       <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditDialog({ type: "persyaratan", data: { ...item }, isNew: false })}>
                         <Pencil className="h-3.5 w-3.5" />
@@ -503,6 +513,11 @@ const ManageRegistrationInfo = () => {
                     </div>
                   </div>
                 ))}
+                {persyaratan.length === 0 && (
+                  <div className="p-8 text-center text-sm text-muted-foreground">
+                    Belum ada persyaratan. Klik "Tambah Syarat" untuk memulai.
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -522,24 +537,24 @@ const ManageRegistrationInfo = () => {
           <Card>
             <CardContent className="p-0">
               <div className="divide-y">
-                {biaya.map((item) => (
-                  <div key={item.id} className={`flex items-center gap-3 p-4 ${item.status === "Nonaktif" ? "opacity-50" : ""}`}>
+                {biaya.map((item, idx) => (
+                  <div key={item.id} className={cn("flex items-center gap-3 p-4 transition-colors hover:bg-muted/30", item.status === "Nonaktif" && "opacity-50")}>
                     <div className="flex flex-col gap-0.5">
-                      <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveItem("biaya", item.id, "up")}>
+                      <Button variant="ghost" size="icon" className="h-5 w-5" disabled={idx === 0} onClick={() => moveItem("biaya", item.id, "up")}>
                         <ChevronUp className="h-3 w-3" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveItem("biaya", item.id, "down")}>
+                      <Button variant="ghost" size="icon" className="h-5 w-5" disabled={idx === biaya.length - 1} onClick={() => moveItem("biaya", item.id, "down")}>
                         <ChevronDown className="h-3 w-3" />
                       </Button>
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-foreground">{item.item}</p>
                       <p className="text-xs text-muted-foreground">{item.note}</p>
                     </div>
-                    <span className="text-sm font-bold text-primary">{item.amount}</span>
+                    <span className="text-sm font-bold text-primary whitespace-nowrap">{item.amount}</span>
                     <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => toggleStatus("biaya", item.id)}>
-                        {item.status === "Aktif" ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => toggleStatus("biaya", item.id)} title={item.status === "Aktif" ? "Sembunyikan" : "Tampilkan"}>
+                        {item.status === "Aktif" ? <Eye className="h-3.5 w-3.5 text-primary" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
                       </Button>
                       <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditDialog({ type: "biaya", data: { ...item }, isNew: false })}>
                         <Pencil className="h-3.5 w-3.5" />
@@ -550,6 +565,11 @@ const ManageRegistrationInfo = () => {
                     </div>
                   </div>
                 ))}
+                {biaya.length === 0 && (
+                  <div className="p-8 text-center text-sm text-muted-foreground">
+                    Belum ada biaya. Klik "Tambah Biaya" untuk memulai.
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -569,24 +589,25 @@ const ManageRegistrationInfo = () => {
           <Card>
             <CardContent className="p-0">
               <div className="divide-y">
-                {faq.map((item) => (
-                  <div key={item.id} className={`p-4 ${item.status === "Nonaktif" ? "opacity-50" : ""}`}>
+                {faq.map((item, idx) => (
+                  <div key={item.id} className={cn("p-4 transition-colors hover:bg-muted/30", item.status === "Nonaktif" && "opacity-50")}>
                     <div className="flex items-start gap-3">
                       <div className="flex flex-col gap-0.5 mt-1">
-                        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveItem("faq", item.id, "up")}>
+                        <Button variant="ghost" size="icon" className="h-5 w-5" disabled={idx === 0} onClick={() => moveItem("faq", item.id, "up")}>
                           <ChevronUp className="h-3 w-3" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveItem("faq", item.id, "down")}>
+                        <Button variant="ghost" size="icon" className="h-5 w-5" disabled={idx === faq.length - 1} onClick={() => moveItem("faq", item.id, "down")}>
                           <ChevronDown className="h-3 w-3" />
                         </Button>
                       </div>
-                      <div className="flex-1">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold shrink-0 mt-0.5">Q</span>
+                      <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-foreground">{item.question}</p>
                         <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{item.answer}</p>
                       </div>
                       <div className="flex items-center gap-1 shrink-0">
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => toggleStatus("faq", item.id)}>
-                          {item.status === "Aktif" ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => toggleStatus("faq", item.id)} title={item.status === "Aktif" ? "Sembunyikan" : "Tampilkan"}>
+                          {item.status === "Aktif" ? <Eye className="h-3.5 w-3.5 text-primary" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
                         </Button>
                         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setEditDialog({ type: "faq", data: { ...item }, isNew: false })}>
                           <Pencil className="h-3.5 w-3.5" />
@@ -598,18 +619,74 @@ const ManageRegistrationInfo = () => {
                     </div>
                   </div>
                 ))}
+                {faq.length === 0 && (
+                  <div className="p-8 text-center text-sm text-muted-foreground">
+                    Belum ada FAQ. Klik "Tambah FAQ" untuk memulai.
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
 
+      {/* ═══ ADD PROGRAM DIALOG ═══ */}
+      <Dialog open={programDialog} onOpenChange={setProgramDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <GraduationCap className="h-5 w-5 text-primary" />
+              Tambah Program Baru
+            </DialogTitle>
+            <DialogDescription>
+              Masukkan nama program pendaftaran. Gelombang pertama akan otomatis dibuat.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Nama Program</label>
+              <Input
+                placeholder="Contoh: Tahfidz Al-Qur'an"
+                value={newProgramName}
+                onChange={(e) => setNewProgramName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") handleAddProgram(); }}
+                autoFocus
+              />
+            </div>
+            {newProgramName.trim() && (
+              <div className="rounded-xl border bg-muted/30 p-4 space-y-2">
+                <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Preview</p>
+                <div className="flex items-center gap-3">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary text-sm font-bold">
+                    {newProgramName.trim().charAt(0).toUpperCase()}
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{newProgramName.trim()}</p>
+                    <p className="text-xs text-muted-foreground">Gelombang 1 akan dibuat otomatis</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setProgramDialog(false)}>Batal</Button>
+            <Button onClick={handleAddProgram} disabled={!newProgramName.trim()}>
+              <Plus className="h-4 w-4 mr-1" /> Tambah Program
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* ═══ EDIT DIALOG ═══ */}
       <Dialog open={!!editDialog} onOpenChange={() => setEditDialog(null)}>
         <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editDialog?.isNew ? "Tambah Item Baru" : "Edit Item"}</DialogTitle>
+            <DialogTitle>
+              {editDialog?.isNew ? "Tambah" : "Edit"}{" "}
+              {editDialog?.type === "alur" ? "Langkah" : editDialog?.type === "jadwal" ? "Gelombang" : editDialog?.type === "persyaratan" ? "Persyaratan" : editDialog?.type === "biaya" ? "Biaya" : "FAQ"}
+            </DialogTitle>
           </DialogHeader>
+
           {editDialog?.type === "alur" && (
             <div className="space-y-4">
               {/* Live Preview */}
@@ -704,10 +781,18 @@ const ManageRegistrationInfo = () => {
               </div>
             </div>
           )}
+
           {editDialog?.type === "jadwal" && (
             <div className="space-y-4">
-              <div className="space-y-2"><label className="text-sm font-medium">Program</label><Input placeholder="Contoh: Tahfidz Al-Qur'an" value={editDialog.data.program} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, program: e.target.value } })} /></div>
-              <div className="space-y-2"><label className="text-sm font-medium">Gelombang</label><Input value={editDialog.data.wave} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, wave: e.target.value } })} /></div>
+              {/* Program read-only display */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Program</label>
+                <div className="flex items-center gap-2 rounded-lg border bg-muted/50 px-3 py-2.5">
+                  <GraduationCap className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-foreground">{editDialog.data.program}</span>
+                </div>
+              </div>
+              <div className="space-y-2"><label className="text-sm font-medium">Gelombang</label><Input value={editDialog.data.wave} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, wave: e.target.value } })} placeholder="Contoh: Gelombang 1" /></div>
               <div className="grid grid-cols-2 gap-4">
                 <DatePickerField label="Periode Mulai" value={editDialog.data.periodStart || ""} onChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, periodStart: v } })} />
                 <DatePickerField label="Periode Selesai" value={editDialog.data.periodEnd || ""} onChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, periodEnd: v } })} />
@@ -719,49 +804,45 @@ const ManageRegistrationInfo = () => {
               <div className="space-y-2"><label className="text-sm font-medium">Status</label>
                 <Select value={editDialog.data.status} onValueChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, status: v } })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent><SelectItem value="Dibuka">Dibuka</SelectItem><SelectItem value="Segera">Segera</SelectItem><SelectItem value="Tertutup">Tertutup</SelectItem></SelectContent>
+                  <SelectContent>
+                    <SelectItem value="Dibuka">
+                      <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-success" /> Dibuka</span>
+                    </SelectItem>
+                    <SelectItem value="Segera">
+                      <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-warning" /> Segera</span>
+                    </SelectItem>
+                    <SelectItem value="Tertutup">
+                      <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-muted-foreground" /> Tertutup</span>
+                    </SelectItem>
+                  </SelectContent>
                 </Select>
               </div>
             </div>
           )}
+
           {editDialog?.type === "persyaratan" && (
             <div className="space-y-4">
-              <div className="space-y-2"><label className="text-sm font-medium">Persyaratan</label><Input value={editDialog.data.title} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, title: e.target.value } })} /></div>
-              <div className="space-y-2"><label className="text-sm font-medium">Status</label>
-                <Select value={editDialog.data.status} onValueChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, status: v } })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent><SelectItem value="Aktif">Aktif</SelectItem><SelectItem value="Nonaktif">Nonaktif</SelectItem></SelectContent>
-                </Select>
-              </div>
+              <div className="space-y-2"><label className="text-sm font-medium">Persyaratan</label><Input value={editDialog.data.title} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, title: e.target.value } })} placeholder="Contoh: Fotokopi akta kelahiran (2 lembar)" /></div>
             </div>
           )}
+
           {editDialog?.type === "biaya" && (
             <div className="space-y-4">
-              <div className="space-y-2"><label className="text-sm font-medium">Nama Biaya</label><Input value={editDialog.data.item} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, item: e.target.value } })} /></div>
+              <div className="space-y-2"><label className="text-sm font-medium">Nama Biaya</label><Input value={editDialog.data.item} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, item: e.target.value } })} placeholder="Contoh: SPP Bulanan" /></div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2"><label className="text-sm font-medium">Jumlah</label><Input value={editDialog.data.amount} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, amount: e.target.value } })} /></div>
-                <div className="space-y-2"><label className="text-sm font-medium">Keterangan</label><Input value={editDialog.data.note} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, note: e.target.value } })} /></div>
-              </div>
-              <div className="space-y-2"><label className="text-sm font-medium">Status</label>
-                <Select value={editDialog.data.status} onValueChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, status: v } })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent><SelectItem value="Aktif">Aktif</SelectItem><SelectItem value="Nonaktif">Nonaktif</SelectItem></SelectContent>
-                </Select>
+                <div className="space-y-2"><label className="text-sm font-medium">Jumlah</label><Input value={editDialog.data.amount} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, amount: e.target.value } })} placeholder="Rp 1.500.000" /></div>
+                <div className="space-y-2"><label className="text-sm font-medium">Keterangan</label><Input value={editDialog.data.note} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, note: e.target.value } })} placeholder="Sekali bayar / Per bulan" /></div>
               </div>
             </div>
           )}
+
           {editDialog?.type === "faq" && (
             <div className="space-y-4">
-              <div className="space-y-2"><label className="text-sm font-medium">Pertanyaan</label><Input value={editDialog.data.question} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, question: e.target.value } })} /></div>
-              <div className="space-y-2"><label className="text-sm font-medium">Jawaban</label><Textarea value={editDialog.data.answer} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, answer: e.target.value } })} rows={3} /></div>
-              <div className="space-y-2"><label className="text-sm font-medium">Status</label>
-                <Select value={editDialog.data.status} onValueChange={(v) => setEditDialog({ ...editDialog, data: { ...editDialog.data, status: v } })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent><SelectItem value="Aktif">Aktif</SelectItem><SelectItem value="Nonaktif">Nonaktif</SelectItem></SelectContent>
-                </Select>
-              </div>
+              <div className="space-y-2"><label className="text-sm font-medium">Pertanyaan</label><Input value={editDialog.data.question} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, question: e.target.value } })} placeholder="Contoh: Berapa usia minimal untuk mendaftar?" /></div>
+              <div className="space-y-2"><label className="text-sm font-medium">Jawaban</label><Textarea value={editDialog.data.answer} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, answer: e.target.value } })} rows={3} placeholder="Tulis jawaban lengkap di sini..." /></div>
             </div>
           )}
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditDialog(null)}>Batal</Button>
             <Button onClick={handleSave}>Simpan</Button>
@@ -771,14 +852,29 @@ const ManageRegistrationInfo = () => {
 
       {/* ═══ DELETE DIALOG ═══ */}
       <Dialog open={!!deleteDialog} onOpenChange={() => setDeleteDialog(null)}>
-        <DialogContent>
+        <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Konfirmasi Hapus</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              Konfirmasi Hapus
+            </DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-muted-foreground">Item yang dihapus tidak dapat dikembalikan. Lanjutkan?</p>
+          <p className="text-sm text-muted-foreground">
+            {deleteDialog?.type === "program"
+              ? `Semua gelombang di program "${deleteDialog.id}" akan ikut dihapus. Lanjutkan?`
+              : "Item yang dihapus tidak dapat dikembalikan. Lanjutkan?"}
+          </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteDialog(null)}>Batal</Button>
-            <Button variant="destructive" onClick={handleDelete}>Hapus</Button>
+            <Button variant="destructive" onClick={() => {
+              if (deleteDialog?.type === "program") {
+                setJadwal(prev => prev.filter(j => j.program !== deleteDialog.id));
+                setDeleteDialog(null);
+                showToast(`Program berhasil dihapus`);
+              } else {
+                handleDelete();
+              }
+            }}>Hapus</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
