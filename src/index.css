@@ -131,7 +131,7 @@
     opacity: 0.035;
     pointer-events: none;
     z-index: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23166534' stroke-width='0.6'%3E%3Ccircle cx='60' cy='60' r='40'/%3E%3Ccircle cx='60' cy='60' r='28'/%3E%3Ccircle cx='60' cy='60' r='16'/%3E%3Cpath d='M60,20 Q80,40 60,60 Q40,80 60,100' /%3E%3Cpath d='M20,60 Q40,40 60,60 Q80,80 100,60' /%3E%3Cpath d='M60,20 Q40,40 60,60 Q80,80 60,100' /%3E%3Cpath d='M20,60 Q40,80 60,60 Q80,40 100,60' /%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23000000' stroke-width='0.6'%3E%3Ccircle cx='60' cy='60' r='40'/%3E%3Ccircle cx='60' cy='60' r='28'/%3E%3Ccircle cx='60' cy='60' r='16'/%3E%3Cpath d='M60,20 Q80,40 60,60 Q40,80 60,100' /%3E%3Cpath d='M20,60 Q40,40 60,60 Q80,80 100,60' /%3E%3Cpath d='M60,20 Q40,40 60,60 Q80,80 60,100' /%3E%3Cpath d='M20,60 Q40,80 60,60 Q80,40 100,60' /%3E%3C/g%3E%3C/svg%3E");
   }
   .islamic-pattern > * {
     position: relative;
@@ -148,7 +148,7 @@
     opacity: 0.03;
     pointer-events: none;
     z-index: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23166534' stroke-width='0.5'%3E%3Cpath d='M50,10 Q70,30 50,50 Q30,70 50,90' /%3E%3Cpath d='M10,50 Q30,30 50,50 Q70,70 90,50' /%3E%3Ccircle cx='50' cy='50' r='30'/%3E%3Ccircle cx='50' cy='50' r='18'/%3E%3Cpath d='M50,20 C65,35 65,65 50,80 C35,65 35,35 50,20Z' /%3E%3Cpath d='M20,50 C35,35 65,35 80,50 C65,65 35,65 20,50Z' /%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23000000' stroke-width='0.5'%3E%3Cpath d='M50,10 Q70,30 50,50 Q30,70 50,90' /%3E%3Cpath d='M10,50 Q30,30 50,50 Q70,70 90,50' /%3E%3Ccircle cx='50' cy='50' r='30'/%3E%3Ccircle cx='50' cy='50' r='18'/%3E%3Cpath d='M50,20 C65,35 65,65 50,80 C35,65 35,35 50,20Z' /%3E%3Cpath d='M20,50 C35,35 65,35 80,50 C65,65 35,65 20,50Z' /%3E%3C/g%3E%3C/svg%3E");
   }
   .islamic-pattern-star > * {
     position: relative;
@@ -165,7 +165,7 @@
     opacity: 0.025;
     pointer-events: none;
     z-index: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='140' height='140' viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23166534' stroke-width='0.5'%3E%3Cpath d='M70,10 C95,25 95,55 70,70 C45,85 45,115 70,130' /%3E%3Cpath d='M10,70 C25,45 55,45 70,70 C85,95 115,95 130,70' /%3E%3Ccircle cx='70' cy='70' r='45'/%3E%3Ccircle cx='70' cy='70' r='30'/%3E%3Ccircle cx='70' cy='70' r='12'/%3E%3Cpath d='M30,30 Q70,50 110,30' /%3E%3Cpath d='M30,110 Q70,90 110,110' /%3E%3Cpath d='M30,30 Q50,70 30,110' /%3E%3Cpath d='M110,30 Q90,70 110,110' /%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='140' height='140' viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23000000' stroke-width='0.5'%3E%3Cpath d='M70,10 C95,25 95,55 70,70 C45,85 45,115 70,130' /%3E%3Cpath d='M10,70 C25,45 55,45 70,70 C85,95 115,95 130,70' /%3E%3Ccircle cx='70' cy='70' r='45'/%3E%3Ccircle cx='70' cy='70' r='30'/%3E%3Ccircle cx='70' cy='70' r='12'/%3E%3Cpath d='M30,30 Q70,50 110,30' /%3E%3Cpath d='M30,110 Q70,90 110,110' /%3E%3Cpath d='M30,30 Q50,70 30,110' /%3E%3Cpath d='M110,30 Q90,70 110,110' /%3E%3C/g%3E%3C/svg%3E");
   }
   .islamic-pattern-arabesque > * {
     position: relative;
@@ -185,7 +185,7 @@
     pointer-events: none;
     z-index: 0;
     /* Traditional Islamic 8-pointed star pattern like mosque doors */
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23166534' stroke-width='0.6'%3E%3C!-- 8-pointed star --%3E%3Cpolygon points='50,10 58,35 85,35 64,52 72,78 50,62 28,78 36,52 15,35 42,35'/%3E%3C!-- Inner octagon --%3E%3Cpolygon points='50,22 65,35 65,65 50,78 35,65 35,35'/%3E%3C!-- Center star --%3E%3Cpolygon points='50,30 55,45 70,45 58,55 62,70 50,60 38,70 42,55 30,45 45,45'/%3E%3C!-- Corner connectors --%3E%3Cpath d='M0,0 L25,25 M100,0 L75,25 M0,100 L25,75 M100,100 L75,75'/%3E%3Cpath d='M50,0 L50,10 M100,50 L90,50 M50,100 L50,90 M0,50 L10,50'/%3E%3C!-- Decorative arches --%3E%3Cpath d='M20,0 Q50,20 80,0'/%3E%3Cpath d='M20,100 Q50,80 80,100'/%3E%3Cpath d='M0,20 Q20,50 0,80'/%3E%3Cpath d='M100,20 Q80,50 100,80'/%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23000000' stroke-width='0.6'%3E%3C!-- 8-pointed star --%3E%3Cpolygon points='50,10 58,35 85,35 64,52 72,78 50,62 28,78 36,52 15,35 42,35'/%3E%3C!-- Inner octagon --%3E%3Cpolygon points='50,22 65,35 65,65 50,78 35,65 35,35'/%3E%3C!-- Center star --%3E%3Cpolygon points='50,30 55,45 70,45 58,55 62,70 50,60 38,70 42,55 30,45 45,45'/%3E%3C!-- Corner connectors --%3E%3Cpath d='M0,0 L25,25 M100,0 L75,25 M0,100 L25,75 M100,100 L75,75'/%3E%3Cpath d='M50,0 L50,10 M100,50 L90,50 M50,100 L50,90 M0,50 L10,50'/%3E%3C!-- Decorative arches --%3E%3Cpath d='M20,0 Q50,20 80,0'/%3E%3Cpath d='M20,100 Q50,80 80,100'/%3E%3Cpath d='M0,20 Q20,50 0,80'/%3E%3Cpath d='M100,20 Q80,50 100,80'/%3E%3C/g%3E%3C/svg%3E");
   }
   .islamic-pattern-curved::after {
     content: "";
@@ -197,7 +197,7 @@
     pointer-events: none;
     z-index: 0;
     /* Islamic arch border at top */
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 80' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23166534' stroke-width='1'%3E%3Cpath opacity='0.06' d='M0,80 Q25,40 50,80 Q75,40 100,80 Q125,40 150,80 Q175,40 200,80'/%3E%3Cpath opacity='0.04' d='M0,60 Q25,30 50,60 Q75,30 100,60 Q125,30 150,60 Q175,30 200,60'/%3E%3C/g%3E%3C/svg%3E") repeat-x top center;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 80' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23000000' stroke-width='1'%3E%3Cpath opacity='0.06' d='M0,80 Q25,40 50,80 Q75,40 100,80 Q125,40 150,80 Q175,40 200,80'/%3E%3Cpath opacity='0.04' d='M0,60 Q25,30 50,60 Q75,30 100,60 Q125,30 150,60 Q175,30 200,60'/%3E%3C/g%3E%3C/svg%3E") repeat-x top center;
     background-size: 200px 80px;
   }
   .islamic-pattern-curved > * {
@@ -218,7 +218,7 @@
     pointer-events: none;
     z-index: 0;
     /* Classic mosque door geometric pattern with interlocking stars and octagons */
-    background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='star8' width='80' height='80' patternUnits='userSpaceOnUse'%3E%3Cg fill='none' stroke='%23166534' stroke-width='0.8'%3E%3C!-- Main 8-pointed star --%3E%3Cpath d='M40,5 L45,20 L60,15 L50,28 L65,35 L50,40 L65,45 L50,52 L60,65 L45,60 L40,75 L35,60 L20,65 L30,52 L15,45 L30,40 L15,35 L30,28 L20,15 L35,20 Z'/%3E%3C!-- Inner octagon --%3E%3Cpolygon points='40,18 52,28 52,52 40,62 28,52 28,28'/%3E%3C!-- Center circle --%3E%3Ccircle cx='40' cy='40' r='8'/%3E%3C!-- Corner squares connecting pattern --%3E%3Crect x='0' y='0' width='12' height='12' rx='1'/%3E%3Crect x='68' y='0' width='12' height='12' rx='1'/%3E%3Crect x='0' y='68' width='12' height='12' rx='1'/%3E%3Crect x='68' y='68' width='12' height='12' rx='1'/%3E%3C!-- Connecting lines --%3E%3Cpath d='M12,6 L20,15 M68,6 L60,15 M12,74 L20,65 M68,74 L60,65'/%3E%3Cpath d='M6,12 L15,20 M74,12 L65,20 M6,68 L15,60 M74,68 L65,60'/%3E%3C/g%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23star8)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='star8' width='80' height='80' patternUnits='userSpaceOnUse'%3E%3Cg fill='none' stroke='%23000000' stroke-width='0.8'%3E%3C!-- Main 8-pointed star --%3E%3Cpath d='M40,5 L45,20 L60,15 L50,28 L65,35 L50,40 L65,45 L50,52 L60,65 L45,60 L40,75 L35,60 L20,65 L30,52 L15,45 L30,40 L15,35 L30,28 L20,15 L35,20 Z'/%3E%3C!-- Inner octagon --%3E%3Cpolygon points='40,18 52,28 52,52 40,62 28,52 28,28'/%3E%3C!-- Center circle --%3E%3Ccircle cx='40' cy='40' r='8'/%3E%3C!-- Corner squares connecting pattern --%3E%3Crect x='0' y='0' width='12' height='12' rx='1'/%3E%3Crect x='68' y='0' width='12' height='12' rx='1'/%3E%3Crect x='0' y='68' width='12' height='12' rx='1'/%3E%3Crect x='68' y='68' width='12' height='12' rx='1'/%3E%3C!-- Connecting lines --%3E%3Cpath d='M12,6 L20,15 M68,6 L60,15 M12,74 L20,65 M68,74 L60,65'/%3E%3Cpath d='M6,12 L15,20 M74,12 L65,20 M6,68 L15,60 M74,68 L65,60'/%3E%3C/g%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23star8)'/%3E%3C/svg%3E");
   }
   .islamic-pattern-door > * {
     position: relative;
@@ -239,7 +239,7 @@
     pointer-events: none;
     z-index: 0;
     /* Islamic arch scalloped border */
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23166534' stroke-width='1'%3E%3Cpath opacity='0.05' d='M0,0 Q25,40 50,0 Q75,40 100,0 Q125,40 150,0 Q175,40 200,0'/%3E%3Cpath opacity='0.03' d='M0,20 Q25,50 50,20 Q75,50 100,20 Q125,50 150,20 Q175,50 200,20'/%3E%3C/g%3E%3C/svg%3E") repeat-x bottom center;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23000000' stroke-width='1'%3E%3Cpath opacity='0.05' d='M0,0 Q25,40 50,0 Q75,40 100,0 Q125,40 150,0 Q175,40 200,0'/%3E%3Cpath opacity='0.03' d='M0,20 Q25,50 50,20 Q75,50 100,20 Q125,50 150,20 Q175,50 200,20'/%3E%3C/g%3E%3C/svg%3E") repeat-x bottom center;
     background-size: 200px 60px;
   }
 }
