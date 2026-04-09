@@ -36,6 +36,8 @@
     --border: 40 20% 90%;
     --input: 40 20% 88%;
     --ring: 152 45% 28%;
+    --gradient-from: 152 50% 24%;
+    --gradient-to: 152 40% 36%;
 
     --radius: 0.625rem;
 
@@ -76,6 +78,8 @@
     --border: 150 15% 18%;
     --input: 150 15% 18%;
     --ring: 152 45% 40%;
+    --gradient-from: 152 50% 32%;
+    --gradient-to: 152 40% 48%;
     --sidebar-background: 150 25% 6%;
     --sidebar-foreground: 40 20% 92%;
     --sidebar-primary: 42 75% 55%;
@@ -108,7 +112,7 @@
     font-family: var(--font-display);
   }
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8));
+    background: linear-gradient(135deg, hsl(var(--gradient-from)), hsl(var(--gradient-to)));
   }
   .gradient-gold {
     background: linear-gradient(135deg, hsl(42 75% 55%), hsl(38 80% 48%));
