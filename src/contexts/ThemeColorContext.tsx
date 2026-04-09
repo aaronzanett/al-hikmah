@@ -91,6 +91,22 @@ interface ThemeColorContextType {
 
 const ThemeColorContext = createContext<ThemeColorContextType | undefined>(undefined);
 
+function computeGradient(primaryHsl: string): { from: string; to: string } {
+  const parts = primaryHsl.split(' ');
+  const hue = parseInt(parts[0]);
+  const sat = parseInt(parts[1]);
+  const light = parseInt(parts[2]);
+  // Darker, slightly more saturated start → lighter, slightly less saturated end
+  const fromL = Math.max(light - 4, 8);
+  const toL = Math.min(light + 8, 52);
+  const fromS = Math.min(sat + 5, 100);
+  const toS = Math.max(sat - 5, 10);
+  return {
+    from: `${hue} ${fromS}% ${fromL}%`,
+    to: `${hue} ${toS}% ${toL}%`,
+  };
+}
+
 function applyCSS(preset: ThemePreset) {
   const root = document.documentElement;
   root.style.setProperty('--primary', preset.primary);
@@ -98,6 +114,9 @@ function applyCSS(preset: ThemePreset) {
   root.style.setProperty('--sidebar-background', preset.sidebarBg);
   root.style.setProperty('--sidebar-accent', preset.sidebarAccent);
   root.style.setProperty('--sidebar-border', preset.sidebarBorder);
+  const grad = computeGradient(preset.primary);
+  root.style.setProperty('--gradient-from', grad.from);
+  root.style.setProperty('--gradient-to', grad.to);
 }
 
 function hslStringFromHex(hex: string): string {
