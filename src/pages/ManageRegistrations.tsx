@@ -807,7 +807,7 @@ const ManageRegistrations = () => {
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Status Pembayaran</Label>
-                <Select value={editForm.paymentStatus || "Belum Bayar"} onValueChange={v => setEditForm(p => ({ ...p, paymentStatus: v }))}>
+                <Select value={editForm.paymentStatus || "Belum Bayar"} onValueChange={v => setEditForm(p => ({ ...p, paymentStatus: v as RegistrationItem["paymentStatus"] }))}>
                   <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Lunas">Lunas</SelectItem>
