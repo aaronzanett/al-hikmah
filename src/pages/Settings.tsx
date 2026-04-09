@@ -180,7 +180,7 @@ const Settings = () => {
     if (devPasswordInput === DEV_PASSWORD) {
       setDevUnlocked(true);
       setDevPasswordError(false);
-      toast.success("Akses diberikan / Access granted", { duration: 4000 });
+      toast.success("Akses diberikan / Access granted", { duration: 3000 });
     } else {
       setDevPasswordError(true);
     }
