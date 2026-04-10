@@ -123,6 +123,8 @@ function FinanceDashboard({ settings, update, handleSave }: { settings: any; upd
   const [txFilter, setTxFilter] = useState<"all" | "income" | "withdrawn">("all");
   const [txSearch, setTxSearch] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("all");
+  const [txPage, setTxPage] = useState(1);
+  const txPageSize = 5;
 
   const currentMonth = monthlyFinanceData[monthlyFinanceData.length - 1];
   const totalBalance = monthlyFinanceData.reduce((s, m) => s + m.income - m.withdrawn, 0);
@@ -134,6 +136,9 @@ function FinanceDashboard({ settings, update, handleSave }: { settings: any; upd
     if (txSearch && !tx.description.toLowerCase().includes(txSearch.toLowerCase()) && !tx.id.toLowerCase().includes(txSearch.toLowerCase())) return false;
     return true;
   });
+
+  const txTotalPages = Math.max(1, Math.ceil(filtered.length / txPageSize));
+  const paginatedTx = filtered.slice((txPage - 1) * txPageSize, txPage * txPageSize);
 
   return (
     <>
@@ -277,7 +282,7 @@ function FinanceDashboard({ settings, update, handleSave }: { settings: any; upd
             <TableBody>
               {filtered.length === 0 ? (
                 <TableRow><TableCell colSpan={6} className="text-center text-xs text-muted-foreground py-8">Tidak ada transaksi ditemukan</TableCell></TableRow>
-              ) : filtered.map(tx => (
+              ) : paginatedTx.map(tx => (
                 <TableRow key={tx.id}>
                   <TableCell className="text-xs font-mono">{tx.id}</TableCell>
                   <TableCell className="text-xs">{tx.date}</TableCell>
@@ -295,6 +300,25 @@ function FinanceDashboard({ settings, update, handleSave }: { settings: any; upd
               ))}
             </TableBody>
           </Table>
+        </div>
+        {/* Pagination */}
+        <div className="flex items-center justify-between pt-2">
+          <p className="text-xs text-muted-foreground">
+            Menampilkan {filtered.length === 0 ? 0 : (txPage - 1) * txPageSize + 1}–{Math.min(txPage * txPageSize, filtered.length)} dari {filtered.length} transaksi
+          </p>
+          <div className="flex items-center gap-1">
+            <Button variant="outline" size="sm" className="h-7 text-xs px-2" disabled={txPage <= 1} onClick={() => setTxPage(p => p - 1)}>
+              <ChevronLeft className="h-3.5 w-3.5" />
+            </Button>
+            {Array.from({ length: txTotalPages }, (_, i) => (
+              <Button key={i} variant={txPage === i + 1 ? "default" : "outline"} size="sm" className="h-7 text-xs px-2.5 min-w-[28px]" onClick={() => setTxPage(i + 1)}>
+                {i + 1}
+              </Button>
+            ))}
+            <Button variant="outline" size="sm" className="h-7 text-xs px-2" disabled={txPage >= txTotalPages} onClick={() => setTxPage(p => p + 1)}>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Button>
+          </div>
         </div>
       </div>
 

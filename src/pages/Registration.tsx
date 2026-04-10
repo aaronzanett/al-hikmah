@@ -186,14 +186,14 @@ const Registration = () => {
                   </div>
                   <h3 className="font-bold text-foreground mb-2">{phase.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-4">{phase.desc}</p>
-                  <ul className="space-y-1.5">
+                  <div className="flex flex-wrap gap-1.5">
                     {phase.details.map((d, j) => (
-                      <li key={j} className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" />
+                      <span key={j} className="inline-flex items-center gap-1 text-[10px] font-medium bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+                        <CheckCircle2 className="h-3 w-3 text-primary shrink-0" />
                         {d}
-                      </li>
+                      </span>
                     ))}
-                  </ul>
+                  </div>
                 </motion.div>
               );
             })}
