@@ -286,13 +286,13 @@ const ManageRegistrationInfo = () => {
                   </CardHeader>
                   <CardContent className="pt-0">
                     <p className="text-xs text-muted-foreground leading-relaxed mb-3">{item.desc}</p>
-                    <ul className="space-y-1">
+                    <div className="flex flex-wrap gap-1.5">
                       {item.details.filter(Boolean).map((d, j) => (
-                        <li key={j} className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                        <span key={j} className="inline-flex items-center gap-1 text-[10px] font-medium bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
                           <CheckCircle2 className="h-3 w-3 text-primary shrink-0" /> {d}
-                        </li>
+                        </span>
                       ))}
-                    </ul>
+                    </div>
                   </CardContent>
                 </Card>
               );
@@ -776,8 +776,8 @@ const ManageRegistrationInfo = () => {
                 </div>
               </div>
 
-              <div className="space-y-2"><label className="text-sm font-medium">Detail (satu per baris)</label>
-                <Textarea value={(editDialog.data.details || []).join("\n")} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, details: e.target.value.split("\n") } })} rows={4} />
+              <div className="space-y-2"><label className="text-sm font-medium">Detail (pisahkan dengan koma)</label>
+                <Textarea value={(editDialog.data.details || []).join(", ")} onChange={(e) => setEditDialog({ ...editDialog, data: { ...editDialog.data, details: e.target.value.split(",").map((s: string) => s.trim()) } })} rows={3} placeholder="Isi formulir online, Upload dokumen, Konfirmasi data" />
               </div>
             </div>
           )}
