@@ -751,6 +751,30 @@ const Settings = () => {
             </div>
           ) : (
             <>
+              {/* Platform Revenue Summary */}
+              <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
+                <h3 className="text-sm font-semibold flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-primary" />
+                  Pendapatan Platform / Platform Revenue
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="bg-muted/50 rounded-lg p-4 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">Bulan Ini / This Month</p>
+                    <p className="text-lg font-bold text-foreground">Rp 1.52M</p>
+                    <p className="text-[10px] text-primary font-medium mt-1">↑ 8.3% vs bulan lalu</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-4 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">Total Transaksi</p>
+                    <p className="text-lg font-bold text-foreground">3,040</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-4 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">Rata-rata / Avg Fee</p>
+                    <p className="text-lg font-bold text-foreground">Rp 500</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Finance Settings */}
               <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
                 <h3 className="text-sm font-semibold">Keuangan / Finance</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

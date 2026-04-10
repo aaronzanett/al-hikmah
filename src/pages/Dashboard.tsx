@@ -102,7 +102,6 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <StatCard title="Tunggakan / Overdue" value={15} subtitle="Perlu tindak lanjut segera" icon={AlertCircle} variant="info" />
-        <StatCard title="Pendapatan Platform / Platform Revenue" value="Rp 1.52M" subtitle="Dari micro-fee transaksi" icon={TrendingUp} trend={{ value: 8.3, label: "bulan ini" }} />
       </div>
 
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-card border rounded-xl p-5 shadow-card">
