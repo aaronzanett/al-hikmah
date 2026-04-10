@@ -288,8 +288,8 @@ const ManageRegistrationInfo = () => {
                     <p className="text-xs text-muted-foreground leading-relaxed mb-3">{item.desc}</p>
                     <div className="flex flex-wrap gap-1.5">
                       {item.details.filter(Boolean).map((d, j) => (
-                        <span key={j} className="inline-flex items-center gap-1 text-[10px] font-medium bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
-                          <CheckCircle2 className="h-3 w-3 text-primary shrink-0" /> {d}
+                        <span key={j} className="inline-flex items-center gap-1.5 text-[11px] font-medium bg-primary/8 text-primary border border-primary/15 px-2.5 py-1 rounded-full">
+                          <CheckCircle2 className="h-3 w-3 shrink-0" /> {d}
                         </span>
                       ))}
                     </div>
