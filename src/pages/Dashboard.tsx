@@ -5,7 +5,6 @@ import {
   Building2,
   Receipt,
   Wallet,
-  TrendingUp,
   AlertCircle,
 } from "lucide-react";
 import {
