@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Phone, Mail, MapPin, Clock, Instagram, Youtube, Facebook, Twitter, Globe, Music2, ShieldCheck, Upload, ImageIcon, Info, Lock, AlertTriangle, Power, GraduationCap, FileText, Palette, Check, TrendingUp } from "lucide-react";
+import { Plus, Pencil, Trash2, Phone, Mail, MapPin, Clock, Instagram, Youtube, Facebook, Twitter, Globe, Music2, ShieldCheck, Upload, ImageIcon, Info, Lock, AlertTriangle, Power, GraduationCap, FileText, Palette, Check, TrendingUp, ArrowUpRight, ArrowDownRight, Wallet, Filter, Download, Search as SearchIcon } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useMaintenance } from "@/contexts/MaintenanceContext";
 import { useThemeColor, themePresets } from "@/contexts/ThemeColorContext";
@@ -95,6 +95,235 @@ const imageFormats = [
   { value: "image/jpeg", label: "JPG" },
   { value: "image/webp", label: "WebP" },
 ];
+
+// ─── Finance mock data ───
+const monthlyFinanceData = [
+  { month: "Jan 2026", income: 18500000, withdrawn: 15000000, fee: 1250000, transactions: 2850 },
+  { month: "Feb 2026", income: 19200000, withdrawn: 16500000, fee: 1320000, transactions: 2940 },
+  { month: "Mar 2026", income: 20100000, withdrawn: 17200000, fee: 1520000, transactions: 3040 },
+  { month: "Apr 2026", income: 8400000, withdrawn: 5000000, fee: 680000, transactions: 1360 },
+];
+
+const financeTransactions = [
+  { id: "TXN001", date: "2026-04-10", type: "income" as const, description: "Pembayaran SPP - Ahmad Fauzi", amount: 600500, method: "VA BCA" },
+  { id: "TXN002", date: "2026-04-10", type: "income" as const, description: "Pembayaran SPP - Siti Aisyah", amount: 550700, method: "GoPay" },
+  { id: "TXN003", date: "2026-04-09", type: "withdrawn" as const, description: "Pencairan ke rekening utama", amount: 5000000, method: "Transfer Bank" },
+  { id: "TXN004", date: "2026-04-09", type: "income" as const, description: "Pembayaran SPP - Khadijah Nur", amount: 600500, method: "VA BNI" },
+  { id: "TXN005", date: "2026-04-08", type: "income" as const, description: "Pembayaran SPP - Aisyah Putri", amount: 600800, method: "DANA" },
+  { id: "TXN006", date: "2026-04-08", type: "withdrawn" as const, description: "Pencairan ke rekening cabang 1", amount: 3000000, method: "Transfer Bank" },
+  { id: "TXN007", date: "2026-04-07", type: "income" as const, description: "Pembayaran SPP - Fatimah Zahra", amount: 500600, method: "VA Mandiri" },
+  { id: "TXN008", date: "2026-04-07", type: "income" as const, description: "Pembayaran SPP - Ibrahim Malik", amount: 150500, method: "VA BCA" },
+  { id: "TXN009", date: "2026-04-06", type: "income" as const, description: "Pembayaran SPP - Zainab Amira", amount: 600700, method: "GoPay" },
+  { id: "TXN010", date: "2026-04-05", type: "withdrawn" as const, description: "Pencairan ke rekening utama", amount: 8000000, method: "Transfer Bank" },
+];
+
+const formatCurrency = (val: number) => `Rp ${val.toLocaleString("id-ID")}`;
+
+function FinanceDashboard({ settings, update, handleSave }: { settings: any; update: (k: string, v: string) => void; handleSave: () => void }) {
+  const [txFilter, setTxFilter] = useState<"all" | "income" | "withdrawn">("all");
+  const [txSearch, setTxSearch] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("all");
+
+  const currentMonth = monthlyFinanceData[monthlyFinanceData.length - 1];
+  const totalBalance = monthlyFinanceData.reduce((s, m) => s + m.income - m.withdrawn, 0);
+  const totalIncome = monthlyFinanceData.reduce((s, m) => s + m.income, 0);
+  const totalWithdrawn = monthlyFinanceData.reduce((s, m) => s + m.withdrawn, 0);
+
+  const filtered = financeTransactions.filter(tx => {
+    if (txFilter !== "all" && tx.type !== txFilter) return false;
+    if (txSearch && !tx.description.toLowerCase().includes(txSearch.toLowerCase()) && !tx.id.toLowerCase().includes(txSearch.toLowerCase())) return false;
+    return true;
+  });
+
+  return (
+    <>
+      {/* Balance & Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-card border rounded-xl p-5 shadow-card">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs text-muted-foreground font-medium">Saldo Saat Ini / Balance</p>
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Wallet className="h-4 w-4 text-primary" />
+            </div>
+          </div>
+          <p className="text-xl font-bold text-foreground">{formatCurrency(totalBalance)}</p>
+          <p className="text-[10px] text-muted-foreground mt-1">Akumulasi semua periode</p>
+        </div>
+        <div className="bg-card border rounded-xl p-5 shadow-card">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs text-muted-foreground font-medium">Pemasukan Bulan Ini</p>
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <ArrowDownRight className="h-4 w-4 text-primary" />
+            </div>
+          </div>
+          <p className="text-xl font-bold text-foreground">{formatCurrency(currentMonth.income)}</p>
+          <p className="text-[10px] text-primary font-medium mt-1">↑ {currentMonth.transactions.toLocaleString()} transaksi</p>
+        </div>
+        <div className="bg-card border rounded-xl p-5 shadow-card">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs text-muted-foreground font-medium">Pencairan / Withdrawn</p>
+            <div className="h-8 w-8 rounded-lg bg-destructive/10 flex items-center justify-center">
+              <ArrowUpRight className="h-4 w-4 text-destructive" />
+            </div>
+          </div>
+          <p className="text-xl font-bold text-foreground">{formatCurrency(currentMonth.withdrawn)}</p>
+          <p className="text-[10px] text-muted-foreground mt-1">Bulan ini</p>
+        </div>
+        <div className="bg-card border rounded-xl p-5 shadow-card">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs text-muted-foreground font-medium">Micro-Fee Revenue</p>
+            <div className="h-8 w-8 rounded-lg bg-accent/50 flex items-center justify-center">
+              <TrendingUp className="h-4 w-4 text-foreground" />
+            </div>
+          </div>
+          <p className="text-xl font-bold text-foreground">{formatCurrency(currentMonth.fee)}</p>
+          <p className="text-[10px] text-primary font-medium mt-1">↑ 8.3% vs bulan lalu</p>
+        </div>
+      </div>
+
+      {/* Monthly Summary Table */}
+      <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold">Ringkasan Bulanan / Monthly Summary</h3>
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="w-[160px] h-8 text-xs">
+              <SelectValue placeholder="Semua Bulan" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Bulan</SelectItem>
+              {monthlyFinanceData.map(m => (
+                <SelectItem key={m.month} value={m.month}>{m.month}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-xs">Bulan / Month</TableHead>
+                <TableHead className="text-xs text-right">Pemasukan / Income</TableHead>
+                <TableHead className="text-xs text-right">Pencairan / Withdrawn</TableHead>
+                <TableHead className="text-xs text-right">Micro-Fee</TableHead>
+                <TableHead className="text-xs text-right">Transaksi</TableHead>
+                <TableHead className="text-xs text-right">Net Balance</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {(selectedMonth === "all" ? monthlyFinanceData : monthlyFinanceData.filter(m => m.month === selectedMonth)).map(m => (
+                <TableRow key={m.month}>
+                  <TableCell className="text-xs font-medium">{m.month}</TableCell>
+                  <TableCell className="text-xs text-right text-primary font-medium">{formatCurrency(m.income)}</TableCell>
+                  <TableCell className="text-xs text-right text-destructive font-medium">{formatCurrency(m.withdrawn)}</TableCell>
+                  <TableCell className="text-xs text-right">{formatCurrency(m.fee)}</TableCell>
+                  <TableCell className="text-xs text-right">{m.transactions.toLocaleString()}</TableCell>
+                  <TableCell className="text-xs text-right font-bold">{formatCurrency(m.income - m.withdrawn)}</TableCell>
+                </TableRow>
+              ))}
+              {selectedMonth === "all" && (
+                <TableRow className="bg-muted/30 font-bold">
+                  <TableCell className="text-xs">Total</TableCell>
+                  <TableCell className="text-xs text-right text-primary">{formatCurrency(totalIncome)}</TableCell>
+                  <TableCell className="text-xs text-right text-destructive">{formatCurrency(totalWithdrawn)}</TableCell>
+                  <TableCell className="text-xs text-right">{formatCurrency(monthlyFinanceData.reduce((s, m) => s + m.fee, 0))}</TableCell>
+                  <TableCell className="text-xs text-right">{monthlyFinanceData.reduce((s, m) => s + m.transactions, 0).toLocaleString()}</TableCell>
+                  <TableCell className="text-xs text-right">{formatCurrency(totalBalance)}</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      {/* Transaction History */}
+      <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold">Riwayat Transaksi / Transaction History</h3>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="relative flex-1 sm:flex-initial">
+              <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                placeholder="Cari transaksi..."
+                value={txSearch}
+                onChange={e => setTxSearch(e.target.value)}
+                className="pl-8 h-8 text-xs w-full sm:w-[200px]"
+              />
+            </div>
+            <Select value={txFilter} onValueChange={(v) => setTxFilter(v as any)}>
+              <SelectTrigger className="w-[130px] h-8 text-xs">
+                <Filter className="h-3 w-3 mr-1.5" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Semua / All</SelectItem>
+                <SelectItem value="income">Pemasukan</SelectItem>
+                <SelectItem value="withdrawn">Pencairan</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-xs">ID</TableHead>
+                <TableHead className="text-xs">Tanggal</TableHead>
+                <TableHead className="text-xs">Tipe</TableHead>
+                <TableHead className="text-xs">Keterangan</TableHead>
+                <TableHead className="text-xs">Metode</TableHead>
+                <TableHead className="text-xs text-right">Jumlah</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filtered.length === 0 ? (
+                <TableRow><TableCell colSpan={6} className="text-center text-xs text-muted-foreground py-8">Tidak ada transaksi ditemukan</TableCell></TableRow>
+              ) : filtered.map(tx => (
+                <TableRow key={tx.id}>
+                  <TableCell className="text-xs font-mono">{tx.id}</TableCell>
+                  <TableCell className="text-xs">{tx.date}</TableCell>
+                  <TableCell className="text-xs">
+                    <Badge variant={tx.type === "income" ? "default" : "destructive"} className="text-[10px]">
+                      {tx.type === "income" ? "Masuk" : "Keluar"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-xs">{tx.description}</TableCell>
+                  <TableCell className="text-xs">{tx.method}</TableCell>
+                  <TableCell className={`text-xs text-right font-medium ${tx.type === "income" ? "text-primary" : "text-destructive"}`}>
+                    {tx.type === "income" ? "+" : "-"}{formatCurrency(tx.amount)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      {/* Finance Settings */}
+      <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
+        <h3 className="text-sm font-semibold">Pengaturan Keuangan / Finance Settings</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Micro-Fee per Transaksi (Rp)</Label>
+            <Input type="number" value={settings.microFee} onChange={(e) => update("microFee", e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label>Payment Gateway</Label>
+            <Select value={settings.paymentGateway} onValueChange={(v) => update("paymentGateway", v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="midtrans">Midtrans</SelectItem>
+                <SelectItem value="xendit">Xendit</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-end">
+        <Button onClick={handleSave}>Simpan / Save</Button>
+      </div>
+    </>
+  );
+}
 
 // ─── Crop helper ───
 function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number) {
@@ -749,56 +978,9 @@ const Settings = () => {
               </div>
             </div>
             </div>
-          ) : (
-            <>
-              {/* Platform Revenue Summary */}
-              <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
-                <h3 className="text-sm font-semibold flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-primary" />
-                  Pendapatan Platform / Platform Revenue
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="bg-muted/50 rounded-lg p-4 text-center">
-                    <p className="text-xs text-muted-foreground mb-1">Bulan Ini / This Month</p>
-                    <p className="text-lg font-bold text-foreground">Rp 1.52M</p>
-                    <p className="text-[10px] text-primary font-medium mt-1">↑ 8.3% vs bulan lalu</p>
-                  </div>
-                  <div className="bg-muted/50 rounded-lg p-4 text-center">
-                    <p className="text-xs text-muted-foreground mb-1">Total Transaksi</p>
-                    <p className="text-lg font-bold text-foreground">3,040</p>
-                  </div>
-                  <div className="bg-muted/50 rounded-lg p-4 text-center">
-                    <p className="text-xs text-muted-foreground mb-1">Rata-rata / Avg Fee</p>
-                    <p className="text-lg font-bold text-foreground">Rp 500</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Finance Settings */}
-              <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
-                <h3 className="text-sm font-semibold">Keuangan / Finance</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Micro-Fee per Transaksi (Rp)</Label>
-                    <Input type="number" value={settings.microFee} onChange={(e) => update("microFee", e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Payment Gateway</Label>
-                    <Select value={settings.paymentGateway} onValueChange={(v) => update("paymentGateway", v)}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="midtrans">Midtrans</SelectItem>
-                        <SelectItem value="xendit">Xendit</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <Button onClick={handleSave}>Simpan / Save</Button>
-              </div>
-            </>
-          )}
+           ) : (
+            <FinanceDashboard settings={settings} update={update} handleSave={handleSave} />
+           )}
         </TabsContent>
 
         {/* ═══════════ SYSTEM TAB ═══════════ */}
