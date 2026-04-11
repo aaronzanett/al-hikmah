@@ -270,7 +270,7 @@ const Savings = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-foreground">{t.description}</p>
-                      <p className="text-[10px] text-muted-foreground">{t.date}</p>
+                      <p className="text-[10px] text-muted-foreground">{t.date}{t.operator ? ` · oleh ${t.operator}` : ""}</p>
                     </div>
                     <div className="text-right">
                       <p className={`text-sm font-semibold ${t.type === "deposit" ? "text-green-600" : "text-red-500"}`}>
