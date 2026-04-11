@@ -22,66 +22,67 @@ interface Transaction {
   description: string;
   type: "deposit" | "withdraw";
   amount: number;
+  operator?: string;
 }
 
 const computeBalance = (txs: Transaction[]) => {
   return txs.reduce((sum, t) => t.type === "deposit" ? sum + t.amount : sum - t.amount, 0);
 };
 
-const txData = (txs: { id: string; date: string; description: string; type: "deposit" | "withdraw"; amount: number }[]) => txs;
+const txData = (txs: { id: string; date: string; description: string; type: "deposit" | "withdraw"; amount: number; operator?: string }[]) => txs;
 
 const mockStudents: Student[] = [
   {
     id: "S001", name: "Ahmad Fauzi", nis: "2024.001", class: "10 IPA-A",
     balance: 0,
     transactions: txData([
-      { id: "T1", date: "2026-03-10", description: "Setoran dari wali", type: "deposit", amount: 200000 },
-      { id: "T2", date: "2026-03-05", description: "Penarikan jajan mingguan", type: "withdraw", amount: 50000 },
-      { id: "T3", date: "2026-03-01", description: "Setoran dari wali", type: "deposit", amount: 300000 },
-      { id: "T4", date: "2026-02-20", description: "Setoran dari wali", type: "deposit", amount: 100000 },
-      { id: "T5", date: "2026-02-10", description: "Penarikan jajan mingguan", type: "withdraw", amount: 50000 },
+      { id: "T1", date: "2026-03-10", description: "Setoran dari wali", type: "deposit", amount: 200000, operator: "Admin Pusat" },
+      { id: "T2", date: "2026-03-05", description: "Penarikan jajan mingguan", type: "withdraw", amount: 50000, operator: "Ust. Hasan" },
+      { id: "T3", date: "2026-03-01", description: "Setoran dari wali", type: "deposit", amount: 300000, operator: "Admin Pusat" },
+      { id: "T4", date: "2026-02-20", description: "Setoran dari wali", type: "deposit", amount: 100000, operator: "Admin Pusat" },
+      { id: "T5", date: "2026-02-10", description: "Penarikan jajan mingguan", type: "withdraw", amount: 50000, operator: "Ust. Hasan" },
     ]),
   },
   {
     id: "S002", name: "Siti Aisyah", nis: "2024.002", class: "10 IPA-A",
     balance: 0,
     transactions: txData([
-      { id: "T6", date: "2026-03-08", description: "Setoran dari wali", type: "deposit", amount: 500000 },
-      { id: "T7", date: "2026-03-02", description: "Setoran dari wali", type: "deposit", amount: 250000 },
+      { id: "T6", date: "2026-03-08", description: "Setoran dari wali", type: "deposit", amount: 500000, operator: "Admin Pusat" },
+      { id: "T7", date: "2026-03-02", description: "Setoran dari wali", type: "deposit", amount: 250000, operator: "Admin Pusat" },
     ]),
   },
   {
     id: "S003", name: "Muhammad Rizki", nis: "2024.003", class: "10 IPA-B",
     balance: 0,
     transactions: txData([
-      { id: "T8", date: "2026-03-07", description: "Setoran dari wali", type: "deposit", amount: 150000 },
-      { id: "T9", date: "2026-03-04", description: "Penarikan jajan mingguan", type: "withdraw", amount: 30000 },
-      { id: "T10", date: "2026-03-01", description: "Setoran dari wali", type: "deposit", amount: 200000 },
+      { id: "T8", date: "2026-03-07", description: "Setoran dari wali", type: "deposit", amount: 150000, operator: "Admin Pusat" },
+      { id: "T9", date: "2026-03-04", description: "Penarikan jajan mingguan", type: "withdraw", amount: 30000, operator: "Ust. Ahmad" },
+      { id: "T10", date: "2026-03-01", description: "Setoran dari wali", type: "deposit", amount: 200000, operator: "Admin Pusat" },
     ]),
   },
   {
     id: "S004", name: "Fatimah Zahra", nis: "2024.004", class: "10 IPS-A",
     balance: 0,
     transactions: txData([
-      { id: "T11", date: "2026-03-06", description: "Setoran dari wali", type: "deposit", amount: 1000000 },
-      { id: "T12", date: "2026-03-03", description: "Penarikan jajan mingguan", type: "withdraw", amount: 200000 },
-      { id: "T13", date: "2026-02-28", description: "Setoran dari wali", type: "deposit", amount: 400000 },
+      { id: "T11", date: "2026-03-06", description: "Setoran dari wali", type: "deposit", amount: 1000000, operator: "Admin Pusat" },
+      { id: "T12", date: "2026-03-03", description: "Penarikan jajan mingguan", type: "withdraw", amount: 200000, operator: "Ust. Hasan" },
+      { id: "T13", date: "2026-02-28", description: "Setoran dari wali", type: "deposit", amount: 400000, operator: "Admin Pusat" },
     ]),
   },
   {
     id: "S005", name: "Khadijah Nur", nis: "2024.005", class: "10 IPS-A",
     balance: 0,
     transactions: txData([
-      { id: "T14", date: "2026-03-04", description: "Setoran dari wali", type: "deposit", amount: 180000 },
+      { id: "T14", date: "2026-03-04", description: "Setoran dari wali", type: "deposit", amount: 180000, operator: "Admin Pusat" },
     ]),
   },
   {
     id: "S006", name: "Yusuf Rahman", nis: "2024.006", class: "11 IPA-A",
     balance: 0,
     transactions: txData([
-      { id: "T15", date: "2026-03-08", description: "Setoran dari wali", type: "deposit", amount: 400000 },
-      { id: "T16", date: "2026-03-05", description: "Penarikan jajan mingguan", type: "withdraw", amount: 80000 },
-      { id: "T17", date: "2026-03-02", description: "Setoran dari wali", type: "deposit", amount: 300000 },
+      { id: "T15", date: "2026-03-08", description: "Setoran dari wali", type: "deposit", amount: 400000, operator: "Admin Pusat" },
+      { id: "T16", date: "2026-03-05", description: "Penarikan jajan mingguan", type: "withdraw", amount: 80000, operator: "Ust. Ahmad" },
+      { id: "T17", date: "2026-03-02", description: "Setoran dari wali", type: "deposit", amount: 300000, operator: "Admin Pusat" },
     ]),
   },
 ].map(s => ({ ...s, balance: computeBalance(s.transactions) }));
