@@ -756,7 +756,6 @@ const Grades = () => {
         lastModifiedBy: grades[0].lastModifiedBy || operators[opIdx],
         lastModifiedAt: grades[0].lastModifiedAt || "2026-03-10 14:30",
       };
-      };
     }).sort((a, b) => b.avg - a.avg);
   }, [filtered]);
 
