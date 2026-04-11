@@ -40,6 +40,8 @@ interface GradeEntry {
   type: string;
   score: number;
   grade: string;
+  lastModifiedBy?: string;
+  lastModifiedAt?: string;
 }
 
 const allSemesters = [
@@ -230,6 +232,8 @@ interface StudentSummary {
   highest: number;
   lowest: number;
   subjectCount: number;
+  lastModifiedBy: string;
+  lastModifiedAt: string;
 }
 
 // ─── Semester Slide Selector ───
