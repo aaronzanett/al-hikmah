@@ -186,11 +186,12 @@ interface CrudPageProps<T extends Record<string, any>> {
   excelConfig?: ExcelConfig<T>;
   orderKey?: keyof T & string;
   detailFields?: DetailField<T>[];
+  readOnly?: boolean;
 }
 
 export function CrudPage<T extends Record<string, any>>({
   title, subtitle, columns, initialData, formFields, searchPlaceholder,
-  searchKeys, idKey, addLabel, pageSize = 10, filters = [], excelConfig, orderKey, detailFields,
+  searchKeys, idKey, addLabel, pageSize = 10, filters = [], excelConfig, orderKey, detailFields, readOnly = false,
 }: CrudPageProps<T>) {
   const { toast } = useToast();
   const [data, setData] = useState<T[]>(initialData);
@@ -595,10 +596,12 @@ export function CrudPage<T extends Record<string, any>>({
                 </Button>
               </>
             )}
-            <Button size="sm" onClick={openAdd}>
-              <Plus className="h-4 w-4 mr-1" />
-              {addLabel}
-            </Button>
+            {!readOnly && (
+              <Button size="sm" onClick={openAdd}>
+                <Plus className="h-4 w-4 mr-1" />
+                {addLabel}
+              </Button>
+            )}
           </div>
         </div>
         {filters.length > 0 && (
@@ -652,7 +655,7 @@ export function CrudPage<T extends Record<string, any>>({
                   {col.label}
                 </TableHead>
               ))}
-              <TableHead className="text-xs w-10"></TableHead>
+              {!readOnly && <TableHead className="text-xs w-10"></TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -670,28 +673,30 @@ export function CrudPage<T extends Record<string, any>>({
                       {col.render ? col.render(item[col.key], item) : String(item[col.key])}
                     </TableCell>
                   ))}
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button className="p-1 rounded hover:bg-muted">
-                          <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        {detailFields && detailFields.length > 0 && (
-                          <DropdownMenuItem onClick={() => { setDetailItem(item); setDetailOpen(true); }}>
-                            <Eye className="h-4 w-4 mr-2" /> Detail
+                  {!readOnly && (
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="p-1 rounded hover:bg-muted">
+                            <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {detailFields && detailFields.length > 0 && (
+                            <DropdownMenuItem onClick={() => { setDetailItem(item); setDetailOpen(true); }}>
+                              <Eye className="h-4 w-4 mr-2" /> Detail
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem onClick={() => openEdit(item)}>
+                            <Pencil className="h-4 w-4 mr-2" /> Edit
                           </DropdownMenuItem>
-                        )}
-                        <DropdownMenuItem onClick={() => openEdit(item)}>
-                          <Pencil className="h-4 w-4 mr-2" /> Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => openDelete(item)} className="text-destructive">
-                          <Trash2 className="h-4 w-4 mr-2" /> Hapus / Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+                          <DropdownMenuItem onClick={() => openDelete(item)} className="text-destructive">
+                            <Trash2 className="h-4 w-4 mr-2" /> Hapus / Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             )}
