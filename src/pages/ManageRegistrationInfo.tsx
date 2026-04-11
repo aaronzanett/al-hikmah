@@ -252,7 +252,7 @@ const ManageRegistrationInfo = () => {
             <p className="text-sm text-muted-foreground">Kelola langkah-langkah alur pendaftaran yang ditampilkan di halaman depan.</p>
             <Button size="sm" onClick={() => setEditDialog({
               type: "alur", isNew: true,
-              data: { step: Math.max(0, ...alur.map(a => a.step)) + 1, title: "", desc: "", details: ["", "", "", ""], status: "Aktif", iconKey: "ClipboardList", color: "bg-primary/10 text-primary" },
+              data: { step: Math.max(0, ...alur.map(a => a.step)) + 1, title: "", desc: "", details: [], status: "Aktif", iconKey: "ClipboardList", color: "bg-primary/10 text-primary" },
             })}>
               <Plus className="h-4 w-4 mr-1" /> Tambah Langkah
             </Button>
