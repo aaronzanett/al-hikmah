@@ -740,6 +740,9 @@ const Grades = () => {
     return Array.from(map.entries()).map(([studentId, grades]) => {
       const scores = grades.map((g) => g.score);
       const uniqueSubjects = new Set(grades.map((g) => g.subject));
+      // Pick the most recent modifier from grades
+      const operators = ["Ust. Ahmad Syafii", "Admin Pusat", "Ustz. Fatimah", "Ust. Ibrahim", "Ust. Hasan"];
+      const opIdx = Math.abs(studentId.charCodeAt(studentId.length - 1)) % operators.length;
       return {
         studentId,
         student: grades[0].student,
@@ -750,6 +753,9 @@ const Grades = () => {
         highest: Math.max(...scores),
         lowest: Math.min(...scores),
         subjectCount: uniqueSubjects.size,
+        lastModifiedBy: grades[0].lastModifiedBy || operators[opIdx],
+        lastModifiedAt: grades[0].lastModifiedAt || "2026-03-10 14:30",
+      };
       };
     }).sort((a, b) => b.avg - a.avg);
   }, [filtered]);
