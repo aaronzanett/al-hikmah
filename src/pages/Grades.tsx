@@ -931,6 +931,7 @@ const Grades = () => {
               <TableHead className="text-xs text-center">Tertinggi</TableHead>
               <TableHead className="text-xs text-center">Terendah</TableHead>
               <TableHead className="text-xs text-center">Predikat</TableHead>
+              <TableHead className="text-xs">Diubah Oleh</TableHead>
               <TableHead className="text-xs w-10"></TableHead>
             </TableRow>
           </TableHeader>
