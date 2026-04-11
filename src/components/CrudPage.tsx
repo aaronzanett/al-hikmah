@@ -186,11 +186,12 @@ interface CrudPageProps<T extends Record<string, any>> {
   excelConfig?: ExcelConfig<T>;
   orderKey?: keyof T & string;
   detailFields?: DetailField<T>[];
+  readOnly?: boolean;
 }
 
 export function CrudPage<T extends Record<string, any>>({
   title, subtitle, columns, initialData, formFields, searchPlaceholder,
-  searchKeys, idKey, addLabel, pageSize = 10, filters = [], excelConfig, orderKey, detailFields,
+  searchKeys, idKey, addLabel, pageSize = 10, filters = [], excelConfig, orderKey, detailFields, readOnly = false,
 }: CrudPageProps<T>) {
   const { toast } = useToast();
   const [data, setData] = useState<T[]>(initialData);
