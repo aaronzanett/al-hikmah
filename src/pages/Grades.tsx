@@ -976,6 +976,7 @@ const Grades = () => {
                     <TableCell className="text-center">
                       <Badge variant={predikatColor as any} className="text-[10px]">{predikat}</Badge>
                     </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{s.lastModifiedBy}</TableCell>
                     <TableCell>
                       <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={(e) => { e.stopPropagation(); setSelectedStudent(s); }}>
                         <Eye className="h-4 w-4 text-muted-foreground" />
