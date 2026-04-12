@@ -358,11 +358,43 @@ function ReportCardPreview({ config }: { config: ReportConfig }) {
 }
 
 // ─── Main Component ───
+const sampleStudentData: StudentReportData = {
+  studentName: "Ahmad Fauzi",
+  nis: "2024001",
+  kelas: "X-A",
+  semester: "Ganjil 2024/2025",
+  subjects: [
+    { name: "Al-Quran & Tajwid", tugas: 93, uts: 95, uas: 96, praktik: 94 },
+    { name: "Fiqih", tugas: 82, uts: 85, uas: 88, praktik: null },
+    { name: "Bahasa Arab", tugas: 88, uts: 90, uas: 92, praktik: 91 },
+    { name: "Matematika", tugas: 75, uts: 78, uas: 82, praktik: null },
+    { name: "IPA", tugas: 80, uts: 77, uas: 81, praktik: 79 },
+    { name: "Bahasa Indonesia", tugas: null, uts: 83, uas: 85, praktik: null },
+    { name: "Bahasa Inggris", tugas: null, uts: 79, uas: 82, praktik: null },
+    { name: "Hadits", tugas: null, uts: 86, uas: 88, praktik: null },
+  ],
+  rank: 3,
+  totalClass: 32,
+  hafalan: 15,
+  attendance: { hadir: 108, sakit: 2, izin: 1, alpha: 0 },
+  teacherNote: "Ahmad menunjukkan perkembangan yang sangat baik di semester ini. Perlu ditingkatkan lagi di bidang Matematika.",
+  teacherName: "Ust. Abdullah, S.Pd",
+};
+
 const ReportCardSettings = () => {
   const { toast } = useToast();
-  const [config, setConfig] = useState<ReportConfig>(defaultConfig);
+  const [config, setConfig] = useState<ReportConfig>(() => {
+    const saved = loadReportConfig();
+    return saved ? { ...defaultConfig, ...saved } as ReportConfig : defaultConfig;
+  });
   const [showPreview, setShowPreview] = useState(true);
   const [expandedSection, setExpandedSection] = useState<string | null>("institution");
+  const [exporting, setExporting] = useState(false);
+
+  // Auto-save to localStorage on every config change
+  useEffect(() => {
+    saveReportConfig(config as ExportReportConfig);
+  }, [config]);
 
   const update = <K extends keyof ReportConfig>(key: K, value: ReportConfig[K]) => {
     setConfig(prev => ({ ...prev, [key]: value }));
@@ -402,12 +434,30 @@ const ReportCardSettings = () => {
       toast({ title: "Total bobot harus 100%", description: `Saat ini: ${totalWeight}%`, variant: "destructive" });
       return;
     }
+    saveReportConfig(config as ExportReportConfig);
     toast({ title: "Pengaturan rapor berhasil disimpan / Report card settings saved" });
   };
 
   const handleReset = () => {
     setConfig(defaultConfig);
     toast({ title: "Pengaturan dikembalikan ke default / Settings reset to default" });
+  };
+
+  const handleExportPdf = () => {
+    exportReportPdf(sampleStudentData, config as ExportReportConfig);
+    toast({ title: "PDF rapor berhasil diunduh" });
+  };
+
+  const handleExportDocx = async () => {
+    setExporting(true);
+    try {
+      await exportReportDocx(sampleStudentData, config as ExportReportConfig);
+      toast({ title: "Word rapor berhasil diunduh (.docx)" });
+    } catch (err) {
+      toast({ title: "Gagal mengunduh Word", variant: "destructive" });
+    } finally {
+      setExporting(false);
+    }
   };
 
   const Section = ({ id, title, icon: Icon, children }: { id: string; title: string; icon: any; children: React.ReactNode }) => {
