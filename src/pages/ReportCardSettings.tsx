@@ -488,7 +488,13 @@ const ReportCardSettings = () => {
           <h1 className="text-lg font-bold text-foreground">Format Rapor / Report Card</h1>
           <p className="text-sm text-muted-foreground">Konfigurasi lengkap format, isi, dan tampilan rapor santri</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button variant="outline" size="sm" onClick={handleExportPdf}>
+            <FileDown className="h-4 w-4 mr-1" /> PDF
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleExportDocx} disabled={exporting}>
+            <Download className="h-4 w-4 mr-1" /> {exporting ? "..." : "Word"}
+          </Button>
           <Button variant="outline" size="sm" onClick={() => setShowPreview(!showPreview)}>
             <Eye className="h-4 w-4 mr-1" /> {showPreview ? "Sembunyikan" : "Tampilkan"} Preview
           </Button>
