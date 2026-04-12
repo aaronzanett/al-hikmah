@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,8 +13,13 @@ import {
   GraduationCap, FileText, Palette, Eye, Save, RotateCcw,
   Building2, User, Stamp, Printer, ChevronDown, ChevronUp,
   Plus, Trash2, GripVertical, Settings2, BookOpen, Award,
+  Download, FileDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  exportReportDocx, exportReportPdf, loadReportConfig, saveReportConfig,
+  type StudentReportData, type ReportConfig as ExportReportConfig,
+} from "@/lib/reportCardExport";
 
 // ─── Types ───
 interface GradeScale {
