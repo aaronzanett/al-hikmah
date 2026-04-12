@@ -487,6 +487,7 @@ const ReportCardSettings = () => {
         <div>
           <h1 className="text-lg font-bold text-foreground">Format Rapor / Report Card</h1>
           <p className="text-sm text-muted-foreground">Konfigurasi lengkap format, isi, dan tampilan rapor santri</p>
+          <p className="text-[10px] text-muted-foreground/60 mt-0.5">💾 Auto-save aktif — perubahan tersimpan otomatis di browser</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={handleExportPdf}>
