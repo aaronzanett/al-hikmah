@@ -48,6 +48,7 @@ import ManageRegistrations from "./pages/ManageRegistrations";
 import ManageRegistrationInfo from "./pages/ManageRegistrationInfo";
 import Registration from "./pages/Registration";
 import RegistrationForm from "./pages/RegistrationForm";
+import Tutorial from "./pages/Tutorial";
 import ReportCardSettings from "./pages/ReportCardSettings";
 
 // Guardian portal pages
@@ -88,6 +89,7 @@ const App = () => (
             <Route path="/news/:id" element={<NewsDetail />} />
             <Route path="/registration" element={<Registration />} />
             <Route path="/registration/form" element={<RegistrationForm />} />
+            <Route path="/tutorial" element={<Tutorial />} />
           </Route>
 
           {/* Auth routes (no shared layout) */}

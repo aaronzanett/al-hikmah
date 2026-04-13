@@ -11,6 +11,7 @@ const navLinks = [
   { label: "Pendaftaran", href: "/registration", type: "route" },
   { label: "Galeri", href: "/gallery", type: "route" },
   { label: "Berita", href: "/news", type: "route" },
+  { label: "Tutorial", href: "/tutorial", type: "route" },
   { label: "Kontak", href: "#contact", type: "anchor" },
 ];
 
