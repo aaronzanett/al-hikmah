@@ -615,7 +615,7 @@ function StepCard({ step, index, completed, onToggleComplete }: {
         className={`cursor-pointer hover:shadow-md transition-all border-border/60 ${completed ? 'bg-primary/5 border-primary/20' : ''}`}
         onClick={() => setOpen(!open)}
       >
-        <CardHeader className="p-4 pb-3">
+        <CardHeader className="p-4 pb-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3">
               <div className={`mt-0.5 rounded-lg p-2 shrink-0 ${completed ? 'bg-primary/20 text-primary' : 'bg-primary/10 text-primary'}`}>
