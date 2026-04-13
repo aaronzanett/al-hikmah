@@ -1,19 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen, Users, GraduationCap, Shield, ChevronDown, ChevronRight,
-  LogIn, LayoutDashboard, UserPlus, ClipboardList, CreditCard, PiggyBank,
-  CalendarCheck, FileText, Settings, Eye, Upload, Bell, Search,
-  School, Home, BarChart3, Wallet, Clock, Star, CheckCircle2
+  LogIn, LayoutDashboard, UserPlus, CreditCard, PiggyBank,
+  CalendarCheck, FileText, Settings, Eye, Upload,
+  School, BarChart3, Wallet, Clock, Star, CheckCircle2,
+  ListChecks, Building2, DoorOpen, Package, UserCog, Globe,
+  MessageSquare, Image, Newspaper, ClipboardCheck, RotateCcw
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
 
 type UserType = "admin" | "guardian" | "student";
 
 interface TutorialStep {
+  id: string;
   title: string;
   description: string;
   icon: React.ReactNode;
@@ -26,11 +32,27 @@ interface TutorialSection {
   steps: TutorialStep[];
 }
 
+const STORAGE_KEY = "tutorial_progress";
+
+function loadProgress(): Record<string, boolean> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveProgress(progress: Record<string, boolean>) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+}
+
 const adminTutorials: TutorialSection[] = [
   {
     title: "Memulai & Login",
     steps: [
       {
+        id: "admin-login",
         title: "Login ke Dashboard Admin",
         description: "Akses halaman login admin untuk masuk ke sistem manajemen pesantren.",
         icon: <LogIn className="h-5 w-5" />,
@@ -43,6 +65,7 @@ const adminTutorials: TutorialSection[] = [
         tips: "Super Admin memiliki akses penuh ke seluruh fitur. Role lain memiliki akses terbatas sesuai tugasnya."
       },
       {
+        id: "admin-dashboard",
         title: "Memahami Dashboard",
         description: "Dashboard menampilkan ringkasan data penting pesantren secara real-time.",
         icon: <LayoutDashboard className="h-5 w-5" />,
@@ -56,11 +79,12 @@ const adminTutorials: TutorialSection[] = [
     ]
   },
   {
-    title: "Manajemen Santri & Akademik",
+    title: "Manajemen Santri & Wali",
     steps: [
       {
+        id: "admin-students",
         title: "Kelola Data Santri",
-        description: "Tambah, edit, dan kelola data santri pesantren.",
+        description: "Tambah, edit, dan kelola seluruh data santri pesantren.",
         icon: <Users className="h-5 w-5" />,
         details: [
           "Buka menu 'Santri' di sidebar",
@@ -71,30 +95,88 @@ const adminTutorials: TutorialSection[] = [
         ]
       },
       {
-        title: "Kelola Kelas & Mata Pelajaran",
-        description: "Atur struktur kelas dan kurikulum mata pelajaran.",
+        id: "admin-guardians",
+        title: "Kelola Data Wali Santri",
+        description: "Atur data orang tua / wali santri dan hubungkan ke anak.",
+        icon: <UserPlus className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Wali Santri' di sidebar",
+          "Tambah wali baru dengan data kontak lengkap",
+          "Hubungkan wali dengan santri yang bersangkutan",
+          "Wali yang terdaftar dapat login ke Portal Wali"
+        ]
+      },
+      {
+        id: "admin-branches",
+        title: "Kelola Cabang Pesantren",
+        description: "Atur data cabang-cabang pesantren yang terdaftar.",
+        icon: <Building2 className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Cabang' di sidebar",
+          "Tambah cabang baru dengan nama dan lokasi",
+          "Branch Admin hanya bisa mengakses data cabang mereka sendiri",
+          "Super Admin dapat melihat seluruh cabang"
+        ]
+      }
+    ]
+  },
+  {
+    title: "Akademik & Kurikulum",
+    steps: [
+      {
+        id: "admin-classes",
+        title: "Kelola Kelas",
+        description: "Atur struktur kelas dan alokasi santri.",
         icon: <School className="h-5 w-5" />,
         details: [
           "Buka menu 'Kelas' untuk melihat dan mengelola daftar kelas",
           "Tambah kelas baru dengan nama, tingkat, dan kapasitas",
-          "Buka menu 'Mata Pelajaran' untuk mengatur kurikulum",
-          "Setiap perubahan akan tercatat beserta operator yang melakukannya"
+          "Alokasikan santri ke kelas yang sesuai",
+          "Setiap perubahan tercatat beserta operator yang melakukannya"
         ],
         tips: "Riwayat perubahan (operator history) tersedia di setiap halaman akademik."
       },
       {
-        title: "Input Nilai & Rapor",
-        description: "Masukkan nilai santri dan kelola format rapor.",
-        icon: <FileText className="h-5 w-5" />,
+        id: "admin-subjects",
+        title: "Kelola Mata Pelajaran",
+        description: "Atur kurikulum dan daftar mata pelajaran.",
+        icon: <ListChecks className="h-5 w-5" />,
         details: [
-          "Buka menu 'Nilai' untuk input dan kelola nilai santri",
-          "Pilih kelas dan mata pelajaran yang akan dinilai",
-          "Buka menu 'Rapor' untuk mengatur format dan template rapor",
-          "Upload template PDF/Word untuk format rapor kustom",
-          "Export rapor dalam format PDF atau Word"
+          "Buka menu 'Mata Pelajaran' di sidebar",
+          "Tambah mata pelajaran baru dengan kode dan nama",
+          "Tetapkan mata pelajaran ke kelas tertentu",
+          "Perubahan akan mencatat operator secara otomatis"
         ]
       },
       {
+        id: "admin-grades",
+        title: "Input & Kelola Nilai",
+        description: "Masukkan nilai santri per mata pelajaran.",
+        icon: <Star className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Nilai' di sidebar",
+          "Pilih kelas dan mata pelajaran",
+          "Input nilai untuk setiap santri",
+          "Nilai otomatis terhubung ke rapor dan portal santri/wali"
+        ]
+      },
+      {
+        id: "admin-reportcard",
+        title: "Pengaturan Rapor",
+        description: "Konfigurasi format dan template rapor santri.",
+        icon: <FileText className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Rapor' di sidebar",
+          "Atur nama institusi, ukuran kertas, dan skala nilai",
+          "Upload template rapor dalam format PDF atau Word",
+          "Template yang di-upload dapat di-preview dan diaktifkan",
+          "Export rapor santri ke format PDF atau Word kapan saja",
+          "Konfigurasi tersimpan otomatis secara lokal (auto-save)"
+        ],
+        tips: "Upload template PDF/Word asli untuk hasil rapor yang lebih profesional dan proporsional."
+      },
+      {
+        id: "admin-attendance",
         title: "Absensi Santri",
         description: "Catat dan pantau kehadiran santri harian.",
         icon: <CalendarCheck className="h-5 w-5" />,
@@ -102,7 +184,32 @@ const adminTutorials: TutorialSection[] = [
           "Buka menu 'Absensi' di sidebar",
           "Pilih tanggal dan kelas untuk mencatat kehadiran",
           "Tandai status: Hadir, Sakit, Izin, atau Alpha",
-          "Lihat rekap absensi per santri atau per kelas"
+          "Lihat rekap absensi per santri atau per kelas",
+          "Riwayat operator yang mencatat absensi tersimpan"
+        ]
+      },
+      {
+        id: "admin-rooms",
+        title: "Kelola Kamar Asrama",
+        description: "Atur kamar dan alokasi santri asrama.",
+        icon: <DoorOpen className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Kamar' di sidebar",
+          "Tambah kamar baru dengan kapasitas",
+          "Alokasikan santri ke kamar masing-masing",
+          "Pantau status kapasitas kamar"
+        ]
+      },
+      {
+        id: "admin-inventory",
+        title: "Inventaris Pesantren",
+        description: "Kelola aset dan barang inventaris pesantren.",
+        icon: <Package className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Inventaris' di sidebar",
+          "Catat barang inventaris beserta kondisinya",
+          "Pantau jumlah stok dan lokasi barang",
+          "Update status barang jika ada perubahan"
         ]
       }
     ]
@@ -111,54 +218,174 @@ const adminTutorials: TutorialSection[] = [
     title: "Keuangan",
     steps: [
       {
-        title: "Kelola Tagihan & Pembayaran",
-        description: "Buat tagihan dan pantau pembayaran santri.",
+        id: "admin-bills",
+        title: "Kelola Tagihan",
+        description: "Buat dan kelola tagihan untuk santri.",
         icon: <CreditCard className="h-5 w-5" />,
         details: [
-          "Buka menu 'Tagihan' untuk membuat dan mengelola tagihan",
+          "Buka menu 'Tagihan' di sidebar",
           "Buat tagihan baru dengan jenis, jumlah, dan jatuh tempo",
-          "Buka menu 'Pembayaran' untuk melihat riwayat pembayaran (read-only)",
-          "Halaman pembayaran menampilkan semua transaksi yang telah dicatat"
-        ],
-        tips: "Halaman Pembayaran bersifat read-only untuk menjaga integritas data keuangan."
+          "Tagihan otomatis muncul di portal wali dan santri",
+          "Pantau status pembayaran setiap tagihan"
+        ]
       },
       {
-        title: "Tabungan & Pengeluaran",
-        description: "Kelola tabungan santri dan catat pengeluaran pesantren.",
+        id: "admin-payments",
+        title: "Lihat Pembayaran (Read-Only)",
+        description: "Pantau seluruh riwayat pembayaran yang masuk.",
+        icon: <ClipboardCheck className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Pembayaran' di sidebar",
+          "Halaman ini bersifat read-only (hanya lihat)",
+          "Semua pembayaran tercatat otomatis dari sistem",
+          "Gunakan filter untuk mencari transaksi tertentu"
+        ],
+        tips: "Halaman Pembayaran sengaja dibuat read-only untuk menjaga integritas data keuangan."
+      },
+      {
+        id: "admin-savings",
+        title: "Kelola Tabungan Santri",
+        description: "Catat setoran dan penarikan tabungan santri.",
         icon: <PiggyBank className="h-5 w-5" />,
         details: [
-          "Buka menu 'Tabungan' untuk melihat saldo dan transaksi tabungan santri",
-          "Catat setoran dan penarikan tabungan beserta operator yang menangani",
-          "Buka menu 'Pengeluaran' untuk mencatat biaya operasional pesantren",
-          "Setiap transaksi mencatat operator yang bertanggung jawab"
+          "Buka menu 'Tabungan' di sidebar",
+          "Lihat saldo tabungan setiap santri",
+          "Catat setoran dan penarikan tabungan",
+          "Operator yang menangani transaksi tercatat otomatis",
+          "Riwayat transaksi lengkap tersedia untuk setiap santri"
+        ]
+      },
+      {
+        id: "admin-expenses",
+        title: "Catat Pengeluaran",
+        description: "Catat pengeluaran operasional pesantren.",
+        icon: <Wallet className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Pengeluaran' di sidebar",
+          "Tambah pengeluaran baru dengan kategori dan jumlah",
+          "Operator yang menginput pengeluaran tercatat otomatis",
+          "Pantau total pengeluaran per periode"
         ]
       }
     ]
   },
   {
-    title: "Konten Website & Pengaturan",
+    title: "Konten Website Publik",
     steps: [
       {
-        title: "Kelola Konten Website",
-        description: "Atur tampilan website publik pesantren.",
-        icon: <Upload className="h-5 w-5" />,
+        id: "admin-hero",
+        title: "Kelola Banner Hero",
+        description: "Atur banner utama di halaman depan website.",
+        icon: <Globe className="h-5 w-5" />,
         details: [
-          "Buka menu 'Konten > Hero' untuk mengatur banner utama website",
-          "Kelola galeri foto di menu 'Konten > Galeri'",
-          "Publikasi berita dan pengumuman di 'Konten > Berita'",
-          "Atur informasi program dan pendaftaran",
-          "Lihat pesan masuk dari pengunjung di 'Konten > Pesan'"
+          "Buka menu 'Konten > Hero' di sidebar",
+          "Upload gambar dan atur teks banner utama",
+          "Preview perubahan sebelum disimpan",
+          "Banner akan tampil di halaman utama website publik"
         ]
       },
       {
-        title: "Pengaturan Sistem",
+        id: "admin-gallery",
+        title: "Kelola Galeri Foto",
+        description: "Upload dan atur galeri foto pesantren.",
+        icon: <Image className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Konten > Galeri'",
+          "Upload foto kegiatan dan fasilitas pesantren",
+          "Atur urutan dan kategori foto",
+          "Foto akan tampil di halaman Galeri website"
+        ]
+      },
+      {
+        id: "admin-news",
+        title: "Publikasi Berita",
+        description: "Buat dan kelola berita/pengumuman pesantren.",
+        icon: <Newspaper className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Konten > Berita'",
+          "Buat berita baru dengan judul, isi, dan gambar",
+          "Berita akan tampil di halaman Berita website",
+          "Edit atau hapus berita yang sudah dipublikasi"
+        ]
+      },
+      {
+        id: "admin-messages",
+        title: "Lihat Pesan Kontak",
+        description: "Baca pesan masuk dari pengunjung website.",
+        icon: <MessageSquare className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Konten > Pesan'",
+          "Lihat pesan yang dikirim melalui formulir kontak",
+          "Tandai pesan yang sudah ditangani",
+          "Balas pesan melalui email atau telepon"
+        ]
+      },
+      {
+        id: "admin-programs",
+        title: "Kelola Program Pendidikan",
+        description: "Atur informasi program yang ditawarkan.",
+        icon: <BookOpen className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Konten > Program'",
+          "Tambah atau edit program pendidikan",
+          "Atur deskripsi, gambar, dan detail program",
+          "Program akan tampil di halaman utama website"
+        ]
+      },
+      {
+        id: "admin-registration-content",
+        title: "Kelola Info Pendaftaran",
+        description: "Atur alur dan informasi pendaftaran santri baru.",
+        icon: <ClipboardCheck className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Konten > Pendaftaran'",
+          "Atur langkah-langkah alur pendaftaran",
+          "Tambahkan detail dan persyaratan setiap tahap",
+          "Preview alur di halaman /registration website"
+        ]
+      }
+    ]
+  },
+  {
+    title: "Pengaturan & Pengguna",
+    steps: [
+      {
+        id: "admin-users",
+        title: "Kelola Pengguna & Hak Akses",
+        description: "Atur akun pengguna dan role masing-masing.",
+        icon: <UserCog className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Pengguna' di sidebar",
+          "Tambah pengguna baru dengan role yang sesuai",
+          "Role: Super Admin, Branch Admin, Treasurer, Academic Staff, Musyrif",
+          "Setiap role memiliki hak akses berbeda secara otomatis",
+          "Nonaktifkan akun pengguna jika diperlukan"
+        ],
+        tips: "Gunakan prinsip least privilege — berikan hak akses minimal yang diperlukan untuk setiap role."
+      },
+      {
+        id: "admin-settings",
+        title: "Pengaturan Umum",
         description: "Konfigurasi pengaturan umum pesantren.",
         icon: <Settings className="h-5 w-5" />,
         details: [
-          "Buka menu 'Pengaturan' untuk konfigurasi umum",
-          "Atur nama pesantren, logo, dan warna tema",
-          "Kelola pengguna dan hak akses di menu 'Pengguna'",
-          "Aktifkan/nonaktifkan mode maintenance jika diperlukan"
+          "Buka menu 'Pengaturan' di sidebar",
+          "Atur nama pesantren dan informasi institusi",
+          "Ubah logo dan warna tema aplikasi",
+          "Aktifkan/nonaktifkan mode maintenance jika perlu",
+          "Pengaturan tersimpan dan berlaku untuk seluruh sistem"
+        ]
+      },
+      {
+        id: "admin-registrations",
+        title: "Kelola Pendaftaran Masuk",
+        description: "Proses pendaftaran santri baru yang masuk.",
+        icon: <ClipboardCheck className="h-5 w-5" />,
+        details: [
+          "Buka menu 'Pendaftaran' di sidebar",
+          "Lihat daftar pendaftar yang masuk via website",
+          "Review dan proses setiap pendaftaran",
+          "Terima atau tolak pendaftaran dengan catatan"
         ]
       }
     ]
@@ -170,6 +397,7 @@ const guardianTutorials: TutorialSection[] = [
     title: "Memulai",
     steps: [
       {
+        id: "guardian-login",
         title: "Login sebagai Wali Santri",
         description: "Masuk ke portal wali untuk memantau perkembangan anak Anda.",
         icon: <LogIn className="h-5 w-5" />,
@@ -187,6 +415,7 @@ const guardianTutorials: TutorialSection[] = [
     title: "Memantau Anak",
     steps: [
       {
+        id: "guardian-profile",
         title: "Lihat Profil Anak",
         description: "Akses informasi lengkap tentang anak Anda di pesantren.",
         icon: <Eye className="h-5 w-5" />,
@@ -197,6 +426,7 @@ const guardianTutorials: TutorialSection[] = [
         ]
       },
       {
+        id: "guardian-grades",
         title: "Pantau Nilai & Hafalan",
         description: "Lihat perkembangan akademik dan hafalan anak.",
         icon: <BarChart3 className="h-5 w-5" />,
@@ -208,6 +438,7 @@ const guardianTutorials: TutorialSection[] = [
         ]
       },
       {
+        id: "guardian-attendance",
         title: "Cek Kehadiran",
         description: "Pantau kehadiran anak di pesantren.",
         icon: <CalendarCheck className="h-5 w-5" />,
@@ -224,6 +455,7 @@ const guardianTutorials: TutorialSection[] = [
     title: "Keuangan",
     steps: [
       {
+        id: "guardian-bills",
         title: "Lihat Tagihan",
         description: "Pantau tagihan dan status pembayaran.",
         icon: <CreditCard className="h-5 w-5" />,
@@ -235,6 +467,7 @@ const guardianTutorials: TutorialSection[] = [
         ]
       },
       {
+        id: "guardian-savings",
         title: "Kelola Tabungan Anak",
         description: "Pantau dan top-up tabungan anak di pesantren.",
         icon: <Wallet className="h-5 w-5" />,
@@ -256,6 +489,7 @@ const studentTutorials: TutorialSection[] = [
     title: "Memulai",
     steps: [
       {
+        id: "student-login",
         title: "Login sebagai Santri",
         description: "Masuk ke portal santri untuk mengakses informasi akademik Anda.",
         icon: <LogIn className="h-5 w-5" />,
@@ -272,6 +506,7 @@ const studentTutorials: TutorialSection[] = [
     title: "Akademik",
     steps: [
       {
+        id: "student-schedule",
         title: "Lihat Jadwal Pelajaran",
         description: "Cek jadwal harian dan mingguan Anda.",
         icon: <Clock className="h-5 w-5" />,
@@ -283,6 +518,7 @@ const studentTutorials: TutorialSection[] = [
         ]
       },
       {
+        id: "student-grades",
         title: "Cek Nilai & Progress Hafalan",
         description: "Pantau nilai akademik dan progress hafalan Anda.",
         icon: <Star className="h-5 w-5" />,
@@ -294,6 +530,7 @@ const studentTutorials: TutorialSection[] = [
         ]
       },
       {
+        id: "student-attendance",
         title: "Riwayat Kehadiran",
         description: "Lihat rekap kehadiran Anda.",
         icon: <CalendarCheck className="h-5 w-5" />,
@@ -309,6 +546,7 @@ const studentTutorials: TutorialSection[] = [
     title: "Keuangan & Profil",
     steps: [
       {
+        id: "student-finance",
         title: "Lihat Tagihan & Tabungan",
         description: "Pantau status keuangan Anda di pesantren.",
         icon: <Wallet className="h-5 w-5" />,
@@ -319,8 +557,9 @@ const studentTutorials: TutorialSection[] = [
         ]
       },
       {
-        title: "Update Profil",
-        description: "Lihat dan kelola informasi profil Anda.",
+        id: "student-profile",
+        title: "Lihat Profil",
+        description: "Lihat informasi profil Anda.",
         icon: <UserPlus className="h-5 w-5" />,
         details: [
           "Buka menu 'Profil' di portal santri",
@@ -353,7 +592,16 @@ const userTypeConfig: Record<UserType, { label: string; icon: React.ReactNode; c
   }
 };
 
-function StepCard({ step, index }: { step: TutorialStep; index: number }) {
+function getStepIds(tutorials: TutorialSection[]): string[] {
+  return tutorials.flatMap(s => s.steps.map(st => st.id));
+}
+
+function StepCard({ step, index, completed, onToggleComplete }: { 
+  step: TutorialStep; 
+  index: number; 
+  completed: boolean;
+  onToggleComplete: (id: string) => void;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -364,20 +612,25 @@ function StepCard({ step, index }: { step: TutorialStep; index: number }) {
       transition={{ delay: index * 0.05 }}
     >
       <Card
-        className="cursor-pointer hover:shadow-md transition-shadow border-border/60"
+        className={`cursor-pointer hover:shadow-md transition-all border-border/60 ${completed ? 'bg-primary/5 border-primary/20' : ''}`}
         onClick={() => setOpen(!open)}
       >
-        <CardHeader className="pb-2">
+        <CardHeader className="p-4 pb-3">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3">
-              <div className="mt-0.5 rounded-lg bg-primary/10 p-2 text-primary shrink-0">
-                {step.icon}
+              <div className={`mt-0.5 rounded-lg p-2 shrink-0 ${completed ? 'bg-primary/20 text-primary' : 'bg-primary/10 text-primary'}`}>
+                {completed ? <CheckCircle2 className="h-5 w-5" /> : step.icon}
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Badge variant="outline" className="text-xs font-normal">
                     Langkah {index + 1}
                   </Badge>
+                  {completed && (
+                    <Badge className="text-xs bg-primary/15 text-primary border-0 hover:bg-primary/20">
+                      ✓ Selesai
+                    </Badge>
+                  )}
                 </div>
                 <CardTitle className="text-base leading-snug">{step.title}</CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">{step.description}</p>
@@ -397,23 +650,45 @@ function StepCard({ step, index }: { step: TutorialStep; index: number }) {
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <CardContent className="pt-0 pb-4">
+              <CardContent className="px-4 pt-0 pb-5">
                 <Separator className="mb-3" />
-                <ol className="space-y-2 ml-1">
+                <ol className="space-y-2.5 ml-1">
                   {step.details.map((detail, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm">
+                    <li key={i} className="flex items-start gap-2.5 text-sm">
                       <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                       <span>{detail}</span>
                     </li>
                   ))}
                 </ol>
                 {step.tips && (
-                  <div className="mt-3 rounded-lg bg-accent/20 border border-accent/30 p-3">
+                  <div className="mt-4 rounded-lg bg-accent/20 border border-accent/30 p-3">
                     <p className="text-sm text-accent-foreground">
                       <span className="font-semibold">💡 Tips:</span> {step.tips}
                     </p>
                   </div>
                 )}
+                <div className="mt-4 flex justify-end">
+                  <Button
+                    size="sm"
+                    variant={completed ? "outline" : "default"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleComplete(step.id);
+                    }}
+                  >
+                    {completed ? (
+                      <>
+                        <RotateCcw className="h-3.5 w-3.5 mr-1" />
+                        Tandai Belum Selesai
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
+                        Tandai Selesai
+                      </>
+                    )}
+                  </Button>
+                </div>
               </CardContent>
             </motion.div>
           )}
@@ -425,7 +700,36 @@ function StepCard({ step, index }: { step: TutorialStep; index: number }) {
 
 export default function Tutorial() {
   const [activeTab, setActiveTab] = useState<UserType>("admin");
+  const [progress, setProgress] = useState<Record<string, boolean>>(loadProgress);
+  const { toast } = useToast();
   const config = userTypeConfig[activeTab];
+
+  useEffect(() => {
+    saveProgress(progress);
+  }, [progress]);
+
+  const toggleComplete = useCallback((id: string) => {
+    setProgress(prev => {
+      const next = { ...prev };
+      if (next[id]) {
+        delete next[id];
+      } else {
+        next[id] = true;
+      }
+      return next;
+    });
+  }, []);
+
+  const resetProgress = useCallback(() => {
+    setProgress({});
+    toast({ title: "Progress direset", description: "Semua langkah ditandai belum selesai." });
+  }, [toast]);
+
+  // Calculate progress for current tab
+  const currentStepIds = getStepIds(config.tutorials);
+  const completedCount = currentStepIds.filter(id => progress[id]).length;
+  const totalCount = currentStepIds.length;
+  const progressPercent = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -465,14 +769,36 @@ export default function Tutorial() {
 
           {(Object.entries(userTypeConfig) as [UserType, typeof config][]).map(([key, cfg]) => (
             <TabsContent key={key} value={key}>
-              <div className="mb-6">
-                <Badge className={cfg.color}>{cfg.label}</Badge>
-                <p className="text-sm text-muted-foreground mt-2">
-                  {key === "admin" && "Panduan untuk Super Admin, Branch Admin, Treasurer, Academic Staff, dan Dormitory Supervisor."}
-                  {key === "guardian" && "Panduan untuk orang tua / wali santri dalam memantau perkembangan anak."}
-                  {key === "student" && "Panduan untuk santri dalam mengakses informasi akademik dan keuangan."}
-                </p>
-              </div>
+              {/* Progress bar */}
+              <Card className="mb-6 border-border/60">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Badge className={cfg.color}>{cfg.label}</Badge>
+                      <span className="text-sm text-muted-foreground">
+                        {completedCount}/{totalCount} langkah selesai
+                      </span>
+                    </div>
+                    {completedCount > 0 && (
+                      <Button variant="ghost" size="sm" onClick={resetProgress} className="text-xs h-7">
+                        <RotateCcw className="h-3 w-3 mr-1" />
+                        Reset
+                      </Button>
+                    )}
+                  </div>
+                  <Progress value={progressPercent} className="h-2" />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {key === "admin" && "Panduan lengkap untuk Super Admin, Branch Admin, Treasurer, Academic Staff, dan Dormitory Supervisor."}
+                    {key === "guardian" && "Panduan untuk orang tua / wali santri dalam memantau perkembangan anak."}
+                    {key === "student" && "Panduan untuk santri dalam mengakses informasi akademik dan keuangan."}
+                  </p>
+                  {progressPercent === 100 && (
+                    <div className="mt-2 rounded-lg bg-primary/10 border border-primary/20 p-2 text-center">
+                      <p className="text-sm font-medium text-primary">🎉 Selamat! Anda telah menyelesaikan semua tutorial.</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
               <div className="space-y-8">
                 {cfg.tutorials.map((section, si) => (
@@ -485,7 +811,13 @@ export default function Tutorial() {
                     </h2>
                     <div className="space-y-3">
                       {section.steps.map((step, i) => (
-                        <StepCard key={i} step={step} index={i} />
+                        <StepCard 
+                          key={step.id} 
+                          step={step} 
+                          index={i} 
+                          completed={!!progress[step.id]}
+                          onToggleComplete={toggleComplete}
+                        />
                       ))}
                     </div>
                   </div>
@@ -504,6 +836,8 @@ export default function Tutorial() {
               { q: "Apakah data saya aman?", a: "Ya, sistem menggunakan enkripsi dan kontrol akses berbasis peran (RBAC) untuk melindungi data setiap pengguna." },
               { q: "Bisakah wali santri melihat data semua santri?", a: "Tidak, wali hanya dapat melihat data anak yang terdaftar di akunnya." },
               { q: "Bagaimana cara menghubungi pihak pesantren?", a: "Gunakan formulir kontak di halaman utama website atau hubungi langsung melalui nomor telepon yang tertera." },
+              { q: "Apakah progress tutorial saya tersimpan?", a: "Ya, progress tutorial Anda tersimpan secara lokal di browser. Anda bisa melanjutkan kapan saja." },
+              { q: "Siapa saja yang bisa mengakses sistem ini?", a: "Sistem mendukung 7 role: Super Admin, Branch Admin, Treasurer, Academic Staff, Musyrif (Dormitory Supervisor), Wali Santri, dan Santri." },
             ].map((faq, i) => (
               <Card key={i} className="border-border/60">
                 <CardContent className="p-4">
