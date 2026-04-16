@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus, Pencil, Trash2, ChevronDown, ChevronRight, GripVertical,
   BookOpen, Users, GraduationCap, Save, RotateCcw, Eye, EyeOff,
-  AlertTriangle, Lock, Copy, ArrowUp, ArrowDown
+  AlertTriangle, Lock, ArrowUp, ArrowDown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,151 +17,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import {
+  type UserType, type TutorialStepData, type TutorialSectionData, type TutorialData,
+  loadTutorialData, saveTutorialData, getDefaultTutorialData, getIconComponent,
+  tutorialIconOptions, generateId
+} from "@/data/tutorialData";
 
-// ─── Types ───
-type UserType = "admin" | "guardian" | "student";
-
-interface TutorialStep {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  details: string[];
-  tips?: string;
-  isVisible: boolean;
-}
-
-interface TutorialSection {
-  id: string;
-  title: string;
-  steps: TutorialStep[];
-  isVisible: boolean;
-}
-
-interface TutorialData {
-  admin: TutorialSection[];
-  guardian: TutorialSection[];
-  student: TutorialSection[];
-  faq: { id: string; question: string; answer: string; isVisible: boolean }[];
-}
-
-const TUTORIAL_DATA_KEY = "managed_tutorial_data";
 const DEV_PASSWORD = "developerganteng";
-
-// ─── Icon options ───
-const iconOptions = [
-  "LogIn", "LayoutDashboard", "Users", "UserPlus", "Building2", "School",
-  "ListChecks", "Star", "FileText", "CalendarCheck", "DoorOpen", "Package",
-  "CreditCard", "ClipboardCheck", "PiggyBank", "Wallet", "Globe", "Image",
-  "Newspaper", "MessageSquare", "BookOpen", "UserCog", "Settings", "Eye",
-  "BarChart3", "Clock", "GraduationCap", "Upload"
-];
-
-// ─── Default data ───
-function getDefaultData(): TutorialData {
-  return {
-    admin: [
-      {
-        id: "sec-admin-1",
-        title: "Memulai & Login",
-        isVisible: true,
-        steps: [
-          {
-            id: "admin-login",
-            title: "Login ke Dashboard Admin",
-            description: "Akses halaman login admin untuk masuk ke sistem manajemen pesantren.",
-            icon: "LogIn",
-            details: [
-              "Buka halaman /login/admin di browser",
-              "Pilih role Anda (Super Admin, Branch Admin, Treasurer, dll.)",
-              "Masukkan kredensial yang telah diberikan",
-              "Anda akan diarahkan ke dashboard sesuai dengan hak akses role Anda"
-            ],
-            tips: "Super Admin memiliki akses penuh ke seluruh fitur.",
-            isVisible: true
-          },
-          {
-            id: "admin-dashboard",
-            title: "Memahami Dashboard",
-            description: "Dashboard menampilkan ringkasan data penting pesantren secara real-time.",
-            icon: "LayoutDashboard",
-            details: [
-              "Lihat statistik jumlah santri, kelas, dan cabang aktif",
-              "Pantau ringkasan keuangan (pembayaran, tabungan, pengeluaran)",
-              "Akses menu navigasi di sidebar kiri untuk fitur spesifik",
-              "Gunakan tombol toggle untuk menyembunyikan/menampilkan sidebar"
-            ],
-            isVisible: true
-          }
-        ]
-      }
-    ],
-    guardian: [
-      {
-        id: "sec-guardian-1",
-        title: "Memulai",
-        isVisible: true,
-        steps: [
-          {
-            id: "guardian-login",
-            title: "Login sebagai Wali Santri",
-            description: "Masuk ke portal wali untuk memantau perkembangan anak Anda.",
-            icon: "LogIn",
-            details: [
-              "Buka halaman /login di browser",
-              "Pilih 'Wali Santri' sebagai jenis akun",
-              "Masukkan email dan password yang telah terdaftar"
-            ],
-            tips: "Hubungi pihak pesantren jika Anda belum memiliki akun.",
-            isVisible: true
-          }
-        ]
-      }
-    ],
-    student: [
-      {
-        id: "sec-student-1",
-        title: "Memulai",
-        isVisible: true,
-        steps: [
-          {
-            id: "student-login",
-            title: "Login sebagai Santri",
-            description: "Masuk ke portal santri untuk melihat jadwal dan nilai.",
-            icon: "LogIn",
-            details: [
-              "Buka halaman /login di browser",
-              "Pilih 'Santri' sebagai jenis akun",
-              "Masukkan email dan password yang telah terdaftar"
-            ],
-            isVisible: true
-          }
-        ]
-      }
-    ],
-    faq: [
-      { id: "faq-1", question: "Bagaimana cara reset password?", answer: "Hubungi administrator pesantren untuk mereset password Anda.", isVisible: true },
-      { id: "faq-2", question: "Apakah data bisa diakses offline?", answer: "Tidak, aplikasi ini memerlukan koneksi internet.", isVisible: true },
-    ]
-  };
-}
-
-function loadTutorialData(): TutorialData {
-  try {
-    const raw = localStorage.getItem(TUTORIAL_DATA_KEY);
-    return raw ? JSON.parse(raw) : getDefaultData();
-  } catch {
-    return getDefaultData();
-  }
-}
-
-function saveTutorialData(data: TutorialData) {
-  localStorage.setItem(TUTORIAL_DATA_KEY, JSON.stringify(data));
-}
-
-function generateId() {
-  return `id-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-}
 
 const userTypeLabels: Record<UserType, { label: string; icon: typeof BookOpen }> = {
   admin: { label: "Administrator", icon: GraduationCap },
@@ -173,10 +35,10 @@ const userTypeLabels: Record<UserType, { label: string; icon: typeof BookOpen }>
 function StepEditorDialog({ open, onOpenChange, step, onSave }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  step: TutorialStep | null;
-  onSave: (step: TutorialStep) => void;
+  step: TutorialStepData | null;
+  onSave: (step: TutorialStepData) => void;
 }) {
-  const [form, setForm] = useState<TutorialStep>({
+  const [form, setForm] = useState<TutorialStepData>({
     id: "", title: "", description: "", icon: "BookOpen", details: [""], tips: "", isVisible: true
   });
 
@@ -198,6 +60,9 @@ function StepEditorDialog({ open, onOpenChange, step, onSave }: {
     onOpenChange(false);
   };
 
+  // Render icon preview
+  const PreviewIcon = getIconComponent(form.icon);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
@@ -215,14 +80,24 @@ function StepEditorDialog({ open, onOpenChange, step, onSave }: {
           </div>
           <div className="space-y-2">
             <Label>Ikon / Icon</Label>
-            <Select value={form.icon} onValueChange={v => setForm(f => ({ ...f, icon: v }))}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {iconOptions.map(ic => (
-                  <SelectItem key={ic} value={ic}>{ic}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-3">
+              <Select value={form.icon} onValueChange={v => setForm(f => ({ ...f, icon: v }))}>
+                <SelectTrigger className="flex-1"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {tutorialIconOptions.map(ic => {
+                    const IC = getIconComponent(ic);
+                    return (
+                      <SelectItem key={ic} value={ic}>
+                        <span className="flex items-center gap-2"><IC className="h-4 w-4" /> {ic}</span>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <PreviewIcon className="h-5 w-5 text-primary" />
+              </div>
+            </div>
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -261,8 +136,8 @@ function StepEditorDialog({ open, onOpenChange, step, onSave }: {
 
 // ─── Section Editor ───
 function SectionEditor({ section, onUpdate, onDelete, onMoveUp, onMoveDown, isFirst, isLast }: {
-  section: TutorialSection;
-  onUpdate: (section: TutorialSection) => void;
+  section: TutorialSectionData;
+  onUpdate: (section: TutorialSectionData) => void;
   onDelete: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
@@ -273,7 +148,7 @@ function SectionEditor({ section, onUpdate, onDelete, onMoveUp, onMoveDown, isFi
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(section.title);
   const [stepDialogOpen, setStepDialogOpen] = useState(false);
-  const [editingStep, setEditingStep] = useState<TutorialStep | null>(null);
+  const [editingStep, setEditingStep] = useState<TutorialStepData | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   const handleSaveTitle = () => {
@@ -282,7 +157,7 @@ function SectionEditor({ section, onUpdate, onDelete, onMoveUp, onMoveDown, isFi
     toast.success("Judul seksi diperbarui");
   };
 
-  const handleSaveStep = (step: TutorialStep) => {
+  const handleSaveStep = (step: TutorialStepData) => {
     const exists = section.steps.find(s => s.id === step.id);
     const newSteps = exists
       ? section.steps.map(s => s.id === step.id ? step : s)
@@ -346,31 +221,37 @@ function SectionEditor({ section, onUpdate, onDelete, onMoveUp, onMoveDown, isFi
                   <p className="text-xs text-muted-foreground text-center py-4">Belum ada langkah. Klik tombol di bawah untuk menambahkan.</p>
                 ) : (
                   <div className="space-y-2">
-                    {section.steps.map((step, idx) => (
-                      <div key={step.id} className={`flex items-center gap-3 p-3 rounded-lg border bg-muted/20 ${!step.isVisible ? "opacity-50" : ""}`}>
-                        <GripVertical className="h-4 w-4 text-muted-foreground/40 shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{step.title}</p>
-                          <p className="text-xs text-muted-foreground truncate">{step.description}</p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="outline" className="text-[9px]">{step.icon}</Badge>
-                            <span className="text-[10px] text-muted-foreground">{step.details.length} detail</span>
-                            {step.tips && <span className="text-[10px] text-primary">+ tips</span>}
+                    {section.steps.map((step, idx) => {
+                      const StepIcon = getIconComponent(step.icon);
+                      return (
+                        <div key={step.id} className={`flex items-center gap-3 p-3 rounded-lg border bg-muted/20 ${!step.isVisible ? "opacity-50" : ""}`}>
+                          <GripVertical className="h-4 w-4 text-muted-foreground/40 shrink-0" />
+                          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                            <StepIcon className="h-4 w-4 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">{step.title}</p>
+                            <p className="text-xs text-muted-foreground truncate">{step.description}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge variant="outline" className="text-[9px]">{step.icon}</Badge>
+                              <span className="text-[10px] text-muted-foreground">{step.details.length} detail</span>
+                              {step.tips && <span className="text-[10px] text-primary">+ tips</span>}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" disabled={idx === 0} onClick={() => moveStep(idx, -1)}><ArrowUp className="h-3 w-3" /></Button>
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" disabled={idx === section.steps.length - 1} onClick={() => moveStep(idx, 1)}><ArrowDown className="h-3 w-3" /></Button>
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => {
+                              onUpdate({ ...section, steps: section.steps.map(s => s.id === step.id ? { ...s, isVisible: !s.isVisible } : s) });
+                            }}>
+                              {step.isVisible ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3 text-muted-foreground" />}
+                            </Button>
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => { setEditingStep(step); setStepDialogOpen(true); }}><Pencil className="h-3 w-3" /></Button>
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive hover:text-destructive" onClick={() => handleDeleteStep(step.id)}><Trash2 className="h-3 w-3" /></Button>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1 shrink-0">
-                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" disabled={idx === 0} onClick={() => moveStep(idx, -1)}><ArrowUp className="h-3 w-3" /></Button>
-                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" disabled={idx === section.steps.length - 1} onClick={() => moveStep(idx, 1)}><ArrowDown className="h-3 w-3" /></Button>
-                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => {
-                            onUpdate({ ...section, steps: section.steps.map(s => s.id === step.id ? { ...s, isVisible: !s.isVisible } : s) });
-                          }}>
-                            {step.isVisible ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3 text-muted-foreground" />}
-                          </Button>
-                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => { setEditingStep(step); setStepDialogOpen(true); }}><Pencil className="h-3 w-3" /></Button>
-                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive hover:text-destructive" onClick={() => handleDeleteStep(step.id)}><Trash2 className="h-3 w-3" /></Button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
                 <Button variant="outline" size="sm" className="w-full" onClick={() => { setEditingStep(null); setStepDialogOpen(true); }}>
@@ -490,7 +371,7 @@ const ManageTutorial = () => {
   const [devPasswordInput, setDevPasswordInput] = useState("");
   const [devUnlocked, setDevUnlocked] = useState(false);
   const [devPasswordError, setDevPasswordError] = useState(false);
-  const [activeTab, setActiveTab] = useState<UserType>("admin");
+  const [activeTab, setActiveTab] = useState<UserType | "faq">("admin");
   const [data, setData] = useState<TutorialData>(loadTutorialData);
   const [hasChanges, setHasChanges] = useState(false);
   const [resetConfirm, setResetConfirm] = useState(false);
@@ -513,11 +394,11 @@ const ManageTutorial = () => {
   const handleSave = () => {
     saveTutorialData(data);
     setHasChanges(false);
-    toast.success("Data tutorial berhasil disimpan ke localStorage");
+    toast.success("Data tutorial berhasil disimpan — perubahan langsung tampil di halaman /tutorial");
   };
 
   const handleReset = () => {
-    const defaultData = getDefaultData();
+    const defaultData = getDefaultTutorialData();
     setData(defaultData);
     saveTutorialData(defaultData);
     setHasChanges(false);
@@ -526,7 +407,8 @@ const ManageTutorial = () => {
   };
 
   const addSection = () => {
-    const newSection: TutorialSection = {
+    if (activeTab === "faq") return;
+    const newSection: TutorialSectionData = {
       id: generateId(),
       title: "Seksi Baru",
       steps: [],
@@ -536,19 +418,22 @@ const ManageTutorial = () => {
     toast.success("Seksi baru ditambahkan");
   };
 
-  const updateSection = (index: number, section: TutorialSection) => {
+  const updateSection = (index: number, section: TutorialSectionData) => {
+    if (activeTab === "faq") return;
     const sections = [...data[activeTab]];
     sections[index] = section;
     updateData({ ...data, [activeTab]: sections });
   };
 
   const deleteSection = (index: number) => {
+    if (activeTab === "faq") return;
     const sections = data[activeTab].filter((_, i) => i !== index);
     updateData({ ...data, [activeTab]: sections });
     toast.success("Seksi dihapus");
   };
 
   const moveSection = (index: number, direction: -1 | 1) => {
+    if (activeTab === "faq") return;
     const sections = [...data[activeTab]];
     const target = index + direction;
     if (target < 0 || target >= sections.length) return;
@@ -607,7 +492,7 @@ const ManageTutorial = () => {
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-lg font-bold">Kelola Tutorial / Manage Tutorial</h1>
-          <p className="text-sm text-muted-foreground">Kelola konten halaman tutorial untuk semua pengguna</p>
+          <p className="text-sm text-muted-foreground">Perubahan akan tampil langsung di halaman /tutorial setelah disimpan</p>
         </div>
         <div className="flex items-center gap-2">
           {hasChanges && <Badge variant="outline" className="text-[10px] text-warning border-warning">Belum disimpan</Badge>}
@@ -635,13 +520,13 @@ const ManageTutorial = () => {
           <p className="text-xl font-bold text-foreground">{data.faq.length}</p>
         </div>
         <div className="bg-card border rounded-xl p-4">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Storage</p>
-          <p className="text-xl font-bold text-foreground">localStorage</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Sinkronisasi</p>
+          <p className="text-sm font-bold text-primary mt-1">↔ /tutorial</p>
         </div>
       </div>
 
       <div className="max-w-5xl">
-        <Tabs value={activeTab} onValueChange={v => setActiveTab(v as UserType)}>
+        <Tabs value={activeTab} onValueChange={v => setActiveTab(v as UserType | "faq")}>
           <div className="flex items-center justify-between mb-4">
             <TabsList>
               {(Object.keys(userTypeLabels) as UserType[]).map(type => {
@@ -652,7 +537,7 @@ const ManageTutorial = () => {
                   </TabsTrigger>
                 );
               })}
-              <TabsTrigger value={"faq" as any} className="gap-1.5 text-xs">FAQ ({data.faq.length})</TabsTrigger>
+              <TabsTrigger value="faq" className="gap-1.5 text-xs">FAQ ({data.faq.length})</TabsTrigger>
             </TabsList>
           </div>
 
@@ -682,7 +567,7 @@ const ManageTutorial = () => {
             </TabsContent>
           ))}
 
-          <TabsContent value={"faq" as any} className="mt-0">
+          <TabsContent value="faq" className="mt-0">
             <FaqManager faq={data.faq} onUpdate={faq => updateData({ ...data, faq })} />
           </TabsContent>
         </Tabs>
