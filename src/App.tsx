@@ -305,8 +305,6 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-              }
-            />
           </Route>
 
           {/* Guardian portal routes */}
