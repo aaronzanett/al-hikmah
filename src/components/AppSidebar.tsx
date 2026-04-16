@@ -197,6 +197,7 @@ export function AppSidebar() {
     finance: true,
     content: true,
     registration: true,
+    developer: true,
   });
 
   const handleOpenChange = (key: string) => (open: boolean) => {
