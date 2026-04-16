@@ -553,9 +553,7 @@ const Settings = () => {
       <Tabs defaultValue="general" className="max-w-5xl">
         <TabsList>
           <TabsTrigger value="general">Umum / General</TabsTrigger>
-          
-          <TabsTrigger value="finance">Keuangan / Finance</TabsTrigger>
-          <TabsTrigger value="system">Sistem / System</TabsTrigger>
+          <TabsTrigger value="developer" className="gap-1.5"><Lock className="h-3.5 w-3.5" /> Developer</TabsTrigger>
         </TabsList>
 
         {/* ═══════════ GENERAL TAB ═══════════ */}
