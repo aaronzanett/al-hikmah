@@ -24,6 +24,7 @@ import {
   ClipboardList as ClipboardListIcon,
   PanelTop,
   KeyRound,
+  BookOpenCheck,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -98,6 +99,10 @@ const contentItems: MenuItem[] = [
 
 const registrationItems: MenuItem[] = [
   { title: "Data Pendaftar / Registrations", url: "/registrations", icon: ClipboardListIcon, permission: "registrations.view" },
+];
+
+const developerItems: MenuItem[] = [
+  { title: "Kelola Tutorial / Manage Tutorial", url: "/manage-tutorial", icon: BookOpenCheck, permission: "settings.manage" },
 ];
 
 interface NavGroupProps {
