@@ -24,6 +24,7 @@ import {
   ClipboardList as ClipboardListIcon,
   PanelTop,
   KeyRound,
+  BookOpenCheck,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -98,6 +99,10 @@ const contentItems: MenuItem[] = [
 
 const registrationItems: MenuItem[] = [
   { title: "Data Pendaftar / Registrations", url: "/registrations", icon: ClipboardListIcon, permission: "registrations.view" },
+];
+
+const developerItems: MenuItem[] = [
+  { title: "Kelola Tutorial / Manage Tutorial", url: "/manage-tutorial", icon: BookOpenCheck, permission: "settings.manage" },
 ];
 
 interface NavGroupProps {
@@ -192,6 +197,7 @@ export function AppSidebar() {
     finance: true,
     content: true,
     registration: true,
+    developer: true,
   });
 
   const handleOpenChange = (key: string) => (open: boolean) => {
@@ -213,6 +219,7 @@ export function AppSidebar() {
   const showFinance = financeItems.some(item => can(item.permission));
   const showContent = contentItems.some(item => can(item.permission));
   const showRegistration = registrationItems.some(item => can(item.permission));
+  const showDeveloper = developerItems.some(item => can(item.permission));
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
@@ -321,6 +328,16 @@ export function AppSidebar() {
             collapsed={collapsed} 
             open={openGroups.registration} 
             onOpenChange={handleOpenChange("registration")} 
+          />
+        )}
+
+        {showDeveloper && (
+          <NavGroup 
+            label="Developer" 
+            items={developerItems} 
+            collapsed={collapsed} 
+            open={openGroups.developer} 
+            onOpenChange={handleOpenChange("developer")} 
           />
         )}
       </SidebarContent>

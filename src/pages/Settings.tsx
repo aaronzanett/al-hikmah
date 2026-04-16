@@ -553,9 +553,7 @@ const Settings = () => {
       <Tabs defaultValue="general" className="max-w-5xl">
         <TabsList>
           <TabsTrigger value="general">Umum / General</TabsTrigger>
-          
-          <TabsTrigger value="finance">Keuangan / Finance</TabsTrigger>
-          <TabsTrigger value="system">Sistem / System</TabsTrigger>
+          <TabsTrigger value="developer" className="gap-1.5"><Lock className="h-3.5 w-3.5" /> Developer</TabsTrigger>
         </TabsList>
 
         {/* ═══════════ GENERAL TAB ═══════════ */}
@@ -970,8 +968,8 @@ const Settings = () => {
         </TabsContent>
 
 
-        {/* ═══════════ FINANCE TAB ═══════════ */}
-        <TabsContent value="finance" className="space-y-6 mt-4">
+        {/* ═══════════ DEVELOPER TAB ═══════════ */}
+        <TabsContent value="developer" className="space-y-6 mt-4">
           {!devUnlocked ? (
             <div className="min-h-[60vh] flex items-center justify-center">
             <div className="bg-card border rounded-xl p-8 shadow-card flex flex-col items-center gap-5 max-w-md w-full">
@@ -979,8 +977,8 @@ const Settings = () => {
                 <Lock className="h-8 w-8 text-warning" />
               </div>
               <div className="text-center">
-                <h3 className="text-lg font-bold text-foreground mb-1">Akses Terbatas / Restricted Access</h3>
-                <p className="text-sm text-muted-foreground">Menu ini memerlukan password developer untuk mengakses pengaturan keuangan.</p>
+                <h3 className="text-lg font-bold text-foreground mb-1">Akses Developer / Developer Access</h3>
+                <p className="text-sm text-muted-foreground">Area ini memerlukan password developer untuk mengakses pengaturan keuangan, sistem, dan manajemen konten khusus.</p>
               </div>
               <div className="w-full space-y-3">
                 <Input
@@ -1003,196 +1001,173 @@ const Settings = () => {
             </div>
             </div>
            ) : (
-            <FinanceDashboard settings={settings} update={update} handleSave={handleSave} />
-           )}
-        </TabsContent>
-
-        {/* ═══════════ SYSTEM TAB ═══════════ */}
-        <TabsContent value="system" className="space-y-6 mt-4">
-          {!devUnlocked ? (
-            <div className="min-h-[60vh] flex items-center justify-center">
-            <div className="bg-card border rounded-xl p-8 shadow-card flex flex-col items-center gap-5 max-w-md w-full">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-warning/10">
-                <Lock className="h-8 w-8 text-warning" />
-              </div>
-              <div className="text-center">
-                <h3 className="text-lg font-bold text-foreground mb-1">Akses Terbatas / Restricted Access</h3>
-                <p className="text-sm text-muted-foreground">Menu ini memerlukan password developer untuk mengakses pengaturan sistem.</p>
-              </div>
-              <div className="w-full space-y-3">
-                <Input
-                  type="password"
-                  placeholder="Masukkan password developer..."
-                  value={devPasswordInput}
-                  onChange={(e) => { setDevPasswordInput(e.target.value); setDevPasswordError(false); }}
-                  onKeyDown={(e) => e.key === "Enter" && handleDevPasswordSubmit()}
-                  className={devPasswordError ? "border-destructive" : ""}
-                />
-                {devPasswordError && (
-                  <p className="text-xs text-destructive flex items-center gap-1">
-                    <AlertTriangle className="h-3 w-3" /> Password salah. Coba lagi.
-                  </p>
-                )}
-                <Button onClick={handleDevPasswordSubmit} className="w-full">
-                  <Lock className="h-4 w-4 mr-2" /> Buka Akses / Unlock
-                </Button>
-              </div>
-            </div>
-            </div>
-          ) : (
             <>
-              {/* Maintenance Mode */}
-              <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${isMaintenanceMode ? "bg-destructive/10" : "bg-success/10"}`}>
-                      <Power className={`h-5 w-5 ${isMaintenanceMode ? "text-destructive" : "text-success"}`} />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold">Status Website / Website Status</h3>
-                      <p className="text-xs text-muted-foreground">
-                        {isMaintenanceMode ? "Website sedang dalam mode pemeliharaan (maintenance)" : "Website aktif dan dapat diakses publik"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs font-medium ${isMaintenanceMode ? "text-destructive" : "text-success"}`}>
-                      {isMaintenanceMode ? "Maintenance" : "Aktif"}
-                    </span>
-                    <Switch
-                      checked={isMaintenanceMode}
-                      onCheckedChange={(checked) => {
-                        setMaintenancePendingState(checked);
-                        setMaintenanceConfirmOpen(true);
-                      }}
-                    />
-                  </div>
-                </div>
-                {isMaintenanceMode && (
-                  <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 space-y-3">
-                    <div className="flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4 text-destructive" />
-                      <span className="text-sm font-medium text-destructive">Mode Pemeliharaan Aktif</span>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Pesan Maintenance / Maintenance Message</Label>
-                      <Textarea
-                        value={maintenanceMessage}
-                        onChange={(e) => setMaintenanceMessage(e.target.value)}
-                        rows={2}
-                        placeholder="Pesan yang ditampilkan kepada pengunjung..."
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Estimasi Selesai / Estimated End</Label>
-                      <Input
-                        value={estimatedEnd}
-                        onChange={(e) => setEstimatedEnd(e.target.value)}
-                        placeholder="Contoh: 1 April 2026, 18:00 WIB"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
+              {/* Developer Sub-tabs */}
+              <Tabs defaultValue="dev-finance" className="w-full">
+                <TabsList className="mb-4">
+                  <TabsTrigger value="dev-finance" className="text-xs">Keuangan / Finance</TabsTrigger>
+                  <TabsTrigger value="dev-system" className="text-xs">Sistem / System</TabsTrigger>
+                </TabsList>
 
-               {/* System Settings */}
-              <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
-                <h3 className="text-sm font-semibold">Sistem / System</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Bahasa / Language</Label>
-                    <Select value={settings.language} onValueChange={(v) => update("language", v)}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="bilingual">Bilingual (ID/EN)</SelectItem>
-                        <SelectItem value="id">Bahasa Indonesia</SelectItem>
-                        <SelectItem value="en">English</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Zona Waktu / Timezone</Label>
-                    <Select value={settings.timezone} onValueChange={(v) => update("timezone", v)}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Asia/Jakarta">WIB (Asia/Jakarta)</SelectItem>
-                        <SelectItem value="Asia/Makassar">WITA (Asia/Makassar)</SelectItem>
-                        <SelectItem value="Asia/Jayapura">WIT (Asia/Jayapura)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
+                <TabsContent value="dev-finance" className="space-y-6 mt-0">
+                  <FinanceDashboard settings={settings} update={update} handleSave={handleSave} />
+                </TabsContent>
 
-              {/* Theme Color */}
-              <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
-                <div className="flex items-center gap-2">
-                  <Palette className="h-4 w-4 text-primary" />
-                  <h3 className="text-sm font-semibold">Warna Tema / Theme Color</h3>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Pilih warna tema sesuai identitas pesantren. Perubahan berlaku setelah menekan Simpan.
-                </p>
-                <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                  {themePresets.map((preset) => (
-                    <button
-                      key={preset.id}
-                      onClick={() => setPendingTheme(preset.id)}
-                      className={`relative flex flex-col items-center gap-1.5 rounded-xl border-2 p-3 transition-all hover:shadow-md ${
-                        pendingTheme === preset.id ? "border-primary shadow-md ring-2 ring-primary/20" : "border-border"
-                      }`}
-                    >
-                      <div
-                        className="h-8 w-8 rounded-full border-2 border-background shadow-sm"
-                        style={{ backgroundColor: preset.preview }}
-                      />
-                      {pendingTheme === preset.id && (
-                        <div className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
-                          <Check className="h-3 w-3 text-primary-foreground" />
+                <TabsContent value="dev-system" className="space-y-6 mt-0">
+                  {/* Maintenance Mode */}
+                  <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${isMaintenanceMode ? "bg-destructive/10" : "bg-success/10"}`}>
+                          <Power className={`h-5 w-5 ${isMaintenanceMode ? "text-destructive" : "text-success"}`} />
                         </div>
-                      )}
-                      <span className="text-[10px] font-medium text-foreground text-center leading-tight">{preset.name}</span>
-                    </button>
-                  ))}
-                  {/* Custom option */}
-                  <button
-                    onClick={() => setPendingTheme("custom")}
-                    className={`relative flex flex-col items-center gap-1.5 rounded-xl border-2 p-3 transition-all hover:shadow-md ${
-                      pendingTheme === "custom" ? "border-primary shadow-md ring-2 ring-primary/20" : "border-border"
-                    }`}
-                  >
-                    <div
-                      className="h-8 w-8 rounded-full border-2 border-background shadow-sm overflow-hidden"
-                      style={{ background: `conic-gradient(red, yellow, lime, aqua, blue, magenta, red)` }}
-                    />
-                    {pendingTheme === "custom" && (
-                      <div className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
-                        <Check className="h-3 w-3 text-primary-foreground" />
+                        <div>
+                          <h3 className="text-sm font-semibold">Status Website / Website Status</h3>
+                          <p className="text-xs text-muted-foreground">
+                            {isMaintenanceMode ? "Website sedang dalam mode pemeliharaan (maintenance)" : "Website aktif dan dapat diakses publik"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs font-medium ${isMaintenanceMode ? "text-destructive" : "text-success"}`}>
+                          {isMaintenanceMode ? "Maintenance" : "Aktif"}
+                        </span>
+                        <Switch
+                          checked={isMaintenanceMode}
+                          onCheckedChange={(checked) => {
+                            setMaintenancePendingState(checked);
+                            setMaintenanceConfirmOpen(true);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    {isMaintenanceMode && (
+                      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <AlertTriangle className="h-4 w-4 text-destructive" />
+                          <span className="text-sm font-medium text-destructive">Mode Pemeliharaan Aktif</span>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Pesan Maintenance / Maintenance Message</Label>
+                          <Textarea
+                            value={maintenanceMessage}
+                            onChange={(e) => setMaintenanceMessage(e.target.value)}
+                            rows={2}
+                            placeholder="Pesan yang ditampilkan kepada pengunjung..."
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Estimasi Selesai / Estimated End</Label>
+                          <Input
+                            value={estimatedEnd}
+                            onChange={(e) => setEstimatedEnd(e.target.value)}
+                            placeholder="Contoh: 1 April 2026, 18:00 WIB"
+                          />
+                        </div>
                       </div>
                     )}
-                    <span className="text-[10px] font-medium text-foreground text-center leading-tight">Custom</span>
-                  </button>
-                </div>
-                {pendingTheme === "custom" && (
-                  <div className="flex items-center gap-3 p-3 rounded-lg border bg-muted/30">
-                    <Label className="text-xs shrink-0">Pilih Warna:</Label>
-                    <input
-                      type="color"
-                      value={pendingCustomColor}
-                      onChange={(e) => setPendingCustomColor(e.target.value)}
-                      className="h-9 w-14 rounded-md border cursor-pointer"
-                    />
-                    <span className="text-xs text-muted-foreground font-mono">{pendingCustomColor}</span>
-                    <div className="h-6 w-6 rounded-full border" style={{ backgroundColor: pendingCustomColor }} />
                   </div>
-                )}
-              </div>
 
-              <div className="flex justify-end">
-                <Button onClick={handleSystemSave}>Simpan / Save</Button>
-              </div>
+                  {/* System Settings */}
+                  <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
+                    <h3 className="text-sm font-semibold">Sistem / System</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Bahasa / Language</Label>
+                        <Select value={settings.language} onValueChange={(v) => update("language", v)}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="bilingual">Bilingual (ID/EN)</SelectItem>
+                            <SelectItem value="id">Bahasa Indonesia</SelectItem>
+                            <SelectItem value="en">English</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Zona Waktu / Timezone</Label>
+                        <Select value={settings.timezone} onValueChange={(v) => update("timezone", v)}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Asia/Jakarta">WIB (Asia/Jakarta)</SelectItem>
+                            <SelectItem value="Asia/Makassar">WITA (Asia/Makassar)</SelectItem>
+                            <SelectItem value="Asia/Jayapura">WIT (Asia/Jayapura)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Theme Color */}
+                  <div className="bg-card border rounded-xl p-5 shadow-card space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Palette className="h-4 w-4 text-primary" />
+                      <h3 className="text-sm font-semibold">Warna Tema / Theme Color</h3>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Pilih warna tema sesuai identitas pesantren. Perubahan berlaku setelah menekan Simpan.
+                    </p>
+                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                      {themePresets.map((preset) => (
+                        <button
+                          key={preset.id}
+                          onClick={() => setPendingTheme(preset.id)}
+                          className={`relative flex flex-col items-center gap-1.5 rounded-xl border-2 p-3 transition-all hover:shadow-md ${
+                            pendingTheme === preset.id ? "border-primary shadow-md ring-2 ring-primary/20" : "border-border"
+                          }`}
+                        >
+                          <div
+                            className="h-8 w-8 rounded-full border-2 border-background shadow-sm"
+                            style={{ backgroundColor: preset.preview }}
+                          />
+                          {pendingTheme === preset.id && (
+                            <div className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+                              <Check className="h-3 w-3 text-primary-foreground" />
+                            </div>
+                          )}
+                          <span className="text-[10px] font-medium text-foreground text-center leading-tight">{preset.name}</span>
+                        </button>
+                      ))}
+                      {/* Custom option */}
+                      <button
+                        onClick={() => setPendingTheme("custom")}
+                        className={`relative flex flex-col items-center gap-1.5 rounded-xl border-2 p-3 transition-all hover:shadow-md ${
+                          pendingTheme === "custom" ? "border-primary shadow-md ring-2 ring-primary/20" : "border-border"
+                        }`}
+                      >
+                        <div
+                          className="h-8 w-8 rounded-full border-2 border-background shadow-sm overflow-hidden"
+                          style={{ background: `conic-gradient(red, yellow, lime, aqua, blue, magenta, red)` }}
+                        />
+                        {pendingTheme === "custom" && (
+                          <div className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+                            <Check className="h-3 w-3 text-primary-foreground" />
+                          </div>
+                        )}
+                        <span className="text-[10px] font-medium text-foreground text-center leading-tight">Custom</span>
+                      </button>
+                    </div>
+                    {pendingTheme === "custom" && (
+                      <div className="flex items-center gap-3 p-3 rounded-lg border bg-muted/30">
+                        <Label className="text-xs shrink-0">Pilih Warna:</Label>
+                        <input
+                          type="color"
+                          value={pendingCustomColor}
+                          onChange={(e) => setPendingCustomColor(e.target.value)}
+                          className="h-9 w-14 rounded-md border cursor-pointer"
+                        />
+                        <span className="text-xs text-muted-foreground font-mono">{pendingCustomColor}</span>
+                        <div className="h-6 w-6 rounded-full border" style={{ backgroundColor: pendingCustomColor }} />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Button onClick={handleSystemSave}>Simpan / Save</Button>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </>
-          )}
+           )}
         </TabsContent>
       </Tabs>
 

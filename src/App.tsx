@@ -50,6 +50,7 @@ import Registration from "./pages/Registration";
 import RegistrationForm from "./pages/RegistrationForm";
 import Tutorial from "./pages/Tutorial";
 import ReportCardSettings from "./pages/ReportCardSettings";
+import ManageTutorial from "./pages/ManageTutorial";
 
 // Guardian portal pages
 import GuardianPortal from "./pages/portal/GuardianPortal";
@@ -293,6 +294,14 @@ const App = () => (
               element={
                 <ProtectedRoute requiredPermissions={["registrations.view"]}>
                   <ManageRegistrations />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/manage-tutorial"
+              element={
+                <ProtectedRoute requiredPermissions={["settings.manage"]}>
+                  <ManageTutorial />
                 </ProtectedRoute>
               }
             />
