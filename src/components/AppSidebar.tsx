@@ -219,6 +219,7 @@ export function AppSidebar() {
   const showFinance = financeItems.some(item => can(item.permission));
   const showContent = contentItems.some(item => can(item.permission));
   const showRegistration = registrationItems.some(item => can(item.permission));
+  const showDeveloper = developerItems.some(item => can(item.permission));
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
@@ -327,6 +328,16 @@ export function AppSidebar() {
             collapsed={collapsed} 
             open={openGroups.registration} 
             onOpenChange={handleOpenChange("registration")} 
+          />
+        )}
+
+        {showDeveloper && (
+          <NavGroup 
+            label="Developer" 
+            items={developerItems} 
+            collapsed={collapsed} 
+            open={openGroups.developer} 
+            onOpenChange={handleOpenChange("developer")} 
           />
         )}
       </SidebarContent>
