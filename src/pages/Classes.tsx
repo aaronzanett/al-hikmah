@@ -1,4 +1,5 @@
 import { CrudPage } from "@/components/CrudPage";
+import { OptionsManager, useManagedOptions } from "@/components/OptionsManager";
 
 const mockClasses = [
   { id: "CLS001", name: "X-A", branch: "Pusat", level: "X", year: "2024/2025", teacher: "Ust. Ahmad Syafii", students: "30", lastModifiedBy: "Admin Pusat", lastModifiedAt: "2026-03-11 10:00" },
@@ -17,39 +18,60 @@ const mockClasses = [
   { id: "CLS014", name: "XII-A", branch: "Cabang 2", level: "XII", year: "2024/2025", teacher: "Ust. Zubair", students: "20", lastModifiedBy: "Ust. Zubair", lastModifiedAt: "2026-02-26 08:00" },
 ];
 
-const Classes = () => (
-  <CrudPage
-    title="Kelas / Classes"
-    subtitle="Kelola kelas dan jadwal"
-    idKey="id"
-    searchPlaceholder="Cari kelas... / Search classes..."
-    searchKeys={["name", "branch", "teacher"]}
-    addLabel="Tambah Kelas"
-    initialData={mockClasses}
-    filters={[
-      { key: "branch", label: "Cabang", options: [{ value: "Pusat", label: "Pusat" }, { value: "Cabang 1", label: "Cabang 1" }, { value: "Cabang 2", label: "Cabang 2" }] },
-      { key: "level", label: "Tingkat", options: [{ value: "X", label: "X" }, { value: "XI", label: "XI" }, { value: "XII", label: "XII" }] },
-      { key: "year", label: "Tahun Ajaran", options: [{ value: "2024/2025", label: "2024/2025" }, { value: "2023/2024", label: "2023/2024" }] },
-    ]}
-    columns={[
-      { key: "name", label: "Nama Kelas / Class", className: "font-medium" },
-      { key: "branch", label: "Cabang / Branch" },
-      { key: "level", label: "Tingkat / Level" },
-      { key: "year", label: "Tahun Ajaran / Year" },
-      { key: "teacher", label: "Wali Kelas / Teacher" },
-      { key: "students", label: "Santri" },
-      { key: "lastModifiedBy", label: "Diubah Oleh / Modified By", className: "text-xs text-muted-foreground" },
-      { key: "lastModifiedAt", label: "Terakhir Diubah / Last Modified", className: "text-xs text-muted-foreground" },
-    ]}
-    formFields={[
-      { key: "name", label: "Nama Kelas / Class Name", type: "text", placeholder: "X-A" },
-      { key: "branch", label: "Cabang / Branch", type: "select", options: [{ value: "Pusat", label: "Pusat" }, { value: "Cabang 1", label: "Cabang 1" }, { value: "Cabang 2", label: "Cabang 2" }] },
-      { key: "level", label: "Tingkat / Level", type: "select", options: [{ value: "X", label: "X" }, { value: "XI", label: "XI" }, { value: "XII", label: "XII" }] },
-      { key: "year", label: "Tahun Ajaran / Academic Year", type: "text", placeholder: "2024/2025" },
-      { key: "teacher", label: "Wali Kelas / Homeroom Teacher", type: "text", placeholder: "Nama guru" },
-      { key: "students", label: "Jumlah Santri / Students", type: "number", placeholder: "30" },
-    ]}
-  />
-);
+const DEFAULT_LEVELS = [
+  { value: "X", label: "X" },
+  { value: "XI", label: "XI" },
+  { value: "XII", label: "XII" },
+];
+
+const Classes = () => {
+  const [levels, setLevels] = useManagedOptions("class_levels_options", DEFAULT_LEVELS);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-end">
+        <OptionsManager
+          title="Kelola Tingkat Kelas / Manage Class Levels"
+          description="Tingkat yang Anda tambahkan akan muncul di dropdown filter dan form kelas."
+          triggerLabel="Kelola Tingkat"
+          options={levels}
+          onChange={setLevels}
+        />
+      </div>
+      <CrudPage
+        title="Kelas / Classes"
+        subtitle="Kelola kelas dan jadwal"
+        idKey="id"
+        searchPlaceholder="Cari kelas... / Search classes..."
+        searchKeys={["name", "branch", "teacher"]}
+        addLabel="Tambah Kelas"
+        initialData={mockClasses}
+        filters={[
+          { key: "branch", label: "Cabang", options: [{ value: "Pusat", label: "Pusat" }, { value: "Cabang 1", label: "Cabang 1" }, { value: "Cabang 2", label: "Cabang 2" }] },
+          { key: "level", label: "Tingkat", options: levels },
+          { key: "year", label: "Tahun Ajaran", options: [{ value: "2024/2025", label: "2024/2025" }, { value: "2023/2024", label: "2023/2024" }] },
+        ]}
+        columns={[
+          { key: "name", label: "Nama Kelas / Class", className: "font-medium" },
+          { key: "branch", label: "Cabang / Branch" },
+          { key: "level", label: "Tingkat / Level" },
+          { key: "year", label: "Tahun Ajaran / Year" },
+          { key: "teacher", label: "Wali Kelas / Teacher" },
+          { key: "students", label: "Santri" },
+          { key: "lastModifiedBy", label: "Diubah Oleh / Modified By", className: "text-xs text-muted-foreground" },
+          { key: "lastModifiedAt", label: "Terakhir Diubah / Last Modified", className: "text-xs text-muted-foreground" },
+        ]}
+        formFields={[
+          { key: "name", label: "Nama Kelas / Class Name", type: "text", placeholder: "X-A" },
+          { key: "branch", label: "Cabang / Branch", type: "select", options: [{ value: "Pusat", label: "Pusat" }, { value: "Cabang 1", label: "Cabang 1" }, { value: "Cabang 2", label: "Cabang 2" }] },
+          { key: "level", label: "Tingkat / Level", type: "select", options: levels },
+          { key: "year", label: "Tahun Ajaran / Academic Year", type: "text", placeholder: "2024/2025" },
+          { key: "teacher", label: "Wali Kelas / Homeroom Teacher", type: "text", placeholder: "Nama guru" },
+          { key: "students", label: "Jumlah Santri / Students", type: "number", placeholder: "30" },
+        ]}
+      />
+    </div>
+  );
+};
 
 export default Classes;
