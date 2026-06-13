@@ -1,4 +1,5 @@
 import { CrudPage } from "@/components/CrudPage";
+import { OptionsManager, useManagedOptions } from "@/components/OptionsManager";
 
 const mockSubjects = [
   { id: "SBJ001", code: "FQH", name: "Fiqih", category: "Agama", hoursPerWeek: "4", lastModifiedBy: "Ust. Ahmad Syafii", lastModifiedAt: "2026-03-10 14:30" },
@@ -17,33 +18,54 @@ const mockSubjects = [
   { id: "SBJ014", code: "NHW", name: "Nahwu Shorof", category: "Bahasa", hoursPerWeek: "4", lastModifiedBy: "Admin Pusat", lastModifiedAt: "2026-02-25 13:45" },
 ];
 
-const Subjects = () => (
-  <CrudPage
-    title="Mata Pelajaran / Subjects"
-    subtitle="Kelola mata pelajaran"
-    idKey="id"
-    searchPlaceholder="Cari mata pelajaran... / Search subjects..."
-    searchKeys={["name", "code", "category"]}
-    addLabel="Tambah Mapel"
-    initialData={mockSubjects}
-    filters={[
-      { key: "category", label: "Kategori", options: [{ value: "Agama", label: "Agama" }, { value: "Umum", label: "Umum" }, { value: "Bahasa", label: "Bahasa" }] },
-    ]}
-    columns={[
-      { key: "code", label: "Kode / Code", className: "font-mono text-xs" },
-      { key: "name", label: "Nama / Name", className: "font-medium" },
-      { key: "category", label: "Kategori / Category" },
-      { key: "hoursPerWeek", label: "Jam/Minggu / Hrs/Week" },
-      { key: "lastModifiedBy", label: "Diubah Oleh / Modified By", className: "text-xs text-muted-foreground" },
-      { key: "lastModifiedAt", label: "Terakhir Diubah / Last Modified", className: "text-xs text-muted-foreground" },
-    ]}
-    formFields={[
-      { key: "code", label: "Kode Mapel / Subject Code", type: "text", placeholder: "FQH" },
-      { key: "name", label: "Nama Mapel / Subject Name", type: "text", placeholder: "Fiqih" },
-      { key: "category", label: "Kategori / Category", type: "select", options: [{ value: "Agama", label: "Agama / Religious" }, { value: "Umum", label: "Umum / General" }, { value: "Bahasa", label: "Bahasa / Language" }] },
-      { key: "hoursPerWeek", label: "Jam per Minggu / Hours per Week", type: "number", placeholder: "4" },
-    ]}
-  />
-);
+const DEFAULT_CATEGORIES = [
+  { value: "Agama", label: "Agama" },
+  { value: "Umum", label: "Umum" },
+  { value: "Bahasa", label: "Bahasa" },
+];
+
+const Subjects = () => {
+  const [categories, setCategories] = useManagedOptions("subject_categories_options", DEFAULT_CATEGORIES);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-end">
+        <OptionsManager
+          title="Kelola Kategori Mapel / Manage Subject Categories"
+          description="Kategori yang Anda tambahkan akan muncul di dropdown filter dan form mata pelajaran."
+          triggerLabel="Kelola Kategori"
+          options={categories}
+          onChange={setCategories}
+        />
+      </div>
+      <CrudPage
+        title="Mata Pelajaran / Subjects"
+        subtitle="Kelola mata pelajaran"
+        idKey="id"
+        searchPlaceholder="Cari mata pelajaran... / Search subjects..."
+        searchKeys={["name", "code", "category"]}
+        addLabel="Tambah Mapel"
+        initialData={mockSubjects}
+        filters={[
+          { key: "category", label: "Kategori", options: categories },
+        ]}
+        columns={[
+          { key: "code", label: "Kode / Code", className: "font-mono text-xs" },
+          { key: "name", label: "Nama / Name", className: "font-medium" },
+          { key: "category", label: "Kategori / Category" },
+          { key: "hoursPerWeek", label: "Jam/Minggu / Hrs/Week" },
+          { key: "lastModifiedBy", label: "Diubah Oleh / Modified By", className: "text-xs text-muted-foreground" },
+          { key: "lastModifiedAt", label: "Terakhir Diubah / Last Modified", className: "text-xs text-muted-foreground" },
+        ]}
+        formFields={[
+          { key: "code", label: "Kode Mapel / Subject Code", type: "text", placeholder: "FQH" },
+          { key: "name", label: "Nama Mapel / Subject Name", type: "text", placeholder: "Fiqih" },
+          { key: "category", label: "Kategori / Category", type: "select", options: categories },
+          { key: "hoursPerWeek", label: "Jam per Minggu / Hours per Week", type: "number", placeholder: "4" },
+        ]}
+      />
+    </div>
+  );
+};
 
 export default Subjects;
