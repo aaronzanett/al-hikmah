@@ -55,7 +55,7 @@ export function LogoProvider({ children }: { children: ReactNode }) {
   }, [logoMode, logoUrl, institutionName, tagline]);
 
   return (
-    <LogoContext.Provider value={{ logoMode, logoUrl, institutionName, tagline, setLogoMode, setLogoUrl, setInstitutionName, setTagline }}>
+    <LogoContext.Provider value={{ logoMode, logoUrl, displayLogoUrl: logoUrl || DEFAULT_LOGO_URL, institutionName, tagline, setLogoMode, setLogoUrl, setInstitutionName, setTagline }}>
       {children}
     </LogoContext.Provider>
   );
