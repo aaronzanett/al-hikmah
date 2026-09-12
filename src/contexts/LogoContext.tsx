@@ -1,10 +1,15 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import defaultLogo from "@/assets/logo-mockup-pesantren-alhikmah.png";
 
 export type LogoMode = "complete" | "manual";
+
+export const DEFAULT_LOGO_URL = defaultLogo;
 
 interface LogoState {
   logoMode: LogoMode;
   logoUrl: string | null;
+  /** Logo yang selalu tersedia (fallback ke logo bawaan pesantren) */
+  displayLogoUrl: string;
   institutionName: string;
   tagline: string;
   setLogoMode: (mode: LogoMode) => void;
@@ -50,7 +55,7 @@ export function LogoProvider({ children }: { children: ReactNode }) {
   }, [logoMode, logoUrl, institutionName, tagline]);
 
   return (
-    <LogoContext.Provider value={{ logoMode, logoUrl, institutionName, tagline, setLogoMode, setLogoUrl, setInstitutionName, setTagline }}>
+    <LogoContext.Provider value={{ logoMode, logoUrl, displayLogoUrl: logoUrl || DEFAULT_LOGO_URL, institutionName, tagline, setLogoMode, setLogoUrl, setInstitutionName, setTagline }}>
       {children}
     </LogoContext.Provider>
   );

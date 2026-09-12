@@ -16,7 +16,7 @@ const sizeMap = {
 };
 
 export function LogoBrand({ size = "md", showText = true, subtitleOverride, className, iconOnly = false }: LogoBrandProps) {
-  const { logoMode, logoUrl, institutionName, tagline } = useLogo();
+  const { logoMode, displayLogoUrl: logoUrl, institutionName, tagline } = useLogo();
   const s = sizeMap[size];
 
   if (iconOnly) {
