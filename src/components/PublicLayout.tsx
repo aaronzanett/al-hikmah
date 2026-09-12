@@ -52,15 +52,7 @@ export default function PublicLayout() {
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {/* Brand */}
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-md gradient-gold">
-                  <span className="text-[10px] font-bold text-accent-foreground">B</span>
-                </div>
-                <div>
-                  <span className="text-sm font-bold text-foreground block leading-none">Pesantren Al-Hikmah</span>
-                  <span className="text-[10px] text-muted-foreground">Modern Islamic Boarding School</span>
-                </div>
-              </div>
+              <LogoBrand size="md" className="mb-4" />
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Mencetak generasi Qur'ani yang berilmu, beramal, dan berakhlak mulia sejak 1985.
               </p>
